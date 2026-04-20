@@ -87,7 +87,7 @@ export default async function handler(req: Request) {
     const ai = new GoogleGenAI({ apiKey });
 
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemini-3.1-flash-lite-preview",
       contents: [
         ...history,
         { role: 'user', parts: [{ text: message }] }
@@ -103,8 +103,10 @@ export default async function handler(req: Request) {
     });
   } catch (error) {
     console.error("Gemini Error:", error);
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    return new Response(JSON.stringify({ error: `Gemini Error: ${errorMessage}` }), { 
+    return new Response(JSON.stringify({ 
+      error: "Technical glitch",
+      details: error instanceof Error ? error.message : String(error)
+    }), { 
       status: 500,
       headers: { 'Content-Type': 'application/json' }
     });

@@ -67,10 +67,10 @@ export default function ThemeBot({ onThemeChange, onInteract }: ThemeBotProps) {
       const latencyMs = endTime - startTime;
       
       if (!res.ok) {
-        console.error("AI API Error:", data.error || res.statusText);
+        console.error("AI API Error:", data.details || data.error || res.statusText);
         setMessages(prev => [...prev, { 
           role: 'model', 
-          text: data.error || "I'm having a technical glitch. Please try again later." 
+          text: "I'm currently resting my brain to keep things running smoothly. Please try again in a few moments!"
         }]);
         setIsLoading(false);
         return;
@@ -100,7 +100,7 @@ export default function ThemeBot({ onThemeChange, onInteract }: ThemeBotProps) {
 
       // PostHog Tracking
       posthog.capture('$ai_generation', {
-        $ai_model: 'gemini-3-flash-preview',
+        $ai_model: 'gemini-3.1-flash-lite-preview',
         $ai_provider: 'google',
         $ai_input: [{ role: 'user', content: userMsg }],
         $ai_output: [{ role: 'assistant', content: cleanResponse }],
