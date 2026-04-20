@@ -36,7 +36,7 @@ PERSONALITY:
    - Professional, concise, and high-fidelity.
 
 RESUME DATA:
-${JSON.stringify(RESUME_DATA, null, 2)}
+${JSON.stringify(RESUME_DATA)}
 `;
 
 export default async function handler(req: Request) {

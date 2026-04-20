@@ -67,7 +67,22 @@ export default function ThemeBot({ onThemeChange, onInteract }: ThemeBotProps) {
       const latencyMs = endTime - startTime;
       
       if (!res.ok) {
-        console.error("AI API Error:", data.details || data.error || res.statusText);
+        const errorDetails = data.details || data.error || res.statusText;
+        console.error("AI API Error:", errorDetails);
+        
+        console.log('PostHog: Capturing failed AI generation...');
+        posthog.capture('$ai_generation', {
+          $ai_model: 'gemini-3.1-flash-lite-preview',
+          $ai_provider: 'google',
+          $ai_input: [{ role: 'user', content: userMsg }],
+          $ai_output: [{ role: 'assistant', content: errorDetails }],
+          $ai_latency_ms: latencyMs,
+          $ai_is_success: false,
+          $ai_trace_id: traceIdRef.current,
+          error_code: res.status,
+          environment: import.meta.env?.MODE || 'production'
+        });
+
         setMessages(prev => [...prev, { 
           role: 'model', 
           text: "I'm currently resting my brain to keep things running smoothly. Please try again in a few moments!"
@@ -98,7 +113,8 @@ export default function ThemeBot({ onThemeChange, onInteract }: ThemeBotProps) {
         setMessages(prev => [...prev, { role: 'model', text: cleanResponse }]);
       }
 
-      // PostHog Tracking
+      // PostHog Tracking (Success)
+      console.log('PostHog: Capturing successful AI generation...');
       posthog.capture('$ai_generation', {
         $ai_model: 'gemini-3.1-flash-lite-preview',
         $ai_provider: 'google',
@@ -114,6 +130,17 @@ export default function ThemeBot({ onThemeChange, onInteract }: ThemeBotProps) {
       });
 
     } catch (err) {
+      console.error("Network Error:", err);
+      posthog.capture('$ai_generation', {
+        $ai_model: 'gemini-3.1-flash-lite-preview',
+        $ai_provider: 'google',
+        $ai_input: [{ role: 'user', content: userMsg }],
+        $ai_output: [{ role: 'assistant', content: err instanceof Error ? err.message : 'Network failure' }],
+        $ai_is_success: false,
+        $ai_trace_id: traceIdRef.current,
+        error_type: 'network_error',
+        environment: import.meta.env?.MODE || 'production'
+      });
       setMessages(prev => [...prev, { role: 'model', text: "Network error. Please try again later." }]);
     }
 
