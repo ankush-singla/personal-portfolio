@@ -1,20 +1,47 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Ankush Singla | Personal Portfolio
 
-# Run and deploy your AI Studio app
+An AI-native, gamified executive portfolio built to showcase career history, product philosophy, and technical proficiency. 
 
-This contains everything you need to run your app locally.
+This project goes beyond a standard resume by integrating a custom generative AI agent (ThemeBot) that can answer questions about my background and dynamically change the site's visual theme based on user prompts.
 
-View your app in AI Studio: https://ai.studio/apps/5274fee1-df59-4608-a215-5f0bb5ed029e
+## 🚀 Features
 
-## Run Locally
+*   **Gamified Experience:** Users unlock achievements for interacting with the site (scrolling timelines, exploring deep dives, triggering themes).
+*   **AI ThemeBot:** A custom Gemini-powered assistant that guides users and manipulates the CSS design system via prompt engineering.
+*   **Executive Narrative:** A structured timeline of career progression, focused on 0-to-1 builds and enterprise scaling.
+*   **Fully Responsive:** Fluid layouts built with Tailwind CSS that scale from massive monitors down to mobile viewports.
 
-**Prerequisites:**  Node.js
+## 🛠️ Tech Stack
 
+*   **Frontend:** React 19, Vite, Tailwind CSS v4
+*   **Animations:** Motion (Framer Motion)
+*   **AI Integration:** `@google/genai` (Gemini 3 Flash via Vercel Serverless Edge Functions)
+*   **Deployment:** Vercel
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## 💻 Local Setup
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/ankush-singla/personal-portfolio.git
+   cd personal-portfolio
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Environment Variables:**
+   Create a `.env` file in the root directory based on `.env.example`:
+   ```bash
+   GEMINI_API_KEY=your_google_gemini_key_here
+   ```
+
+4. **Run the development server:**
+   ```bash
+   npm run dev
+   ```
+   The site will be available at `http://localhost:3000`.
+
+## 🚢 Deployment
+This project is configured for seamless deployment on [Vercel](https://vercel.com). Simply import the repository and ensure your `GEMINI_API_KEY` is added to the Vercel Environment Variables settings.
