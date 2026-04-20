@@ -1,5 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
-import { RESUME_DATA } from "../src/data/resume";
+import { RESUME_DATA } from "../../src/data/resume";
 
 export const config = {
   runtime: 'edge',
