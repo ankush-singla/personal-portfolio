@@ -43,9 +43,13 @@ export default async function handler(req: Request) {
   const url = new URL(req.url);
 
   // --- PostHog Proxy Logic ---
-  // If the request is coming via the /api/collect rewrite
-  if (url.pathname.includes('/api/collect') || url.searchParams.has('path')) {
-    const path = url.pathname.replace(/^\/api\/collect/, '') || url.searchParams.get('path') || '/';
+  // Detect if this is a PostHog request (either via /api/collect or as a sub-path of /api/chat)
+  const isProxy = url.pathname.includes('/api/collect') || 
+                  url.pathname.startsWith('/api/chat/') || 
+                  url.searchParams.has('path');
+
+  if (isProxy) {
+    const path = url.pathname.replace(/^\/api\/(chat|collect)/, '') || url.searchParams.get('path') || '/';
     const posthogUrl = `https://us.i.posthog.com${path}${url.search.replace(/path=[^&]*&?/, '')}`;
 
     if (req.method === 'OPTIONS') {
