@@ -25,6 +25,8 @@ export default function ThemeBot({ onThemeChange, onInteract }: ThemeBotProps) {
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  const traceIdRef = useRef(crypto.randomUUID());
+
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -100,6 +102,7 @@ export default function ThemeBot({ onThemeChange, onInteract }: ThemeBotProps) {
         $ai_output: [{ role: 'assistant', content: cleanResponse }],
         $ai_latency_ms: latencyMs,
         $ai_is_success: true,
+        $ai_trace_id: traceIdRef.current,
         intent: userIntent,
         environment: import.meta.env?.MODE || 'production',
         theme_triggered: !!requestedTheme,
