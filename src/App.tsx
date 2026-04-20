@@ -232,7 +232,7 @@ export default function App() {
                 initial={{ y: 50, opacity: 0 }}
                 whileInView={{ y: 0, opacity: 1 }}
                 viewport={{ once: true }}
-                className="text-5xl md:text-7xl lg:text-8xl font-black leading-[0.85] tracking-tighter mb-8"
+                className="text-4xl md:text-7xl lg:text-8xl font-black leading-[0.85] tracking-tighter mb-8"
               >
                 Catalyst.<br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-copper to-copper-deep">
@@ -646,7 +646,7 @@ export default function App() {
             </div>
 
             {/* Footer line */}
-            <div className="flex justify-end pt-6">
+            <div className="flex justify-end pt-6 pb-32 md:pb-0">
               <div className="text-right">
                 <p className="text-[10px] uppercase tracking-[0.2em] opacity-40 mb-1">© 2026 ankushmsingla.com.</p>
                 <p className="text-[10px] uppercase tracking-[0.2em] text-teal block mt-1">vibe coded on a sunday afternoon using generative ai</p>
