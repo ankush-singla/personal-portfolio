@@ -67,7 +67,11 @@ export default function ThemeBot({ onThemeChange, onInteract }: ThemeBotProps) {
       const latencyMs = endTime - startTime;
       
       if (!res.ok) {
-        setMessages(prev => [...prev, { role: 'model', text: "I'm having a technical glitch. Please try again later." }]);
+        console.error("AI API Error:", data.error || res.statusText);
+        setMessages(prev => [...prev, { 
+          role: 'model', 
+          text: data.error || "I'm having a technical glitch. Please try again later." 
+        }]);
         setIsLoading(false);
         return;
       }
