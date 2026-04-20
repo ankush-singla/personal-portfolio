@@ -1,3 +1,8 @@
 {
-  "cleanUrls": true
+  "rewrites": [
+    {
+      "source": "/api/collect/:path*",
+      "destination": "/api/proxy?path=/:path*"
+    }
+  ]
 }
