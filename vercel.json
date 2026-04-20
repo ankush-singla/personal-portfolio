@@ -1,12 +1,3 @@
 {
-  "rewrites": [
-    {
-      "source": "/api/metrics/:path*",
-      "destination": "https://us.i.posthog.com/:path*"
-    },
-    {
-      "source": "/api/metrics",
-      "destination": "https://us.i.posthog.com/"
-    }
-  ]
+  "cleanUrls": true
 }
