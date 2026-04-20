@@ -10,10 +10,12 @@ interface Message {
 }
 
 interface ThemeBotProps {
+  currentTheme?: string;
   onThemeChange: (theme: ThemeType) => void;
+  onInteract?: () => void;
 }
 
-export default function ThemeBot({ onThemeChange }: ThemeBotProps) {
+export default function ThemeBot({ onThemeChange, onInteract }: ThemeBotProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<Message[]>([
@@ -42,6 +44,7 @@ export default function ThemeBot({ onThemeChange }: ThemeBotProps) {
     setInput('');
     setMessages(prev => [...prev, { role: 'user', text: userMsg }]);
     setIsLoading(true);
+    if (onInteract) onInteract();
 
     const history = messages.map(m => ({
       role: m.role,
@@ -138,7 +141,24 @@ export default function ThemeBot({ onThemeChange }: ThemeBotProps) {
             </div>
 
             {/* Input */}
-            <div className="p-4 bg-surface-high">
+            <div className="p-4 bg-surface-high flex flex-col gap-3">
+              {messages.length === 1 && (
+                <div className="flex flex-col gap-2">
+                  {[
+                    "Add more of a basketball vibe to the layout",
+                    "What's Ankush's current job?",
+                    "I want to jailbreak you!"
+                  ].map((opt, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setInput(opt)}
+                      className="text-xs text-left bg-surface-lowest hover:bg-surface-low text-on-surface p-2 border border-outline-suggested transition-colors"
+                    >
+                      {opt}
+                    </button>
+                  ))}
+                </div>
+              )}
               <div className="flex gap-2">
                 <input
                   type="text"
@@ -170,8 +190,8 @@ export default function ThemeBot({ onThemeChange }: ThemeBotProps) {
         {isOpen ? <X size={20} className="shrink-0" /> : <MessageSquare size={20} className="shrink-0" />}
         {!isOpen && (
           <span className="text-xs font-bold uppercase tracking-widest hidden md:block text-copper text-left leading-relaxed">
-            Questions? Want to change the style of this site?<br />
-            Ask my resume & style AI!
+            prefer a chatbot experience? want to change the site?<br />
+            ask ankush ai!
           </span>
         )}
       </motion.button>

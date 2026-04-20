@@ -649,7 +649,7 @@ export default function App() {
             <div className="flex justify-end pt-6 pb-32 md:pb-0">
               <div className="text-right">
                 <p className="text-[10px] uppercase tracking-[0.2em] opacity-40 mb-1">© 2026 ankushmsingla.com.</p>
-                <p className="text-[10px] uppercase tracking-[0.2em] text-teal block mt-1">vibe coded on a sunday afternoon using generative ai</p>
+                <p className="text-[10px] uppercase tracking-[0.2em] text-teal block mt-1">vibe coded on a sunday afternoon</p>
               </div>
             </div>
 
@@ -658,7 +658,11 @@ export default function App() {
       </main>
 
       {/* Theme Chat Bot */}
-      <ThemeBot currentTheme={theme} onThemeChange={(t) => { setTheme(t); unlock('vibe-checker'); }} />
+      <ThemeBot 
+        currentTheme={theme} 
+        onThemeChange={(t) => setTheme(t)} 
+        onInteract={() => unlock('vibe-checker')}
+      />
 
       {/* Deep Dive Modal */}
       <AnimatePresence>
