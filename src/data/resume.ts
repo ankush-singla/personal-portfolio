@@ -310,7 +310,7 @@ export const RESUME_DATA = {
   contact: {
     contactForm: "https://forms.gle/soQmsLvjnWWaPJZD9",
     linkedin: "https://www.linkedin.com/in/singlaankush",
-    github: "https://github.com/ankushsingla",
+    github: "https://github.com/ankush-singla",
     engagements: [
       { label: "Advising", description: "Business and product planning for early-stage startups" },
       { label: "Teaching", description: "Workshops or mentorship for product, engineering, or innovation teams" },
