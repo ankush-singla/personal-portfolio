@@ -40,6 +40,41 @@ ${JSON.stringify(RESUME_DATA)}
 `;
 
 export default async function handler(req: Request) {
+  const url = new URL(req.url);
+
+  // --- PostHog Proxy Logic ---
+  // If the request is coming via the /api/collect rewrite
+  if (url.pathname.includes('/api/collect') || url.searchParams.has('path')) {
+    const path = url.pathname.replace(/^\/api\/collect/, '') || url.searchParams.get('path') || '/';
+    const posthogUrl = `https://us.i.posthog.com${path}${url.search.replace(/path=[^&]*&?/, '')}`;
+
+    if (req.method === 'OPTIONS') {
+      return new Response(null, {
+        status: 204,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
+        },
+      });
+    }
+
+    try {
+      const response = await fetch(posthogUrl, {
+        method: req.method,
+        headers: req.headers,
+        body: req.method !== 'GET' && req.method !== 'HEAD' ? await req.blob() : null,
+        redirect: 'follow',
+      });
+      const resHeaders = new Headers(response.headers);
+      resHeaders.set('Access-Control-Allow-Origin', '*');
+      return new Response(response.body, { status: response.status, headers: resHeaders });
+    } catch (e) {
+      return new Response(JSON.stringify({ error: 'Proxy fail' }), { status: 500 });
+    }
+  }
+  // --- End Proxy Logic ---
+
   if (req.method !== 'POST') {
     return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405 });
   }

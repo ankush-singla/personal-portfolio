@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/collect/:path*",
-      "destination": "/api/proxy"
+      "destination": "/api/chat"
     }
   ]
 }
