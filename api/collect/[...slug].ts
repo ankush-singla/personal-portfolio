@@ -5,9 +5,9 @@ export const config = {
 export default async function handler(req: Request) {
   const url = new URL(req.url);
   
-  // Extract the path after /api/metrics
-  // e.g., /api/metrics/e/ -> /e/
-  const path = url.pathname.replace(/^\/api\/metrics/, '');
+  // Extract the path after /api/collect
+  // e.g., /api/collect/e/ -> /e/
+  const path = url.pathname.replace(/^\/api\/collect/, '');
   
   // Construct the target PostHog URL
   const posthogUrl = `https://us.i.posthog.com${path}${url.search}`;

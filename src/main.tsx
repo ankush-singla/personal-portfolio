@@ -9,7 +9,7 @@ const phKey = import.meta.env.VITE_PUBLIC_POSTHOG_KEY;
 if (phKey) {
   console.log('PostHog: Initializing with key...', phKey.substring(0, 8) + '...');
   posthog.init(phKey, {
-    api_host: '/api/metrics',
+    api_host: '/api/collect',
     person_profiles: 'always',
     capture_pageview: true,
     loaded: (ph) => {
