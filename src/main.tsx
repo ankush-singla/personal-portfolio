@@ -1,4 +1,4 @@
-import {StrictMode} from 'react';
+import {StrictMode} from 'react'; // Build: 2026-04-20-0340
 import {createRoot} from 'react-dom/client';
 import posthog from 'posthog-js';
 import App from './App.tsx';

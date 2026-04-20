@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 
-export type AchievementId = 'getting-to-know-ankush' | 'deep-diver' | 'data-miner' | 'vibe-checker' | 'peer-reviewed' | 'time-traveler' | 'the-networker';
+export type AchievementId = 'getting-to-know-ankush' | 'deep-diver' | 'data-miner' | 'ai-prodigy' | 'peer-reviewed' | 'time-traveler' | 'the-networker';
 
 export interface Achievement {
   id: AchievementId;
@@ -13,7 +13,7 @@ export const ACHIEVEMENTS: Record<AchievementId, Achievement> = {
   'getting-to-know-ankush': { id: 'getting-to-know-ankush', title: 'Getting to Know Ankush', description: 'Arrived at the site and started exploring.', icon: '👋' },
   'deep-diver': { id: 'deep-diver', title: 'Deep Diver', description: 'Opened a project deep dive.', icon: '🏆' },
   'data-miner': { id: 'data-miner', title: 'Data Miner', description: 'Scrolled to the absolute bottom of the page.', icon: '📜' },
-  'vibe-checker': { id: 'vibe-checker', title: 'Vibe Checker', description: 'Interacted with the ThemeBot.', icon: '🎨' },
+  'ai-prodigy': { id: 'ai-prodigy', title: 'AI Prodigy', description: 'Engaged with the Ankush AI chatbot.', icon: '🧠' },
   'peer-reviewed': { id: 'peer-reviewed', title: 'Peer Reviewed', description: 'Read through the peer testimonials.', icon: '🤝' },
   'time-traveler': { id: 'time-traveler', title: 'Time Traveler', description: 'Navigated the chronological timeline.', icon: '⏳' },
   'the-networker': { id: 'the-networker', title: 'Networker', description: 'Clicked a contact or social link.', icon: '🌐' }
