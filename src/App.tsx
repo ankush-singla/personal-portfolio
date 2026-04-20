@@ -709,7 +709,7 @@ export default function App() {
           setPrevTheme(theme);
           setTheme(t);
         }} 
-        onInteract={() => unlock('vibe-checker')}
+        onInteract={() => unlock('ai-prodigy')}
       />
 
       {/* Deep Dive Modal */}

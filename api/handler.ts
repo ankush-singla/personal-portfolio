@@ -51,9 +51,13 @@ export default async function handler(req: Request) {
     }
 
     try {
+      const headers = new Headers(req.headers);
+      headers.delete('host');
+      headers.delete('content-length');
+
       const response = await fetch(posthogUrl, {
         method: req.method,
-        headers: req.headers,
+        headers: headers,
         body: req.method !== 'GET' && req.method !== 'HEAD' ? await req.blob() : null,
         redirect: 'follow',
       });

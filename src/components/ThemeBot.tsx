@@ -70,7 +70,6 @@ export default function ThemeBot({ onThemeChange, onInteract }: ThemeBotProps) {
         const errorDetails = data.details || data.error || res.statusText;
         console.error("AI API Error:", errorDetails);
         
-        console.log('PostHog: Capturing failed AI generation...');
         posthog.capture('$ai_generation', {
           $ai_model: 'gemini-3.1-flash-lite-preview',
           $ai_provider: 'google',
@@ -92,7 +91,6 @@ export default function ThemeBot({ onThemeChange, onInteract }: ThemeBotProps) {
       }
       
       const response = data.text || "";
-      console.log("Raw AI Response:", response);
       
       // Safe Intent & Theme Parsing
       const intentMatch = response.match(/\[INTENT: (.*?)\]/);
@@ -114,7 +112,6 @@ export default function ThemeBot({ onThemeChange, onInteract }: ThemeBotProps) {
       }
 
       // PostHog Tracking (Success)
-      console.log('PostHog: Capturing successful AI generation...');
       posthog.capture('$ai_generation', {
         $ai_model: 'gemini-3.1-flash-lite-preview',
         $ai_provider: 'google',
