@@ -7,9 +7,12 @@ interface AchievementsModalProps {
   isOpen: boolean;
   onClose: () => void;
   unlockedIds: AchievementId[];
+  currentTheme: string;
+  onUnlockMatrix: () => void;
+  onReplayConfetti: () => void;
 }
 
-export const AchievementsModal: React.FC<AchievementsModalProps> = ({ isOpen, onClose, unlockedIds }) => {
+export const AchievementsModal: React.FC<AchievementsModalProps> = ({ isOpen, onClose, unlockedIds, currentTheme, onUnlockMatrix, onReplayConfetti }) => {
   const allAchievements = Object.values(ACHIEVEMENTS);
 
   return (
@@ -73,6 +76,30 @@ export const AchievementsModal: React.FC<AchievementsModalProps> = ({ isOpen, on
                 );
               })}
             </div>
+
+            {unlockedIds.length === allAchievements.length && (
+              <div className="mt-8 p-6 border border-copper bg-surface-lowest text-center">
+                <h3 className="text-2xl font-black mb-2 text-copper">100% Complete</h3>
+                <p className="text-sm text-on-surface/70 mb-6">You've unlocked every achievement. A hidden reality is now available to you.</p>
+                <div className="flex flex-col md:flex-row gap-4 justify-center">
+                  <button 
+                    onClick={() => {
+                      onUnlockMatrix();
+                      onClose();
+                    }}
+                    className="bg-copper text-charcoal font-bold uppercase tracking-widest px-8 py-3 hover:bg-copper-deep transition-colors"
+                  >
+                    {currentTheme === 'matrix' ? 'Revert to Previous Theme' : 'Enter The Matrix'}
+                  </button>
+                  <button 
+                    onClick={onReplayConfetti}
+                    className="border border-copper text-copper font-bold uppercase tracking-widest px-8 py-3 hover:bg-copper/10 transition-colors"
+                  >
+                    Replay Celebration
+                  </button>
+                </div>
+              </div>
+            )}
           </motion.div>
         </motion.div>
       )}

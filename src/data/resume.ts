@@ -3,7 +3,7 @@ import { Experience, Project, Testimonial, OtherRole } from '../types';
 export const RESUME_DATA = {
   name: "Ankush Singla",
   role: "Product Executive & AI Strategist",
-  bio: "I build products that move the needle and capture headlines. From 0-to-1 concepts to 10-to-100 scaling, I specialize in turning emerging tech — Generative AI, agentic systems, IoT — into enterprise realities that ship and scale.\n\nMy work doesn't just drive business metrics; it gets featured in Forbes, presented to Boards, and cited in investor 10-Ks.\n\nCurrently operating at the intersection of AI, consumer experience, and rethinking the future of work at FanDuel.",
+  bio: "I build products that move the needle on user engagement and business growth, capturing headlines along the way. From 0-to-1 concepts to 10-to-100 scaling, I specialize in turning emerging tech — like Generative AI, agentic systems, and IoT — into real things that ship and scale.\n\nMy work doesn't just drive metrics; it gets featured in Forbes, presented to Boards, and cited in investor 10-Ks.\n\nCurrently operating at the intersection of AI, consumer experience, and rethinking the future of work at FanDuel.",
   experience: [
     {
       company: "FanDuel",

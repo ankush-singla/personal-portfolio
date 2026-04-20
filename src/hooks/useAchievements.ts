@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 
-export type AchievementId = 'deep-diver' | 'data-miner' | 'vibe-checker' | 'peer-reviewed' | 'time-traveler' | 'the-networker';
+export type AchievementId = 'getting-to-know-ankush' | 'deep-diver' | 'data-miner' | 'vibe-checker' | 'peer-reviewed' | 'time-traveler' | 'the-networker';
 
 export interface Achievement {
   id: AchievementId;
@@ -10,6 +10,7 @@ export interface Achievement {
 }
 
 export const ACHIEVEMENTS: Record<AchievementId, Achievement> = {
+  'getting-to-know-ankush': { id: 'getting-to-know-ankush', title: 'Getting to Know Ankush', description: 'Arrived at the site and started exploring.', icon: '👋' },
   'deep-diver': { id: 'deep-diver', title: 'Deep Diver', description: 'Opened a project deep dive.', icon: '🏆' },
   'data-miner': { id: 'data-miner', title: 'Data Miner', description: 'Scrolled to the absolute bottom of the page.', icon: '📜' },
   'vibe-checker': { id: 'vibe-checker', title: 'Vibe Checker', description: 'Interacted with the ThemeBot.', icon: '🎨' },

@@ -19,7 +19,7 @@ export const THEME_PRESETS: ThemePreset[] = [
   { name: 'moss', bg: '#1c1917', acc: '#65a30d' },
   { name: 'neon-dracula', bg: '#282a36', acc: '#bd93f9' },
   { name: 'synthwave', bg: '#2b213a', acc: '#ff7edb' },
-  { name: 'matrix', bg: '#000000', acc: '#00fa9a' },
+  { name: 'matrix', bg: '#000000', acc: '#00fa9a', fonts: ['"VT323", monospace', '"VT323", monospace'] },
   { name: 'volcano', bg: '#2a0a0a', acc: '#ef4444' },
   { name: 'blood', bg: '#100000', acc: '#dc2626' },
   { name: 'sunset', bg: '#1e1025', acc: '#f97316' },

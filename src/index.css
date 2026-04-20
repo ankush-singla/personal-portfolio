@@ -83,3 +83,25 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
+
+/* Chatbot Response Formatting */
+.chat-markdown p:not(:last-child) {
+    margin-bottom: 0.75rem;
+}
+
+.chat-markdown ul, .chat-markdown ol {
+    margin-bottom: 0.75rem;
+    padding-left: 1.25rem;
+}
+
+.chat-markdown li {
+    margin-bottom: 0.25rem;
+}
+
+.chat-markdown strong {
+    @apply font-bold text-copper;
+}
+
+.chat-markdown code {
+    @apply bg-charcoal px-1 py-0.5 rounded text-copper font-mono text-[11px];
+}

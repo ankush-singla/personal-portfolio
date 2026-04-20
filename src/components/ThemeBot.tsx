@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { MessageSquare, X, Send, Sparkles } from 'lucide-react';
 import Markdown from 'react-markdown';
+import posthog from 'posthog-js';
 import { ThemeType } from '../types';
 
 interface Message {
@@ -46,6 +47,7 @@ export default function ThemeBot({ onThemeChange, onInteract }: ThemeBotProps) {
     setIsLoading(true);
     if (onInteract) onInteract();
 
+    const startTime = performance.now();
     const history = messages.map(m => ({
       role: m.role,
       parts: [{ text: m.text }]
@@ -59,25 +61,51 @@ export default function ThemeBot({ onThemeChange, onInteract }: ThemeBotProps) {
       });
       
       const data = await res.json();
+      const endTime = performance.now();
+      const latencyMs = endTime - startTime;
       
       if (!res.ok) {
-        setMessages(prev => [...prev, { role: 'model', text: data.error || "I'm having a technical glitch. Please try again later." }]);
+        setMessages(prev => [...prev, { role: 'model', text: "I'm having a technical glitch. Please try again later." }]);
         setIsLoading(false);
         return;
       }
       
-      const response = data.text;
+      const response = data.text || "";
+      console.log("Raw AI Response:", response);
       
-      // Check for theme triggers
+      // Safe Intent & Theme Parsing
+      const intentMatch = response.match(/\[INTENT: (.*?)\]/);
+      const userIntent = intentMatch ? intentMatch[1].trim() : 'general_chat';
       const themeMatch = response.match(/\[THEME_CHANGE: (.*?)\]/);
+      let requestedTheme: string | null = null;
+      
+      const cleanResponse = response
+        .replace(/\[THEME_CHANGE: .*?\]/g, '')
+        .replace(/\[INTENT: .*?\]/g, '')
+        .trim();
+
       if (themeMatch) {
-        const requestedTheme = themeMatch[1].toLowerCase().trim() as ThemeType;
-        const cleanResponse = response.replace(/\[THEME_CHANGE: .*?\]/, '').trim();
+        requestedTheme = themeMatch[1].toLowerCase().trim();
         setMessages(prev => [...prev, { role: 'model', text: cleanResponse || `Switching to ${requestedTheme} mode.` }]);
-        onThemeChange(requestedTheme);
+        onThemeChange(requestedTheme as ThemeType);
       } else {
-        setMessages(prev => [...prev, { role: 'model', text: response }]);
+        setMessages(prev => [...prev, { role: 'model', text: cleanResponse }]);
       }
+
+      // PostHog Tracking
+      posthog.capture('$ai_generation', {
+        $ai_model: 'gemini-3-flash-preview',
+        $ai_provider: 'google',
+        $ai_input: [{ role: 'user', content: userMsg }],
+        $ai_output: [{ role: 'assistant', content: cleanResponse }],
+        $ai_latency_ms: latencyMs,
+        $ai_is_success: true,
+        intent: userIntent,
+        environment: import.meta.env?.MODE || 'production',
+        theme_triggered: !!requestedTheme,
+        requested_theme: requestedTheme
+      });
+
     } catch (err) {
       setMessages(prev => [...prev, { role: 'model', text: "Network error. Please try again later." }]);
     }
@@ -120,7 +148,7 @@ export default function ThemeBot({ onThemeChange, onInteract }: ThemeBotProps) {
                   key={i} 
                   className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
-                  <div className={`max-w-[85%] p-3 text-sm ${
+                  <div className={`max-w-[85%] p-3 text-sm chat-markdown ${
                     msg.role === 'user' 
                       ? 'bg-copper text-charcoal' 
                       : 'bg-surface-low text-on-surface'
@@ -145,13 +173,15 @@ export default function ThemeBot({ onThemeChange, onInteract }: ThemeBotProps) {
               {messages.length === 1 && (
                 <div className="flex flex-col gap-2">
                   {[
-                    "Add more of a basketball vibe to the layout",
-                    "What's Ankush's current job?",
+                    "Switch to a basketball theme",
+                    "Give me a quick summary of Ankush's background",
                     "I want to jailbreak you!"
                   ].map((opt, i) => (
                     <button
                       key={i}
-                      onClick={() => setInput(opt)}
+                      onClick={() => {
+                        setInput(opt);
+                      }}
                       className="text-xs text-left bg-surface-lowest hover:bg-surface-low text-on-surface p-2 border border-outline-suggested transition-colors"
                     >
                       {opt}
@@ -182,18 +212,11 @@ export default function ThemeBot({ onThemeChange, onInteract }: ThemeBotProps) {
       </AnimatePresence>
 
       <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="min-h-[56px] py-3 px-6 bg-charcoal border-none text-copper flex items-center justify-center shadow-xl hover:bg-surface-high transition-colors rounded-full font-sans gap-3 cursor-pointer"
+        className="min-h-[56px] py-3 px-6 bg-charcoal text-copper flex items-center justify-center shadow-xl rounded-full gap-3"
       >
-        {isOpen ? <X size={20} className="shrink-0" /> : <MessageSquare size={20} className="shrink-0" />}
-        {!isOpen && (
-          <span className="text-xs font-bold uppercase tracking-widest hidden md:block text-copper text-left leading-relaxed">
-            prefer a chatbot experience? want to change the site?<br />
-            ask ankush ai!
-          </span>
-        )}
+        {isOpen ? <X size={20} /> : <MessageSquare size={20} />}
+        {!isOpen && <span className="text-xs font-bold uppercase tracking-widest hidden md:block">Ask Ankush AI</span>}
       </motion.button>
     </div>
   );

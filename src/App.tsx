@@ -16,12 +16,16 @@ import { applyThemeToRoot } from './utils/theme';
 
 export default function App() {
   const [theme, setTheme] = useState<string>('monolith');
+  const [prevTheme, setPrevTheme] = useState<string>('monolith');
   const [selectedProject, setSelectedProject] = useState<any>(null);
   const [activeYear, setActiveYear] = useState<string>(RESUME_DATA.projects[0].year);
   const [activeCompany, setActiveCompany] = useState<string>(RESUME_DATA.experience[0].company);
   const [activeSection, setActiveSection] = useState<string>('home');
   const [testimonialIndex, setTestimonialIndex] = useState(0);
   const [isAchievementsModalOpen, setIsAchievementsModalOpen] = useState(false);
+  const [hasFiredConfetti, setHasFiredConfetti] = useState(() => {
+    return localStorage.getItem('has-fired-confetti') === 'true';
+  });
   const timelineRef = React.useRef<HTMLDivElement>(null);
 
   const { enabled, setEnabled, unlockedIds, unlock, latestAchievement, clearLatest } = useAchievements();
@@ -44,6 +48,14 @@ export default function App() {
     };
     window.addEventListener('scroll', handleGlobalScroll);
     return () => window.removeEventListener('scroll', handleGlobalScroll);
+  }, [unlock]);
+
+  useEffect(() => {
+    // Unlock the welcome achievement shortly after load
+    const timer = setTimeout(() => {
+      unlock('getting-to-know-ankush');
+    }, 1500);
+    return () => clearTimeout(timer);
   }, [unlock]);
 
   const scrollTimeline = (direction: 'left' | 'right') => {
@@ -75,6 +87,26 @@ export default function App() {
       }
     }
   }, [activeCompany]);
+
+  const fireConfetti = () => {
+    import('canvas-confetti').then((confetti) => {
+      confetti.default({
+        particleCount: 150,
+        spread: 80,
+        origin: { y: 0.6 },
+        colors: ['#b87333', '#76d6d5', '#ffffff'],
+        zIndex: 999
+      });
+    });
+  };
+
+  useEffect(() => {
+    if (unlockedIds.length === 7 && !hasFiredConfetti) {
+      fireConfetti();
+      setHasFiredConfetti(true);
+      localStorage.setItem('has-fired-confetti', 'true');
+    }
+  }, [unlockedIds.length, hasFiredConfetti]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -140,11 +172,16 @@ export default function App() {
     applyThemeToRoot(root, theme);
   }, [theme]);
 
-  // Load 8bit font if needed
+  // Load special fonts if needed
   useEffect(() => {
     if (theme === '8bit') {
       const link = document.createElement('link');
       link.href = 'https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap';
+      link.rel = 'stylesheet';
+      document.head.appendChild(link);
+    } else if (theme === 'matrix') {
+      const link = document.createElement('link');
+      link.href = 'https://fonts.googleapis.com/css2?family=VT323&display=swap';
       link.rel = 'stylesheet';
       document.head.appendChild(link);
     }
@@ -190,15 +227,23 @@ export default function App() {
         <div className="hidden md:flex gap-8 items-center">
           <div className="flex items-center gap-4 mr-4">
             <button onClick={() => setEnabled(!enabled)} className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-bold text-copper/70 hover:text-copper transition-colors border border-copper/30 px-3 py-1 rounded-sm">
-              Game Mode: {enabled ? 'ON' : 'OFF'}
+              Gamification: {enabled ? 'ON' : 'OFF'}
             </button>
             {enabled && (
-              <button
-                onClick={() => setIsAchievementsModalOpen(true)}
-                className="text-[10px] uppercase tracking-[0.2em] font-bold text-teal hover:text-teal/70 transition-colors"
-              >
-                {unlockedIds.length}/6 Achievements Unlocked
-              </button>
+              <div className="flex flex-col items-end gap-1.5 mt-1">
+                <button
+                  onClick={() => setIsAchievementsModalOpen(true)}
+                  className="text-[10px] uppercase tracking-[0.2em] font-bold text-teal hover:text-teal/70 transition-colors"
+                >
+                  {unlockedIds.length}/7 Achievements Unlocked
+                </button>
+                <div className="w-full h-1 bg-outline-suggested rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-teal transition-all duration-1000 ease-out" 
+                    style={{ width: `${(unlockedIds.length / 7) * 100}%` }}
+                  />
+                </div>
+              </div>
             )}
           </div>
           {navItems.map(item => (
@@ -649,7 +694,7 @@ export default function App() {
             <div className="flex justify-end pt-6 pb-32 md:pb-0">
               <div className="text-right">
                 <p className="text-[10px] uppercase tracking-[0.2em] opacity-40 mb-1">© 2026 ankushmsingla.com.</p>
-                <p className="text-[10px] uppercase tracking-[0.2em] text-teal block mt-1">vibe coded on a sunday afternoon</p>
+                <p className="text-[10px] uppercase tracking-[0.2em] text-teal block mt-1">vibe coded on a cold, spring, sunday afternoon in atlanta</p>
               </div>
             </div>
 
@@ -660,7 +705,10 @@ export default function App() {
       {/* Theme Chat Bot */}
       <ThemeBot 
         currentTheme={theme} 
-        onThemeChange={(t) => setTheme(t)} 
+        onThemeChange={(t) => {
+          setPrevTheme(theme);
+          setTheme(t);
+        }} 
         onInteract={() => unlock('vibe-checker')}
       />
 
@@ -739,6 +787,13 @@ export default function App() {
         isOpen={isAchievementsModalOpen}
         onClose={() => setIsAchievementsModalOpen(false)}
         unlockedIds={unlockedIds}
+        currentTheme={theme}
+        onUnlockMatrix={() => {
+          const next = theme === 'matrix' ? prevTheme : 'matrix';
+          setPrevTheme(theme);
+          setTheme(next);
+        }}
+        onReplayConfetti={fireConfetti}
       />
     </div>
   );
