@@ -11,6 +11,11 @@ if (phKey) {
     api_host: '/api/chat',
     person_profiles: 'always',
     capture_pageview: true,
+    autocapture: true,
+    session_recording: {
+      maskAllInputs: false,
+      maskInputOptions: { password: true }
+    },
     loaded: (ph) => {
       if (import.meta.env.DEV) ph.debug();
     }

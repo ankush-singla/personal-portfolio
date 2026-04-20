@@ -299,7 +299,7 @@ export default function App() {
               <img
                 src="https://drive.google.com/thumbnail?id=1uE-lbuR7pEs4AYY6KVBTpOOUvoV3uG38&sz=w1000"
                 alt="Ankush Singla"
-                className="w-full h-full object-cover grayscale brightness-50 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-700"
+                className="w-full h-full object-cover grayscale brightness-50 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-700 scale-110 group-hover:scale-100"
                 referrerPolicy="no-referrer"
               />
             </div>
@@ -324,10 +324,16 @@ export default function App() {
                 <div className="sticky top-48 space-y-8 border-l border-outline-suggested pl-8">
                   {RESUME_DATA.projects.map(proj => (
                     <div key={`timeline-${proj.title}`}>
-                      <a href={`#proj-${proj.year}`} className="block group">
+                      <button 
+                        onClick={() => {
+                          const el = document.getElementById(`proj-${proj.year}`);
+                          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }} 
+                        className="block group text-left"
+                      >
                         <span className={`text-xs font-bold tracking-[0.2em] block transition-colors ${activeYear === proj.year ? 'text-copper scale-105 origin-left' : 'text-teal group-hover:text-copper'}`}>{proj.year}</span>
                         <span className={`text-sm font-semibold transition-opacity ${activeYear === proj.year ? 'opacity-100' : 'opacity-40 group-hover:opacity-100'}`}>{proj.title}</span>
-                      </a>
+                      </button>
                     </div>
                   ))}
                 </div>
@@ -339,11 +345,11 @@ export default function App() {
                   <motion.div
                     key={proj.title}
                     id={`proj-${proj.year}`}
-                    initial={{ opacity: 0, y: 30 }}
+                    initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     onViewportEnter={() => setActiveYear(proj.year)}
-                    viewport={{ once: false, amount: 0.2, margin: "-25% 0px -45% 0px" }}
-                    transition={{ delay: 0.1 }}
+                    viewport={{ once: false, amount: 0.1, margin: "-10% 0px -10% 0px" }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
                     onClick={() => handleProjectSelect(proj)}
                     className="relative group cursor-pointer"
                   >
@@ -351,7 +357,7 @@ export default function App() {
                       <img
                         src={proj.image}
                         alt={proj.title}
-                        className={`w-full h-full transition-all duration-700 group-hover:scale-105 group-hover:brightness-75 ${proj.title === 'COVID-19 Response Center' ? 'object-contain object-left bg-surface-lowest' : 'object-cover'}`}
+                        className={`w-full h-full transition-all duration-700 group-hover:scale-100 ${proj.title === 'Leading with AI' ? 'scale-[1.25]' : 'scale-110'} ${proj.title === 'COVID-19 Response Center' ? 'object-contain object-left bg-surface-lowest' : 'object-cover'}`}
                         referrerPolicy="no-referrer"
                       />
                       <div className="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
@@ -504,7 +510,7 @@ export default function App() {
                         id={`exp-${exp.company.replace(/\s+/g, '-')}-${exp.period.replace(/\s+/g, '')}`}
                         onViewportEnter={() => setActiveCompany(exp.company)}
                         viewport={{ once: false, amount: 0.1, margin: "-10% 0px -45% 0px" }}
-                        className="relative scroll-mt-32"
+                        className={`relative scroll-mt-32 ${isRepeatCompany ? '-mt-24' : ''}`}
                       >
                         {!isRepeatCompany && (
                           <h3 className="text-3xl font-bold mb-2">
