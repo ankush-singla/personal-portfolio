@@ -15,8 +15,14 @@ export default defineConfig(({mode}) => {
       {
         name: 'local-api',
         configureServer(server) {
-          server.middlewares.use(async (req, res, next) => {
-            if (req.url === '/api/chat' && req.method === 'POST') {
+          server.middlewares.use('/api/chat', async (req, res, next) => {
+            // Only handle the exact /api/chat path for the AI bot locally.
+            // Let sub-paths (like /api/chat/e/) fall through to the proxy below.
+            if (req.url !== '/' && req.url !== '') {
+              return next();
+            }
+
+            if (req.method === 'POST') {
               let body = '';
               req.on('data', chunk => body += chunk);
               req.on('end', async () => {
@@ -80,13 +86,18 @@ export default defineConfig(({mode}) => {
     },
     server: {
       // HMR is disabled in AI Studio via DISABLE_HMR env var.
-      // Do not modifyâfile watching is disabled to prevent flickering during agent edits.
+      // Do not modifyâ€”file watching is disabled to prevent flickering during agent edits.
       hmr: process.env.DISABLE_HMR !== 'true',
       proxy: {
-        '/api/metrics': {
+        '/api/chat/': {
           target: 'https://us.i.posthog.com',
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api\/metrics/, ''),
+          rewrite: (path) => path.replace(/^\/api\/chat/, ''),
+        },
+        '/api/collect': {
+          target: 'https://us.i.posthog.com',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api\/collect/, ''),
         },
       },
     },
