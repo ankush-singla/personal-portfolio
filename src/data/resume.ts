@@ -1,6 +1,4 @@
 import { Experience, Project, Testimonial, OtherRole } from '../types';
-import vegasSportsbook from '../assets/vegas_sportsbook.png';
-import pointingAtTv from '../assets/pointing_at_tv.png';
 
 export const RESUME_DATA = {
   name: "Ankush Singla",
@@ -216,7 +214,7 @@ export const RESUME_DATA = {
       category: "Consumer GenAI Product",
       year: "2025",
       description: "Launched the world's first conversational sports betting AI assistant, defining the next generation of consumer wagering.",
-      image: vegasSportsbook,
+      image: "/images/vegas_sportsbook.png",
       aspectRatio: "16/9",
       deepDive: "Ace was conceived as a highly integrated generative AI solution to remove the friction users face when constructing multi-layered bets. By bridging real-time data pipelines with conversational LLMs, we shifted user behavior from external research platforms back into the core application, drastically expanding the share-of-wallet.",
       articleLink: "https://www.forbes.com/sites/mattrybaltowski/2025/03/11/fanduel-launches-first-ai-sports-betting-chat-experience/"
@@ -255,7 +253,7 @@ export const RESUME_DATA = {
       category: "Entrepreneurship / Marketing AI & Analytics",
       year: "2016",
       description: "Co-founded an early-stage startup focused on improving conversion and tracking of money spent on product placement.",
-      image: pointingAtTv,
+      image: "/images/pointing_at_tv.png",
       aspectRatio: "16/9",
       deepDive: "Overlens represented a deep dive into the mechanics of early-stage entrepreneurship. Operating in a highly ambiguous environment, our focus was entirely on validating a concept, getting feedback from potential customers, and proving the concept could be built and would resonate with marketers.",
       articleLink: "https://drive.google.com/file/d/11EVH0b5nenL98wiJw2_GwXCGrVetnHfn/view?usp=drive_link",
