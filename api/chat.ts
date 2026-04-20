@@ -103,6 +103,10 @@ export default async function handler(req: Request) {
     });
   } catch (error) {
     console.error("Gemini Error:", error);
-    return new Response(JSON.stringify({ error: "Technical glitch. Please reach out to me directly." }), { status: 500 });
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    return new Response(JSON.stringify({ error: `Gemini Error: ${errorMessage}` }), { 
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
 }
