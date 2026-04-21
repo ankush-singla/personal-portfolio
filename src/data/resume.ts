@@ -269,7 +269,7 @@ export const RESUME_DATA = {
     {
       quote: "It's like looking into the future.",
       author: "CEO, Flutter Entertainment (parent company of FanDuel)",
-      context: "... about using AI in my personal workflows"
+      context: "... about my use of AI in personal & team workflows"
     },
     {
       quote: "His ability to set a north star while allowing priorities to evolve has been critical in an AI landscape that changes week to week. His steady demeanor and collaborative style build trust and make others better.",
