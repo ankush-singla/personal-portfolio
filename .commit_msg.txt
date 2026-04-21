@@ -1,9 +1,0 @@
-feat: add mobile nav, modernize ThemeBot chips and typography
-
-- Add hamburger menu with animated slide-down drawer for mobile nav
-- Mobile drawer includes all section links and gamification toggle
-- Remove Reset Theme suggestion chip from ThemeBot
-- Redesign suggestion chips to pill-style with emoji prefixes
-- Align ThemeBot typography with site design system (Inter, tracking, sizing)
-- Strengthen jailbreak guardrail to reference PostHog observability
-- Add revert/reset to monolith theme handler in system prompt
