@@ -145,7 +145,7 @@ export default function ThemeBot({ onThemeChange, onInteract }: ThemeBotProps) {
   };
 
   return (
-    <div className="fixed bottom-4 right-4 md:bottom-8 md:right-8 z-[100] font-sans">
+    <div className="fixed bottom-4 right-4 md:bottom-8 md:right-8 z-[100]">
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -156,10 +156,10 @@ export default function ThemeBot({ onThemeChange, onInteract }: ThemeBotProps) {
             style={{ height: '500px' }}
           >
             {/* Header */}
-            <div className="p-4 bg-surface-high flex justify-between items-center">
-              <div className="flex items-center gap-2">
-                <Sparkles size={16} className="text-copper" />
-                <span className="font-serif text-sm uppercase tracking-widest font-bold">Ankush AI</span>
+            <div className="px-5 py-4 bg-surface-high flex justify-between items-center border-b border-outline-suggested">
+              <div className="flex items-center gap-2.5">
+                <Sparkles size={14} className="text-copper" />
+                <span className="text-[11px] uppercase tracking-[0.2em] font-bold text-on-surface">Ankush AI</span>
               </div>
               <button 
                 onClick={() => setIsOpen(false)}
@@ -179,10 +179,10 @@ export default function ThemeBot({ onThemeChange, onInteract }: ThemeBotProps) {
                   key={i} 
                   className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
-                  <div className={`max-w-[85%] p-3 text-sm chat-markdown ${
-                    msg.role === 'user' 
-                      ? 'bg-copper text-charcoal' 
-                      : 'bg-surface-low text-on-surface'
+                  <div className={`max-w-[85%] px-4 py-3 text-[13px] leading-relaxed chat-markdown ${
+                    msg.role === 'user'
+                      ? 'bg-copper text-charcoal font-medium'
+                      : 'bg-surface-low text-on-surface/90'
                   }`}>
                     <Markdown>{msg.text}</Markdown>
                   </div>
@@ -202,20 +202,19 @@ export default function ThemeBot({ onThemeChange, onInteract }: ThemeBotProps) {
             {/* Input */}
             <div className="p-4 bg-surface-high flex flex-col gap-3">
               {messages.length === 1 && (
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-wrap gap-2">
                   {[
-                    "Switch to a basketball theme",
-                    "Give me a quick summary of Ankush's background",
-                    "I want to jailbreak you!"
+                    { label: "Switch to a basketball theme", emoji: "🏀" },
+                    { label: "Quick summary of Ankush's background", emoji: "⚡" },
+                    { label: "I want to jailbreak you!", emoji: "🔓" },
                   ].map((opt, i) => (
                     <button
                       key={i}
-                      onClick={() => {
-                        setInput(opt);
-                      }}
-                      className="text-xs text-left bg-surface-lowest hover:bg-surface-low text-on-surface p-2 border border-outline-suggested transition-colors"
+                      onClick={() => setInput(opt.label)}
+                      className="flex items-center gap-1.5 text-[11px] font-semibold tracking-wide bg-surface-lowest hover:bg-copper/10 hover:border-copper/50 text-on-surface/70 hover:text-copper px-3 py-1.5 rounded-full border border-outline-suggested transition-all duration-200"
                     >
-                      {opt}
+                      <span>{opt.emoji}</span>
+                      {opt.label}
                     </button>
                   ))}
                 </div>
@@ -227,7 +226,7 @@ export default function ThemeBot({ onThemeChange, onInteract }: ThemeBotProps) {
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                   placeholder="Ask me something..."
-                  className="flex-1 bg-surface-lowest p-2 text-sm text-on-surface focus:outline-none focus:ring-1 focus:ring-copper"
+                  className="flex-1 bg-surface-lowest px-3 py-2 text-[13px] text-on-surface placeholder:text-on-surface/30 placeholder:text-[12px] placeholder:tracking-wide focus:outline-none focus:ring-1 focus:ring-copper/60 transition-all"
                 />
                 <button 
                   onClick={handleSend}

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ThemeType } from './types';
 import { RESUME_DATA } from './data/resume';
@@ -11,7 +11,7 @@ import ThemeBot from './components/ThemeBot';
 import { useAchievements } from './hooks/useAchievements';
 import { AchievementToast } from './components/AchievementToast';
 import { AchievementsModal } from './components/AchievementsModal';
-import { Camera, Gamepad2, Users, Briefcase, Mail, Github, Linkedin, Twitter, ArrowRight, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Camera, Gamepad2, Users, Briefcase, Mail, Github, Linkedin, Twitter, ArrowRight, X, ChevronLeft, ChevronRight, Menu } from 'lucide-react';
 import { applyThemeToRoot } from './utils/theme';
 
 export default function App() {
@@ -23,6 +23,7 @@ export default function App() {
   const [activeSection, setActiveSection] = useState<string>('home');
   const [testimonialIndex, setTestimonialIndex] = useState(0);
   const [isAchievementsModalOpen, setIsAchievementsModalOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [hasFiredConfetti, setHasFiredConfetti] = useState(() => {
     return localStorage.getItem('has-fired-confetti') === 'true';
   });
@@ -222,46 +223,120 @@ export default function App() {
   return (
     <div className={`min-h-screen transition-colors duration-700 selection:bg-copper selection:text-charcoal text-on-surface bg-surface`}>
       {/* Navigation */}
-      <nav className="fixed top-0 w-full z-[100] flex justify-between items-center px-6 md:px-12 py-6 bg-surface/90 backdrop-blur-md border-b border-outline-suggested transition-all">
-        <a href="#" className="font-serif text-xl tracking-widest text-on-surface hover:text-copper transition-colors">ankushmsingla.com</a>
-        <div className="hidden md:flex gap-8 items-center">
-          <div className="flex items-center gap-4 mr-4">
-            <button onClick={() => setEnabled(!enabled)} className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-bold text-copper/70 hover:text-copper transition-colors border border-copper/30 px-3 py-1 rounded-sm">
-              Gamification: {enabled ? 'ON' : 'OFF'}
-            </button>
-            {enabled && (
-              <div className="flex flex-col items-end gap-1.5 mt-1">
-                <button
-                  onClick={() => setIsAchievementsModalOpen(true)}
-                  className="text-[10px] uppercase tracking-[0.2em] font-bold text-teal hover:text-teal/70 transition-colors"
-                >
-                  {unlockedIds.length}/7 Achievements Unlocked
-                </button>
-                <div className="w-full h-1 bg-outline-suggested rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-teal transition-all duration-1000 ease-out" 
-                    style={{ width: `${(unlockedIds.length / 7) * 100}%` }}
-                  />
+      <nav className="fixed top-0 w-full z-[100] bg-surface/90 backdrop-blur-md border-b border-outline-suggested transition-all">
+        <div className="flex justify-between items-center px-6 md:px-12 py-6">
+          <a href="#" className="font-serif text-xl tracking-widest text-on-surface hover:text-copper transition-colors">ankushmsingla.com</a>
+
+          {/* Desktop Nav */}
+          <div className="hidden md:flex gap-8 items-center">
+            <div className="flex items-center gap-4 mr-4">
+              <button onClick={() => setEnabled(!enabled)} className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-bold text-copper/70 hover:text-copper transition-colors border border-copper/30 px-3 py-1 rounded-sm">
+                Gamification: {enabled ? 'ON' : 'OFF'}
+              </button>
+              {enabled && (
+                <div className="flex flex-col items-end gap-1.5 mt-1">
+                  <button
+                    onClick={() => setIsAchievementsModalOpen(true)}
+                    className="text-[10px] uppercase tracking-[0.2em] font-bold text-teal hover:text-teal/70 transition-colors"
+                  >
+                    {unlockedIds.length}/7 Achievements Unlocked
+                  </button>
+                  <div className="w-full h-1 bg-outline-suggested rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-teal transition-all duration-1000 ease-out" 
+                      style={{ width: `${(unlockedIds.length / 7) * 100}%` }}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+            {navItems.map(item => (
+              <a
+                key={item.id}
+                href={`#${item.id}`}
+                className={item.id === 'contact'
+                  ? "bg-copper text-charcoal px-5 py-2.5 text-[10px] uppercase tracking-[0.2em] font-black hover:bg-copper-deep transition-all ml-4 shadow-[0_4px_20px_rgba(235,94,40,0.2)] active:scale-95"
+                  : `text-[10px] uppercase tracking-[0.2em] transition-colors font-semibold relative ${activeSection === item.id ? 'text-copper' : 'text-on-surface hover:text-copper'}`
+                }
+              >
+                {item.label}
+                {activeSection === item.id && item.id !== 'contact' && (
+                  <span className="absolute -bottom-2 left-0 w-full h-[2px] bg-copper rounded-full shadow-[0_0_8px_rgba(235,94,40,0.5)]"></span>
+                )}
+              </a>
+            ))}
+          </div>
+
+          {/* Mobile Hamburger */}
+          <button
+            id="mobile-menu-toggle"
+            className="md:hidden flex items-center justify-center p-2 text-on-surface hover:text-copper transition-colors"
+            onClick={() => setIsMobileMenuOpen(prev => !prev)}
+            aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+          >
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
+
+        {/* Mobile Drawer */}
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div
+              id="mobile-nav-drawer"
+              key="mobile-nav"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
+              className="overflow-hidden border-t border-outline-suggested bg-surface/95 backdrop-blur-md"
+            >
+              <div className="px-6 py-8 flex flex-col gap-6">
+                {navItems.map(item => (
+                  <a
+                    key={item.id}
+                    href={`#${item.id}`}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={item.id === 'contact'
+                      ? "bg-copper text-charcoal px-5 py-3 text-[11px] uppercase tracking-[0.2em] font-black text-center shadow-[0_4px_20px_rgba(235,94,40,0.2)] active:scale-95"
+                      : `text-sm uppercase tracking-[0.2em] font-semibold py-1 border-b border-outline-suggested/40 flex justify-between items-center transition-colors ${activeSection === item.id ? 'text-copper' : 'text-on-surface'}`
+                    }
+                  >
+                    {item.label}
+                    {item.id !== 'contact' && (
+                      <ChevronRight size={14} className="text-on-surface/30" />
+                    )}
+                  </a>
+                ))}
+                {/* Gamification toggle in mobile menu */}
+                <div className="pt-4 border-t border-outline-suggested/40 flex flex-col gap-3">
+                  <button
+                    onClick={() => setEnabled(!enabled)}
+                    className="flex items-center justify-between text-xs uppercase tracking-[0.2em] font-bold text-copper/70 hover:text-copper transition-colors border border-copper/30 px-4 py-2 rounded-sm w-full"
+                  >
+                    <span>Gamification</span>
+                    <span className={`text-[10px] px-2 py-0.5 rounded-sm font-black ${enabled ? 'bg-copper/20 text-copper' : 'bg-outline-suggested/40 text-on-surface/40'}`}>
+                      {enabled ? 'ON' : 'OFF'}
+                    </span>
+                  </button>
+                  {enabled && (
+                    <button
+                      onClick={() => { setIsAchievementsModalOpen(true); setIsMobileMenuOpen(false); }}
+                      className="text-[11px] uppercase tracking-[0.2em] font-bold text-teal hover:text-teal/70 transition-colors text-left"
+                    >
+                      {unlockedIds.length}/7 Achievements Unlocked
+                      <div className="w-full h-1 bg-outline-suggested rounded-full overflow-hidden mt-2">
+                        <div
+                          className="h-full bg-teal transition-all duration-1000 ease-out"
+                          style={{ width: `${(unlockedIds.length / 7) * 100}%` }}
+                        />
+                      </div>
+                    </button>
+                  )}
                 </div>
               </div>
-            )}
-          </div>
-          {navItems.map(item => (
-            <a
-              key={item.id}
-              href={`#${item.id}`}
-              className={item.id === 'contact'
-                ? "bg-copper text-charcoal px-5 py-2.5 text-[10px] uppercase tracking-[0.2em] font-black hover:bg-copper-deep transition-all ml-4 shadow-[0_4px_20px_rgba(235,94,40,0.2)] active:scale-95"
-                : `text-[10px] uppercase tracking-[0.2em] transition-colors font-semibold relative ${activeSection === item.id ? 'text-copper' : 'text-on-surface hover:text-copper'}`
-              }
-            >
-              {item.label}
-              {activeSection === item.id && item.id !== 'contact' && (
-                <span className="absolute -bottom-2 left-0 w-full h-[2px] bg-copper rounded-full shadow-[0_0_8px_rgba(235,94,40,0.5)]"></span>
-              )}
-            </a>
-          ))}
-        </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
 
       <main className="pt-32 md:pt-48">
