@@ -319,5 +319,20 @@ export const RESUME_DATA = {
       { label: "Impact", description: "Non-profit boards or mission-driven projects" },
       { label: "The Right Role", description: "When the right opportunity comes along, I'm open to a conversation" }
     ]
+  },
+  siteMetadata: {
+    title: "Ankush Singla | Personal Portfolio",
+    tagline: ["Catalyst.", "Strategist.", "Operator."],
+    sections: [
+      { id: "home", label: "01 / Home", title: "Home" },
+      { id: "work", label: "02 / Selected Work", title: "Selected Work Highlights", period: "2020 — Present" },
+      { id: "background", label: "03 / Career Overview", title: "Career Overview", subtitle: "Career Journey", description: "A timeline of leading teams, executing product strategy, and shipping architectures that define the front edge of AI." },
+      { id: "testimonials", label: "04 / Peer Perspectives", title: "Peer Perspectives" },
+      { id: "contact", label: "05 / How I Engage", title: "How I Engage", subtitle: "Ready when you are.", description: "I'm always open to conversations where I can create value. If any of these resonate, please feel free to reach out." }
+    ],
+    footer: {
+      copyright: "© 2026 ankushmsingla.com.",
+      vibe: "vibe coded on a cold, spring, sunday afternoon in atlanta"
+    }
   }
 };

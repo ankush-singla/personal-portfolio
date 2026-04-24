@@ -69,7 +69,7 @@ export const AchievementsModal: React.FC<AchievementsModalProps> = ({ isOpen, on
                         {isUnlocked ? achievement.title : '???'}
                       </h4>
                       <p className="text-sm text-on-surface/70 leading-snug">
-                        {isUnlocked ? achievement.description : 'Keep exploring the portfolio to unlock this achievement.'}
+                        {isUnlocked ? achievement.description : achievement.hint}
                       </p>
                     </div>
                   </div>
@@ -77,17 +77,50 @@ export const AchievementsModal: React.FC<AchievementsModalProps> = ({ isOpen, on
               })}
             </div>
 
-            {unlockedIds.length === allAchievements.length && (
-              <div className="mt-8 p-6 border border-copper bg-surface-lowest text-center">
-                <h3 className="text-2xl font-black mb-2 text-copper">100% Complete</h3>
-                <p className="text-sm text-on-surface/70 mb-6">You've unlocked every achievement. A hidden reality is now available to you.</p>
-                <div className="flex flex-col md:flex-row gap-4 justify-center">
+            {unlockedIds.length < allAchievements.length ? (
+              <div className="mt-12 p-8 border border-outline-suggested bg-surface/30 relative overflow-hidden group">
+                <div className="absolute inset-0 bg-gradient-to-r from-teal/5 to-copper/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                
+                {/* Glitch-like decorative elements */}
+                <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-teal/30 to-transparent" />
+                <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-copper/30 to-transparent" />
+                
+                <div className="relative z-10 flex flex-col md:flex-row items-center gap-6">
+                  <div className="w-16 h-16 flex items-center justify-center border border-outline-suggested bg-surface-lowest text-on-surface/20 shrink-0">
+                    <Lock size={32} className="animate-pulse" />
+                  </div>
+                  <div className="text-center md:text-left flex-1">
+                    <h3 className="text-xl font-black mb-1 uppercase tracking-widest text-on-surface/40">Mystery Reward Locked</h3>
+                    <p className="text-xs text-on-surface/50 font-medium">Unlock all {allAchievements.length} achievements to reveal a secret reality. {allAchievements.length - unlockedIds.length} remaining.</p>
+                  </div>
+                  <div className="flex -space-x-2">
+                    {Array.from({ length: allAchievements.length }).map((_, i) => (
+                      <div 
+                        key={i}
+                        className={`w-3 h-3 border rotate-45 transition-all duration-500 ${
+                          i < unlockedIds.length ? 'bg-teal border-teal shadow-[0_0_8px_rgba(118,214,213,0.5)]' : 'bg-transparent border-outline-suggested'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="mt-8 p-6 border border-copper bg-surface-lowest text-center relative overflow-hidden">
+                {/* Glitch Effect Background */}
+                <div className="absolute inset-0 opacity-10 pointer-events-none">
+                  <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] animate-pulse" />
+                </div>
+                
+                <h3 className="text-2xl font-black mb-2 text-copper relative z-10">100% Complete</h3>
+                <p className="text-sm text-on-surface/70 mb-6 relative z-10">You've unlocked every achievement. A hidden reality is now available to you.</p>
+                <div className="flex flex-col md:flex-row gap-4 justify-center relative z-10">
                   <button 
                     onClick={() => {
                       onUnlockMatrix();
                       onClose();
                     }}
-                    className="bg-copper text-charcoal font-bold uppercase tracking-widest px-8 py-3 hover:bg-copper-deep transition-colors"
+                    className="bg-copper text-charcoal font-bold uppercase tracking-widest px-8 py-3 hover:bg-copper-deep transition-colors shadow-[0_0_20px_rgba(235,94,40,0.3)]"
                   >
                     {currentTheme === 'matrix' ? 'Revert to Previous Theme' : 'Enter The Matrix'}
                   </button>

@@ -188,13 +188,7 @@ export default function App() {
     }
   }, [theme]);
 
-  const navItems = [
-    { label: 'Home', id: 'home' },
-    { label: 'Work', id: 'work' },
-    { label: 'Career', id: 'background' },
-    { label: 'Perspectives', id: 'testimonials' },
-    { label: 'Contact', id: 'contact' }
-  ];
+  const navItems = RESUME_DATA.siteMetadata.sections.map(s => ({ label: s.label.split(' / ')[1], id: s.id }));
 
   const experienceGroups = [
     "Product Leadership",
@@ -259,7 +253,7 @@ export default function App() {
                   : `text-[10px] uppercase tracking-[0.2em] transition-colors font-semibold relative ${activeSection === item.id ? 'text-copper' : 'text-on-surface hover:text-copper'}`
                 }
               >
-                {item.label}
+                {RESUME_DATA.siteMetadata.sections.find(s => s.id === item.id)?.label.split(' / ')[1]}
                 {activeSection === item.id && item.id !== 'contact' && (
                   <span className="absolute -bottom-2 left-0 w-full h-[2px] bg-copper rounded-full shadow-[0_0_8px_rgba(235,94,40,0.5)]"></span>
                 )}
@@ -301,7 +295,7 @@ export default function App() {
                       : `text-sm uppercase tracking-[0.2em] font-semibold py-1 border-b border-outline-suggested/40 flex justify-between items-center transition-colors ${activeSection === item.id ? 'text-copper' : 'text-on-surface'}`
                     }
                   >
-                    {item.label}
+                    {RESUME_DATA.siteMetadata.sections.find(s => s.id === item.id)?.label.split(' / ')[1]}
                     {item.id !== 'contact' && (
                       <ChevronRight size={14} className="text-on-surface/30" />
                     )}
@@ -343,7 +337,7 @@ export default function App() {
         {/* Section Wrapper with Vertical Gutter Label */}
         <section id="home" className="relative px-6 md:px-24 mb-32 md:mb-64 scroll-mt-32">
           <div className="hidden md:flex absolute left-6 md:left-12 top-0 h-full items-start">
-            <span className="vertical-label sticky top-32">01 / Home</span>
+            <span className="vertical-label sticky top-32">{RESUME_DATA.siteMetadata.sections[0].label}</span>
           </div>
 
           <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-end gap-12">
@@ -354,11 +348,11 @@ export default function App() {
                 viewport={{ once: true }}
                 className="text-4xl md:text-7xl lg:text-8xl font-black leading-[0.85] tracking-tighter mb-8"
               >
-                Catalyst.<br />
+                {RESUME_DATA.siteMetadata.tagline[0]}<br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-copper to-copper-deep">
-                  Strategist.
+                  {RESUME_DATA.siteMetadata.tagline[1]}
                 </span><br />
-                Operator.
+                {RESUME_DATA.siteMetadata.tagline[2]}
               </motion.h1>
               <p className="text-base md:text-lg font-light text-on-surface/80 max-w-lg mb-12 whitespace-pre-line">
                 {RESUME_DATA.bio}
@@ -760,7 +754,7 @@ export default function App() {
                 <h3 className="text-3xl md:text-4xl font-black">Ready when you are.</h3>
               </div>
               <div className="flex flex-wrap gap-4 items-center">
-                <a href={RESUME_DATA.contact.contactForm} target="_blank" rel="noopener noreferrer" className="monolith-btn-primary">Get in Touch</a>
+                <a href={RESUME_DATA.contact.contactForm} onClick={() => unlock('the-networker')} target="_blank" rel="noopener noreferrer" className="monolith-btn-primary">Get in Touch</a>
                 <a href={RESUME_DATA.contact.linkedin} onClick={() => unlock('the-networker')} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 px-6 py-4 border border-outline-suggested text-on-surface font-bold uppercase tracking-widest text-sm hover:bg-copper hover:text-charcoal hover:border-copper transition-colors">
                   <Linkedin size={16} /> LinkedIn
                 </a>
@@ -774,8 +768,8 @@ export default function App() {
             {/* Footer line */}
             <div className="flex justify-end pt-6 pb-32 md:pb-0">
               <div className="text-right">
-                <p className="text-[10px] uppercase tracking-[0.2em] opacity-40 mb-1">© 2026 ankushmsingla.com.</p>
-                <p className="text-[10px] uppercase tracking-[0.2em] text-teal block mt-1">vibe coded on a cold, spring, sunday afternoon in atlanta</p>
+                <p className="text-[10px] uppercase tracking-[0.2em] opacity-40 mb-1">{RESUME_DATA.siteMetadata.footer.copyright}</p>
+                <p className="text-[10px] uppercase tracking-[0.2em] text-teal block mt-1">{RESUME_DATA.siteMetadata.footer.vibe}</p>
               </div>
             </div>
 
@@ -791,6 +785,7 @@ export default function App() {
           setTheme(t);
         }} 
         onInteract={() => unlock('ai-prodigy')}
+        unlockedIds={unlockedIds}
       />
 
       {/* Deep Dive Modal */}

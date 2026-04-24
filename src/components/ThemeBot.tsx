@@ -14,9 +14,10 @@ interface ThemeBotProps {
   currentTheme?: string;
   onThemeChange: (theme: ThemeType) => void;
   onInteract?: () => void;
+  unlockedIds?: string[];
 }
 
-export default function ThemeBot({ onThemeChange, onInteract }: ThemeBotProps) {
+export default function ThemeBot({ onThemeChange, onInteract, unlockedIds = [] }: ThemeBotProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<Message[]>([
@@ -59,7 +60,11 @@ export default function ThemeBot({ onThemeChange, onInteract }: ThemeBotProps) {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: userMsg, history })
+        body: JSON.stringify({ 
+          message: userMsg, 
+          history,
+          achievements: unlockedIds 
+        })
       });
       
       const data = await res.json();
@@ -71,11 +76,11 @@ export default function ThemeBot({ onThemeChange, onInteract }: ThemeBotProps) {
         console.error("AI API Error:", errorDetails);
         
         posthog.capture('$ai_generation', {
-          $ai_model: 'gemini-3.1-flash-lite-preview',
+          $ai_model: 'gemini-3-flash-preview',
           $ai_provider: 'google',
           $ai_input: [{ role: 'user', content: userMsg }],
-          $ai_output: [{ role: 'assistant', content: errorDetails }],
-          $ai_latency_ms: latencyMs,
+          $ai_output_choices: [{ role: 'assistant', content: errorDetails }],
+          $ai_latency: latencyMs / 1000,
           $ai_is_success: false,
           $ai_trace_id: traceIdRef.current,
           error_code: res.status,
@@ -84,7 +89,7 @@ export default function ThemeBot({ onThemeChange, onInteract }: ThemeBotProps) {
 
         setMessages(prev => [...prev, { 
           role: 'model', 
-          text: "I'm currently resting my brain to keep things running smoothly. Please try again in a few moments!"
+          text: "I'm experiencing a temporary technical glitch with the Google Gemini API. I'm resting my brain while it recovers—please try again in a few moments!"
         }]);
         setIsLoading(false);
         return;
@@ -113,11 +118,11 @@ export default function ThemeBot({ onThemeChange, onInteract }: ThemeBotProps) {
 
       // PostHog Tracking (Success)
       posthog.capture('$ai_generation', {
-        $ai_model: 'gemini-3.1-flash-lite-preview',
+        $ai_model: 'gemini-3-flash-preview',
         $ai_provider: 'google',
         $ai_input: [{ role: 'user', content: userMsg }],
-        $ai_output: [{ role: 'assistant', content: cleanResponse }],
-        $ai_latency_ms: latencyMs,
+        $ai_output_choices: [{ role: 'assistant', content: cleanResponse }],
+        $ai_latency: latencyMs / 1000,
         $ai_is_success: true,
         $ai_trace_id: traceIdRef.current,
         intent: userIntent,
@@ -138,7 +143,7 @@ export default function ThemeBot({ onThemeChange, onInteract }: ThemeBotProps) {
         error_type: 'network_error',
         environment: import.meta.env?.MODE || 'production'
       });
-      setMessages(prev => [...prev, { role: 'model', text: "Network error. Please try again later." }]);
+      setMessages(prev => [...prev, { role: 'model', text: "Network error. My neural links to the Google API are a bit tangled right now. I'm resting my circuits for a moment—please check back shortly!" }]);
     }
 
     setIsLoading(false);
