@@ -98,14 +98,73 @@ export default function App() {
   }, [activeCompany]);
 
   const fireConfetti = () => {
-    import('canvas-confetti').then((confetti) => {
-      confetti.default({
-        particleCount: 150,
-        spread: 80,
-        origin: { y: 0.6 },
-        colors: ['#b87333', '#76d6d5', '#ffffff'],
+    import('canvas-confetti').then((confettiModule) => {
+      const confetti = confettiModule.default;
+      const colors = ['#b87333', '#76d6d5', '#ffffff']; // Copper, Teal, White
+      
+      // 1. Initial powerful central burst
+      const count = 200;
+      const defaults = {
+        origin: { y: 0.7 },
+        colors: colors,
         zIndex: 999
-      });
+      };
+
+      function fire(particleRatio: number, opts: any) {
+        confetti({
+          ...defaults,
+          ...opts,
+          particleCount: Math.floor(count * particleRatio)
+        });
+      }
+
+      fire(0.25, { spread: 26, startVelocity: 55 });
+      fire(0.2, { spread: 60 });
+      fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
+      fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 });
+      fire(0.1, { spread: 120, startVelocity: 45 });
+
+      // 2. Left side cannon
+      setTimeout(() => {
+        confetti({
+          ...defaults,
+          particleCount: 50,
+          angle: 60,
+          spread: 70,
+          origin: { x: 0, y: 0.65 },
+          scalar: 1.2
+        });
+      }, 300);
+
+      // 3. Right side cannon
+      setTimeout(() => {
+        confetti({
+          ...defaults,
+          particleCount: 50,
+          angle: 120,
+          spread: 70,
+          origin: { x: 1, y: 0.65 },
+          scalar: 1.2
+        });
+      }, 600);
+
+      // 4. Random "Popcorn" bursts for sustained excitement
+      for (let i = 0; i < 6; i++) {
+        setTimeout(() => {
+          confetti({
+            ...defaults,
+            particleCount: Math.floor(Math.random() * 20) + 15,
+            spread: 60,
+            origin: { 
+              x: 0.2 + Math.random() * 0.6, 
+              y: 0.2 + Math.random() * 0.4 
+            },
+            scalar: 0.8,
+            gravity: 1.2,
+            drift: Math.random() > 0.5 ? 2 : -2
+          });
+        }, 900 + (i * 250));
+      }
     });
   };
 
@@ -434,8 +493,8 @@ export default function App() {
 
       <main className="pt-32 md:pt-48">
         {/* Section Wrapper with Vertical Gutter Label */}
-        <section id="home" className="relative px-6 md:px-24 mb-32 md:mb-64 scroll-mt-32">
-          <div className="hidden md:flex absolute left-6 md:left-12 top-0 h-full items-start">
+        <section id="home" className="relative px-6 md:px-24 pt-32 mb-32 md:mb-64 scroll-mt-32">
+          <div className="hidden md:flex absolute left-6 md:left-12 top-0 h-full items-start z-[55] pt-32">
             <span className="vertical-label sticky top-32">{RESUME_DATA.siteMetadata.sections[0].label}</span>
           </div>
 
@@ -475,9 +534,9 @@ export default function App() {
         </section>
 
         {/* Work Section */}
-        <section id="work" className="relative px-6 md:px-24 mb-64 scroll-mt-32">
-          <div className="hidden md:flex absolute left-6 md:left-12 top-0 h-full items-start">
-            <span className="vertical-label sticky top-32">02 / Selected Work</span>
+        <section id="work" className="relative px-6 md:px-24 pt-32 mb-64 scroll-mt-32">
+          <div className="hidden md:flex absolute left-6 md:left-12 top-0 h-full items-start z-[55] pt-32">
+            <span className="vertical-label sticky top-32">{RESUME_DATA.siteMetadata.sections[1].label}</span>
           </div>
 
           <div className="max-w-6xl mx-auto">
@@ -620,9 +679,9 @@ export default function App() {
         </section>
 
         {/* Background / Resume Section */}
-        <section id="background" className="relative bg-surface-lowest px-6 md:px-24 pt-32 pb-[600px] mb-64 scroll-mt-24">
-          <div className="hidden md:flex absolute left-6 md:left-12 top-0 h-full items-start">
-            <span className="vertical-label sticky top-[550px]">03 / Career Overview</span>
+        <section id="background" className="relative bg-surface-lowest px-6 md:px-24 pt-32 pb-[600px] mb-64 scroll-mt-32">
+          <div className="hidden md:flex absolute left-6 md:left-12 top-0 h-full items-start z-[55] pt-32">
+            <span className="vertical-label sticky top-32">{RESUME_DATA.siteMetadata.sections[2].label}</span>
           </div>
 
           <div className="max-w-6xl mx-auto mb-32 hidden md:block sticky top-20 z-50 bg-surface-lowest pt-12 pb-8 -mx-4 px-4 border-b border-outline-suggested/30 transition-all duration-300 sticky-shield">
@@ -854,9 +913,9 @@ export default function App() {
         </section>
 
         {/* Testimonials Section */}
-        <section id="testimonials" className="relative px-6 md:px-24 pb-32 pt-16 mb-64 overflow-hidden scroll-mt-32 min-h-[70vh] flex flex-col justify-center">
-          <div className="hidden md:flex absolute left-6 md:left-12 top-0 h-full items-start">
-            <span className="vertical-label sticky top-32">04 / Peer Perspectives</span>
+        <section id="testimonials" className="relative px-6 md:px-24 pb-32 pt-32 mb-64 scroll-mt-32 min-h-[70vh] flex flex-col justify-center">
+          <div className="hidden md:flex absolute left-6 md:left-12 top-0 h-full items-start z-[55] pt-32">
+            <span className="vertical-label sticky top-32">{RESUME_DATA.siteMetadata.sections[3].label}</span>
           </div>
 
           <div className="max-w-6xl mx-auto w-full">
@@ -911,9 +970,9 @@ export default function App() {
 
 
         {/* Contact Section */}
-        <section id="contact" className="relative px-6 md:px-24 mb-32 scroll-mt-32">
-          <div className="hidden md:flex absolute left-6 md:left-12 top-0 h-full items-start">
-            <span className="vertical-label sticky top-32">05 / How I Engage</span>
+        <section id="contact" className="relative px-6 md:px-24 pt-32 mb-32 scroll-mt-32">
+          <div className="hidden md:flex absolute left-6 md:left-12 top-0 h-full items-start z-[55] pt-32">
+            <span className="vertical-label sticky top-32">{RESUME_DATA.siteMetadata.sections[4].label}</span>
           </div>
           <div className="max-w-6xl mx-auto">
 
