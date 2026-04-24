@@ -11,14 +11,16 @@ import ThemeBot from './components/ThemeBot';
 import { useAchievements } from './hooks/useAchievements';
 import { AchievementToast } from './components/AchievementToast';
 import { AchievementsModal } from './components/AchievementsModal';
-import { Camera, Gamepad2, Users, Briefcase, Mail, Github, Linkedin, Twitter, ArrowRight, X, ChevronLeft, ChevronRight, Menu } from 'lucide-react';
+import { Camera, Gamepad2, Users, Briefcase, Mail, Github, Linkedin, Twitter, ArrowRight, X, ChevronLeft, ChevronRight, Menu, Play, Pause, Trophy } from 'lucide-react';
 import { applyThemeToRoot } from './utils/theme';
 
 export default function App() {
   const [theme, setTheme] = useState<string>('monolith');
   const [prevTheme, setPrevTheme] = useState<string>('monolith');
   const [selectedProject, setSelectedProject] = useState<any>(null);
-  const [activeYear, setActiveYear] = useState<string>(RESUME_DATA.projects[0].year);
+  const [currentProjectIndex, setCurrentProjectIndex] = useState(1); // Default to Ace AI (2025)
+  const [isProjectAutoPlayPaused, setIsProjectAutoPlayPaused] = useState(false);
+  const [activeYear, setActiveYear] = useState<string>(RESUME_DATA.projects[1].year);
   const [activeCompany, setActiveCompany] = useState<string>(RESUME_DATA.experience[0].company);
   const [activeSection, setActiveSection] = useState<string>('home');
   const [testimonialIndex, setTestimonialIndex] = useState(0);
@@ -144,13 +146,50 @@ export default function App() {
     return () => clearInterval(timer);
   }, [testimonialIndex, activeSection]);
 
+  // Auto-play for projects
+  useEffect(() => {
+    if (activeSection !== 'work' || isProjectAutoPlayPaused) return;
+
+    const timer = setInterval(() => {
+      nextProject();
+    }, 8000);
+    return () => clearInterval(timer);
+  }, [currentProjectIndex, activeSection, isProjectAutoPlayPaused]);
+
   const nextTestimonial = () => {
     setTestimonialIndex((prev) => (prev + 1) % RESUME_DATA.testimonials.length);
     unlock('peer-reviewed');
   };
+
   const prevTestimonial = () => {
     setTestimonialIndex((prev) => (prev - 1 + RESUME_DATA.testimonials.length) % RESUME_DATA.testimonials.length);
     unlock('peer-reviewed');
+  };
+
+  const nextProject = () => {
+    setCurrentProjectIndex((prev) => (prev + 1) % RESUME_DATA.projects.length);
+    setActiveYear(RESUME_DATA.projects[(currentProjectIndex + 1) % RESUME_DATA.projects.length].year);
+  };
+
+  const prevProject = () => {
+    setCurrentProjectIndex((prev) => (prev - 1 + RESUME_DATA.projects.length) % RESUME_DATA.projects.length);
+    setActiveYear(RESUME_DATA.projects[(currentProjectIndex - 1 + RESUME_DATA.projects.length) % RESUME_DATA.projects.length].year);
+  };
+
+  const nextProjectInModal = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const nextIdx = (currentProjectIndex + 1) % RESUME_DATA.projects.length;
+    setCurrentProjectIndex(nextIdx);
+    setSelectedProject(RESUME_DATA.projects[nextIdx]);
+    setActiveYear(RESUME_DATA.projects[nextIdx].year);
+  };
+
+  const prevProjectInModal = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const prevIdx = (currentProjectIndex - 1 + RESUME_DATA.projects.length) % RESUME_DATA.projects.length;
+    setCurrentProjectIndex(prevIdx);
+    setSelectedProject(RESUME_DATA.projects[prevIdx]);
+    setActiveYear(RESUME_DATA.projects[prevIdx].year);
   };
 
   const handleProjectSelect = (project: any) => {
@@ -220,121 +259,159 @@ export default function App() {
   return (
     <div className={`min-h-screen transition-colors duration-700 selection:bg-copper selection:text-charcoal text-on-surface bg-surface`}>
       {/* Navigation */}
-      <nav className="fixed top-0 w-full z-[100] bg-surface/90 backdrop-blur-md border-b border-outline-suggested transition-all">
-        <div className="flex justify-between items-center px-6 md:px-12 py-6">
-          <a href="#" className="font-serif text-xl tracking-widest text-on-surface hover:text-copper transition-colors">ankushmsingla.com</a>
+      <header className="fixed top-0 left-0 right-0 z-[60] bg-surface/80 backdrop-blur-md border-b border-outline-suggested transition-all duration-500">
+        <div className="max-w-[1800px] mx-auto px-6 h-20 flex items-center justify-between lg:grid lg:grid-cols-[1fr_auto_1fr]">
+          {/* Brand Island (Left) */}
+          <div className="flex items-center">
+            <a href="#home" className="text-2xl font-black tracking-tighter hover:text-copper transition-colors flex items-center group">
+              AS
+              <motion.span 
+                animate={{ opacity: [1, 0, 1] }}
+                transition={{ duration: 1, repeat: Infinity, ease: "steps(1)" }}
+                className="text-copper ml-1"
+              >
+                _
+              </motion.span>
+            </a>
+          </div>
 
-          {/* Desktop Nav */}
-          <div className="hidden md:flex gap-8 items-center">
-            <div className="flex items-center gap-4 mr-4">
-              <button onClick={() => setEnabled(!enabled)} className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-bold text-copper/70 hover:text-copper transition-colors border border-copper/30 px-3 py-1 rounded-sm">
-                Gamification: {enabled ? 'ON' : 'OFF'}
-              </button>
-              {enabled && (
-                <div className="flex flex-col items-end gap-1.5 mt-1">
-                  <button
-                    onClick={() => setIsAchievementsModalOpen(true)}
-                    className="text-[10px] uppercase tracking-[0.2em] font-bold text-teal hover:text-teal/70 transition-colors"
-                  >
-                    {unlockedIds.length}/7 Achievements Unlocked
-                  </button>
-                  <div className="w-full h-1 bg-outline-suggested rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-teal transition-all duration-1000 ease-out" 
-                      style={{ width: `${(unlockedIds.length / 7) * 100}%` }}
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-            {navItems.map(item => (
-              <a
+          {/* Navigation Island (Center) */}
+          <nav className="hidden lg:flex items-center justify-center gap-8 xl:gap-12 whitespace-nowrap px-8">
+            {navItems.slice(0, 4).map(item => (
+              <a 
                 key={item.id}
                 href={`#${item.id}`}
-                className={item.id === 'contact'
-                  ? "bg-copper text-charcoal px-5 py-2.5 text-[11px] uppercase tracking-[0.2em] font-black hover:bg-copper-deep transition-all ml-4 shadow-[0_4px_20px_rgba(235,94,40,0.2)] active:scale-95"
-                  : `text-[11px] uppercase tracking-[0.2em] transition-colors font-semibold relative ${activeSection === item.id ? 'text-copper' : 'text-on-surface hover:text-copper'}`
-                }
+                onClick={() => {
+                  if (item.id === 'work') {
+                    setCurrentProjectIndex(1);
+                    setActiveYear(RESUME_DATA.projects[1].year);
+                  }
+                }}
+                className={`group relative text-[11px] font-black uppercase tracking-[0.25em] pl-[0.25em] transition-all hover:-translate-y-0.5 ${activeSection === item.id ? 'text-copper' : 'text-on-surface/40 hover:text-on-surface'}`}
               >
-                {RESUME_DATA.siteMetadata.sections.find(s => s.id === item.id)?.label.split(' / ')[1]}
-                {activeSection === item.id && item.id !== 'contact' && (
-                  <span className="absolute -bottom-2 left-0 w-full h-[2px] bg-copper rounded-full shadow-[0_0_8px_rgba(235,94,40,0.5)]"></span>
+                {item.label}
+                {activeSection === item.id && (
+                  <motion.div 
+                    layoutId="headerNav"
+                    className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-copper shadow-[0_0_10px_rgba(235,94,40,0.8)]"
+                  />
                 )}
               </a>
             ))}
-          </div>
+          </nav>
 
-          {/* Mobile Hamburger */}
-          <button
-            id="mobile-menu-toggle"
-            className="md:hidden flex items-center justify-center p-2 text-on-surface hover:text-copper transition-colors"
-            onClick={() => setIsMobileMenuOpen(prev => !prev)}
-            aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
-          >
-            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          {/* Action & Utility Island (Right) */}
+          <div className="flex items-center justify-end gap-6 h-full">
+              {/* Unified Achievement HUD - Visible on 2xl */}
+              <div className="hidden 2xl:flex items-center pr-6 border-r border-outline-suggested/30">
+                <button 
+                  onClick={() => setIsAchievementsModalOpen(true)}
+                  className="group/achieve relative flex items-center gap-4 px-4 py-1 hover:bg-teal/5 rounded-full transition-colors"
+                >
+                  <div className="relative w-10 h-10 flex items-center justify-center">
+                    <svg className="absolute inset-0 w-full h-full -rotate-90">
+                      <circle cx="20" cy="20" r="18" className="stroke-on-surface/5 fill-none stroke-1" />
+                      <motion.circle 
+                        cx="20" cy="20" r="18" 
+                        className="stroke-teal fill-none stroke-2"
+                        initial={{ pathLength: 0 }}
+                        animate={{ pathLength: unlockedIds.length / 7 }}
+                        transition={{ duration: 1.5, ease: "easeOut" }}
+                      />
+                    </svg>
+                    <Trophy size={14} className={`transition-all ${unlockedIds.length > 0 ? 'text-teal drop-shadow-[0_0_8px_rgba(20,184,166,0.5)]' : 'text-on-surface/20'} group-hover/achieve:scale-110`} />
+                    
+                    {/* Integrated Active Status Light */}
+                    {enabled && (
+                      <div className="absolute top-1 right-1">
+                        <div className="w-1.5 h-1.5 bg-teal rounded-full shadow-[0_0_5px_rgba(20,184,166,1)] animate-pulse" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex flex-col text-left">
+                    <span className="text-[8px] font-black uppercase tracking-widest text-on-surface/30 group-hover/achieve:text-teal transition-colors">Achievements</span>
+                    <span className="text-[10px] font-black text-teal leading-none">{unlockedIds.length}/7</span>
+                  </div>
+                </button>
+              </div>
+              
+              <a href="#contact" className="hidden lg:inline-flex monolith-btn-primary py-2.5 px-6 text-[11px] uppercase tracking-[0.2em] font-black whitespace-nowrap">
+              Contact
+            </a>
+
+            <button 
+              className="lg:hidden p-2 -mr-2 text-on-surface hover:text-copper transition-colors"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Drawer */}
         <AnimatePresence>
           {isMobileMenuOpen && (
             <motion.div
-              id="mobile-nav-drawer"
-              key="mobile-nav"
               initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
+              animate={{ height: '100vh', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3, ease: 'easeInOut' }}
-              className="overflow-hidden border-t border-outline-suggested bg-surface/95 backdrop-blur-md"
+              className="fixed inset-0 top-20 z-50 overflow-hidden bg-surface/95 backdrop-blur-xl"
             >
-              <div className="px-6 py-8 flex flex-col gap-6">
-                {navItems.map(item => (
-                  <a
-                    key={item.id}
-                    href={`#${item.id}`}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className={item.id === 'contact'
-                      ? "bg-copper text-charcoal px-5 py-3 text-[11px] uppercase tracking-[0.2em] font-black text-center shadow-[0_4px_20px_rgba(235,94,40,0.2)] active:scale-95"
-                      : `text-sm uppercase tracking-[0.2em] font-semibold py-1 border-b border-outline-suggested/40 flex justify-between items-center transition-colors ${activeSection === item.id ? 'text-copper' : 'text-on-surface'}`
-                    }
-                  >
-                    {RESUME_DATA.siteMetadata.sections.find(s => s.id === item.id)?.label.split(' / ')[1]}
-                    {item.id !== 'contact' && (
-                      <ChevronRight size={14} className="text-on-surface/30" />
-                    )}
-                  </a>
-                ))}
-                {/* Gamification toggle in mobile menu */}
-                <div className="pt-4 border-t border-outline-suggested/40 flex flex-col gap-3">
-                  <button
-                    onClick={() => setEnabled(!enabled)}
-                    className="flex items-center justify-between text-xs uppercase tracking-[0.2em] font-bold text-copper/70 hover:text-copper transition-colors border border-copper/30 px-4 py-2 rounded-sm w-full"
-                  >
-                    <span>Gamification</span>
-                    <span className={`text-[10px] px-2 py-0.5 rounded-sm font-black ${enabled ? 'bg-copper/20 text-copper' : 'bg-outline-suggested/40 text-on-surface/40'}`}>
-                      {enabled ? 'ON' : 'OFF'}
-                    </span>
-                  </button>
-                  {enabled && (
-                    <button
-                      onClick={() => { setIsAchievementsModalOpen(true); setIsMobileMenuOpen(false); }}
-                      className="text-[11px] uppercase tracking-[0.2em] font-bold text-teal hover:text-teal/70 transition-colors text-left"
+              <div className="px-8 py-12 flex flex-col h-full">
+                <div className="flex flex-col gap-1">
+                  <span className="text-[10px] uppercase font-black tracking-[0.3em] text-copper mb-4">Navigation</span>
+                  {navItems.map(item => (
+                    <a
+                      key={item.id}
+                      href={`#${item.id}`}
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        if (item.id === 'work') {
+                          setCurrentProjectIndex(1);
+                          setActiveYear(RESUME_DATA.projects[1].year);
+                        }
+                      }}
+                      className={`group flex justify-between items-center py-5 border-b border-outline-suggested/30 text-sm font-black uppercase tracking-[0.2em] transition-colors ${activeSection === item.id ? 'text-copper' : 'text-on-surface/60 hover:text-on-surface'}`}
                     >
-                      {unlockedIds.length}/7 Achievements Unlocked
-                      <div className="w-full h-1 bg-outline-suggested rounded-full overflow-hidden mt-2">
-                        <div
-                          className="h-full bg-teal transition-all duration-1000 ease-out"
-                          style={{ width: `${(unlockedIds.length / 7) * 100}%` }}
-                        />
+                      {item.label}
+                      <ChevronRight size={18} className={`transition-transform ${activeSection === item.id ? 'text-copper translate-x-1' : 'text-on-surface/20'}`} />
+                    </a>
+                  ))}
+                </div>
+
+                {/* Mobile Achievement Stats */}
+                <div className="mt-auto pb-32">
+                  <button 
+                    onClick={() => {
+                      setIsAchievementsModalOpen(true);
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="w-full bg-surface-high/40 border border-outline-suggested/50 p-6 rounded-sm group active:scale-[0.98] transition-all"
+                  >
+                    <div className="flex justify-between items-center mb-4">
+                      <div className="flex items-center gap-3">
+                        <Trophy size={18} className="text-teal" />
+                        <span className="text-xs font-black uppercase tracking-widest text-on-surface">Achievements</span>
                       </div>
-                    </button>
-                  )}
+                      <span className="text-sm font-black text-teal">{unlockedIds.length}/7</span>
+                    </div>
+                    <div className="w-full h-1.5 bg-outline-suggested/30 rounded-full overflow-hidden">
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        animate={{ width: `${(unlockedIds.length / 7) * 100}%` }}
+                        className="h-full bg-teal shadow-[0_0_10px_rgba(20,184,166,0.4)]"
+                      />
+                    </div>
+                    <p className="text-[10px] uppercase font-bold tracking-[0.1em] text-on-surface/40 mt-4 text-left">
+                      Tap to view progress & settings
+                    </p>
+                  </button>
                 </div>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
-      </nav>
+      </header>
 
       <main className="pt-32 md:pt-48">
         {/* Section Wrapper with Vertical Gutter Label */}
@@ -387,73 +464,144 @@ export default function App() {
           <div className="max-w-6xl mx-auto">
             <div className="flex flex-col md:flex-row justify-between items-end mb-16 border-b border-outline-suggested pb-8">
               <h2 className="text-4xl md:text-6xl font-black">Selected Work Highlights</h2>
-              <p className="text-xs uppercase tracking-[0.3em] opacity-40">2020 — Present</p>
             </div>
 
-            <div className="flex flex-col md:flex-row gap-12 relative w-full">
-              {/* Sticky Timeline */}
-              <div className="w-full md:w-1/4 hidden md:block">
-                <div className="sticky top-48 space-y-8 border-l border-outline-suggested pl-8">
-                  {RESUME_DATA.projects.map(proj => (
+            <div className="flex flex-col lg:flex-row gap-12 relative w-full items-center">
+              {/* Sidebar Navigation - Acts as a Pager */}
+              <div className="w-full lg:w-1/4 hidden lg:block border-l border-outline-suggested pl-8 relative z-30">
+                <div className="space-y-6">
+                  {RESUME_DATA.projects.map((proj, idx) => (
                     <div key={`timeline-${proj.title}`}>
                       <button 
                         onClick={() => {
-                          const el = document.getElementById(`proj-${proj.year}`);
-                          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                          setCurrentProjectIndex(idx);
+                          setActiveYear(proj.year);
                         }} 
                         className="block group text-left"
                       >
-                        <span className={`text-xs font-bold tracking-[0.2em] block transition-colors ${activeYear === proj.year ? 'text-copper scale-105 origin-left' : 'text-teal group-hover:text-copper'}`}>{proj.year}</span>
-                        <span className={`text-sm font-semibold transition-opacity ${activeYear === proj.year ? 'opacity-100' : 'opacity-40 group-hover:opacity-100'}`}>{proj.title}</span>
+                        <span className={`text-[10px] font-bold tracking-[0.2em] block transition-colors ${currentProjectIndex === idx ? 'text-copper scale-105 origin-left' : 'text-on-surface/40 group-hover:text-copper'}`}>{proj.year}</span>
+                        <span className={`text-sm font-bold transition-all ${currentProjectIndex === idx ? 'text-on-surface translate-x-2' : 'text-on-surface/20 group-hover:text-on-surface/60'}`}>{proj.title}</span>
                       </button>
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* List */}
-              <div className="w-full md:w-3/4 space-y-32">
-                {RESUME_DATA.projects.map((proj, i) => (
-                  <motion.div
-                    key={proj.title}
-                    id={`proj-${proj.year}`}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    onViewportEnter={() => setActiveYear(proj.year)}
-                    viewport={{ once: false, amount: 0.1, margin: "-10% 0px -10% 0px" }}
-                    transition={{ duration: 0.8, ease: "easeOut" }}
-                    onClick={() => handleProjectSelect(proj)}
-                    className="relative group cursor-pointer"
-                  >
-                    <div className="overflow-hidden mb-6 relative" style={{ aspectRatio: proj.aspectRatio }}>
-                      <img
-                        src={proj.image}
-                        alt={proj.title}
-                        className={`w-full h-full transition-all duration-700 group-hover:scale-100 ${proj.title === 'Leading with AI' ? 'scale-[1.25]' : 'scale-110'} ${proj.title === 'COVID-19 Response Center' ? 'object-contain object-left bg-surface-lowest' : 'object-cover'}`}
-                        referrerPolicy="no-referrer"
-                      />
-                      <div className="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                        <span className="font-semibold tracking-widest text-[10px] uppercase bg-charcoal text-copper px-4 py-2 shadow-xl border border-outline-suggested flex items-center gap-2">
-                          View Deep Dive <ArrowRight size={14} />
-                        </span>
-                      </div>
+              {/* Rotating Carousel View */}
+              <div className="w-full lg:w-3/4 h-[500px] md:h-[600px] lg:h-[700px] relative flex items-center justify-center overflow-visible">
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <div className="w-[120%] h-[1px] bg-outline-suggested/20" />
+                </div>
+
+                <div className="relative w-full h-full flex items-center justify-center">
+                  <AnimatePresence initial={false}>
+                    {RESUME_DATA.projects.map((proj, idx) => {
+                      const length = RESUME_DATA.projects.length;
+                      let offset = idx - currentProjectIndex;
+                      
+                      // Infinite Loop Logic: Calculate circular offset
+                      if (offset > length / 2) offset -= length;
+                      if (offset < -length / 2) offset += length;
+                      
+                      // Only render immediate neighbors and their neighbors for smooth transitions
+                      if (Math.abs(offset) > 2) return null;
+
+                      return (
+                        <motion.div
+                          key={proj.title}
+                          initial={{ opacity: 0, scale: 0.6, x: offset * 400 }}
+                          animate={{ 
+                            opacity: offset === 0 ? 1 : Math.abs(offset) === 1 ? 0.3 : 0,
+                            scale: offset === 0 ? 1.1 : 0.65,
+                            x: offset * (window.innerWidth < 768 ? 280 : window.innerWidth < 1280 ? 340 : 420),
+                            rotateY: offset * -20,
+                            zIndex: 20 - Math.abs(offset),
+                            filter: offset === 0 ? 'blur(0px)' : 'blur(6px)'
+                          }}
+                          transition={{ type: "spring", stiffness: 180, damping: 24 }}
+                          onClick={() => {
+                            if (offset === 0) {
+                              handleProjectSelect(proj);
+                            } else {
+                              setCurrentProjectIndex(idx);
+                              setActiveYear(proj.year);
+                            }
+                          }}
+                          className={`absolute w-full max-w-[90vw] md:max-w-2xl lg:max-w-3xl aspect-[16/9] bg-surface-low border border-outline-suggested shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] overflow-hidden cursor-pointer group`}
+                        >
+                          <img
+                            src={proj.image}
+                            alt={proj.title}
+                            className={`w-full h-full object-cover transition-all duration-1000 ${offset === 0 ? 'scale-150 brightness-[0.85]' : 'scale-100 brightness-[0.3]'}`}
+                            referrerPolicy="no-referrer"
+                          />
+                          <div className={`absolute inset-0 bg-gradient-to-tr from-black via-black/60 to-transparent flex flex-col justify-end transition-opacity duration-500 ${offset === 0 ? 'opacity-100' : 'opacity-0'}`}>
+                            <div className="p-6 md:p-8 lg:p-12">
+                              <span className="text-[9px] md:text-xs uppercase font-black tracking-[0.4em] text-copper mb-2 md:mb-4 block drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">{proj.year} / {proj.category}</span>
+                              <h3 className="text-xl md:text-3xl lg:text-5xl font-black text-white mb-2 md:mb-4 tracking-tighter leading-none drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)]">{proj.title}</h3>
+                              <p className="text-xs md:text-base lg:text-lg text-white/80 max-w-2xl line-clamp-2 font-medium leading-relaxed drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">{proj.description}</p>
+                            </div>
+                          </div>
+                          
+                          {offset === 0 && (
+                            <div className="absolute top-8 right-8">
+                              <div className="bg-copper text-charcoal px-6 py-3 rounded-full shadow-[0_10px_20px_-5px_rgba(184,115,51,0.5)] flex items-center gap-3 group-hover:scale-105 transition-all duration-300 border border-white/20">
+                                <span className="text-[10px] md:text-xs font-black uppercase tracking-[0.2em]">Dive Deeper</span>
+                                <ArrowRight size={18} />
+                              </div>
+                            </div>
+                          )}
+                        </motion.div>
+                      );
+                    })}
+                  </AnimatePresence>
+                </div>
+
+                {/* Carousel Controls */}
+                <div className="absolute -bottom-16 w-full max-w-[90vw] md:max-w-2xl lg:max-w-3xl flex justify-center items-center z-30">
+                  <div className="flex gap-8 items-center">
+                    <button 
+                      onClick={prevProject}
+                      className="p-4 rounded-full border border-outline-suggested hover:bg-copper hover:text-charcoal transition-all group"
+                    >
+                      <ChevronLeft size={24} className="group-hover:-translate-x-1 transition-transform" />
+                    </button>
+
+                    <div className="flex gap-2 mx-4">
+                      {RESUME_DATA.projects.map((_, i) => (
+                        <div 
+                          key={`dot-${i}`}
+                          className={`h-1 transition-all duration-500 ${currentProjectIndex === i ? 'w-8 bg-copper' : 'w-2 bg-on-surface/20'}`}
+                        />
+                      ))}
                     </div>
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <span className="text-[10px] uppercase font-bold tracking-widest text-teal mb-2 block">{proj.year} / {proj.category}</span>
-                        <h3 className="text-3xl font-bold mb-2 group-hover:text-copper transition-colors">{proj.title}</h3>
-                        <p className="text-on-surface/60 max-w-xl">{proj.description}</p>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
+
+                    <button 
+                      onClick={nextProject}
+                      className="p-4 rounded-full border border-outline-suggested hover:bg-copper hover:text-charcoal transition-all group"
+                    >
+                      <ChevronRight size={24} className="group-hover:translate-x-1 transition-transform" />
+                    </button>
+                  </div>
+
+                  {/* Absolute positioned pause button aligned to right edge of max-w-3xl */}
+                  <div className="absolute right-0">
+                    <button 
+                      onClick={() => setIsProjectAutoPlayPaused(!isProjectAutoPlayPaused)}
+                      className={`p-4 rounded-full border transition-all ${isProjectAutoPlayPaused ? 'bg-copper text-charcoal border-copper shadow-lg scale-105' : 'border-outline-suggested hover:bg-copper/10 text-on-surface'}`}
+                      title={isProjectAutoPlayPaused ? "Resume Auto-play" : "Pause Auto-play"}
+                    >
+                      {isProjectAutoPlayPaused ? <Play size={24} /> : <Pause size={24} fill="currentColor" />}
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
         {/* Background / Resume Section */}
-        <section id="background" className="relative bg-surface-lowest px-6 md:px-24 pt-32 pb-[600px] mb-64 scroll-mt-32">
+        <section id="background" className="relative bg-surface-lowest px-6 md:px-24 pt-32 pb-[600px] mb-64 scroll-mt-24">
           <div className="hidden md:flex absolute left-6 md:left-12 top-0 h-full items-start">
             <span className="vertical-label sticky top-[550px]">03 / Career Overview</span>
           </div>
@@ -462,12 +610,20 @@ export default function App() {
             <div className="flex justify-between items-center mb-16 border-b border-outline-suggested pb-4">
               <h2 className="text-4xl md:text-6xl font-black">Career Overview</h2>
               <div className="flex gap-4">
-                <button onClick={() => scrollTimeline('left')} className="p-2 border border-outline-suggested hover:bg-copper hover:text-charcoal transition-colors">
+                <button onClick={() => scrollTimeline('left')} className="p-2 border border-outline-suggested hover:bg-copper hover:text-charcoal transition-colors" title="Scroll Left">
                   <ChevronLeft size={16} />
                 </button>
-                <button onClick={() => scrollTimeline('right')} className="p-2 border border-outline-suggested hover:bg-copper hover:text-charcoal transition-colors">
+                <button onClick={() => scrollTimeline('right')} className="p-2 border border-outline-suggested hover:bg-copper hover:text-charcoal transition-colors" title="Scroll Right">
                   <ChevronRight size={16} />
                 </button>
+                <a 
+                  href="#testimonials" 
+                  className="p-2 border border-copper text-copper hover:bg-copper hover:text-charcoal transition-colors flex items-center gap-2 px-4"
+                  title="Next Section"
+                >
+                  <span className="text-[10px] font-bold uppercase tracking-widest">Next Section</span>
+                  <ArrowRight size={14} className="rotate-90" />
+                </a>
               </div>
             </div>
             <div ref={timelineRef} className="relative w-full overflow-x-auto no-scrollbar scroll-smooth flex pb-8 pt-12">
@@ -679,14 +835,14 @@ export default function App() {
         </section>
 
         {/* Testimonials Section */}
-        <section id="testimonials" className="relative px-6 md:px-24 mb-64 overflow-hidden scroll-mt-32">
+        <section id="testimonials" className="relative px-6 md:px-24 pb-32 pt-16 mb-64 overflow-hidden scroll-mt-32 min-h-[70vh] flex flex-col justify-center">
           <div className="hidden md:flex absolute left-6 md:left-12 top-0 h-full items-start">
             <span className="vertical-label sticky top-32">04 / Peer Perspectives</span>
           </div>
 
-          <div className="max-w-6xl mx-auto">
+          <div className="max-w-6xl mx-auto w-full">
             <div className="flex justify-between items-end mb-16">
-              <h2 className="text-4xl md:text-5xl font-black text-left">Peer Perspectives</h2>
+              <h2 className="text-4xl md:text-6xl font-black text-left">Peer Perspectives</h2>
               <div className="flex gap-4">
                 <button onClick={prevTestimonial} className="p-4 bg-surface-low border border-outline-suggested hover:bg-copper hover:text-charcoal transition-colors">
                   <ChevronLeft size={24} />
@@ -746,8 +902,8 @@ export default function App() {
             <div className="mb-16">
               <div className="flex flex-col md:flex-row justify-between items-end mb-10 border-b border-outline-suggested pb-6">
                 <div>
-                  <h2 className="text-4xl md:text-6xl font-black">How I Engage</h2>
-                  <p className="text-on-surface/50 mt-3 text-sm max-w-md">I'm always open to conversations where I can create value. If any of these resonate, please feel free to reach out.</p>
+                  <h2 className="text-4xl md:text-6xl font-black">Want to get in touch?</h2>
+                  <p className="text-on-surface/50 mt-6 text-base md:text-lg max-w-xl leading-relaxed">I'm always open to conversations where I can create value. If any of these resonate, please feel free to reach out.</p>
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-outline-suggested border border-outline-suggested">
@@ -829,6 +985,38 @@ export default function App() {
               onClick={(e) => e.stopPropagation()}
               className="bg-surface border border-outline-suggested w-full max-w-5xl h-[90vh] md:h-[80vh] overflow-y-auto flex flex-col relative"
             >
+              {/* Modal Navigation Buttons */}
+              <div className="hidden lg:block">
+                <button
+                  onClick={prevProjectInModal}
+                  className="fixed left-12 top-1/2 -translate-y-1/2 p-4 bg-charcoal/80 backdrop-blur-md text-copper hover:bg-copper hover:text-charcoal transition-all rounded-full shadow-2xl border border-copper/20 active:scale-95 group"
+                >
+                  <ChevronLeft size={32} className="group-hover:-translate-x-1 transition-transform" />
+                </button>
+                <button
+                  onClick={nextProjectInModal}
+                  className="fixed right-12 top-1/2 -translate-y-1/2 p-4 bg-charcoal/80 backdrop-blur-md text-copper hover:bg-copper hover:text-charcoal transition-all rounded-full shadow-2xl border border-copper/20 active:scale-95 group"
+                >
+                  <ChevronRight size={32} className="group-hover:translate-x-1 transition-transform" />
+                </button>
+              </div>
+
+              {/* Mobile Navigation Buttons */}
+              <div className="flex lg:hidden absolute bottom-6 right-6 gap-3 z-50">
+                <button
+                  onClick={prevProjectInModal}
+                  className="p-3 bg-charcoal text-copper rounded-full border border-copper/20"
+                >
+                  <ChevronLeft size={20} />
+                </button>
+                <button
+                  onClick={nextProjectInModal}
+                  className="p-3 bg-charcoal text-copper rounded-full border border-copper/20"
+                >
+                  <ChevronRight size={20} />
+                </button>
+              </div>
+
               <button
                 onClick={() => setSelectedProject(null)}
                 className="absolute top-6 right-6 p-2 bg-charcoal text-copper hover:bg-copper hover:text-charcoal transition-colors z-10 rounded-full"
@@ -888,6 +1076,8 @@ export default function App() {
         onClose={() => setIsAchievementsModalOpen(false)}
         unlockedIds={unlockedIds}
         currentTheme={theme}
+        enabled={enabled}
+        onToggleEnabled={setEnabled}
         onUnlockMatrix={() => {
           const next = theme === 'matrix' ? prevTheme : 'matrix';
           setPrevTheme(theme);

@@ -3,7 +3,7 @@ import { Experience, Project, Testimonial, OtherRole } from '../types';
 export const RESUME_DATA = {
   name: "Ankush Singla",
   role: "Product Executive & AI Strategist",
-  bio: "I lead teams that build new products. My focus is on turning emerging technologies—today, Generative AI and agents—into tangible tools that actually work for people. I don’t just bridge the gap between strategy and execution; I build the strategy and then I lead the work to deliver it.\n\nSuccess for me is always measured by three things: making a real impact on business metrics, building something worth presenting to a Board, and creating work that earns its way into Forbes or an investor 10-K.\n\nI’ve spent my career navigating the messy \"0 to 1\" phase and the discipline of scaling from 10 to 100 in companies of all sizes. Right now, I’m building AI products at FanDuel, where I’m focused on how agentic systems will change the way we interact with technology.",
+  bio: "I lead teams that build new products. My focus is on turning emerging technologies—today, Generative AI and agents—into tangible tools that actually work for people. I don’t just bridge the gap between strategy and execution; I build the strategy and then I lead the work to deliver it.\n\nSuccess for me is always measured by three things: making a real impact on business metrics, building something worth presenting to a Board, and creating work that earns its way into Forbes or a partner 10-K.\n\nI’ve spent my career navigating the messy \"0 to 1\" phase and the discipline of scaling from 10 to 100 in companies of all sizes. Right now, I’m building AI products at FanDuel, where I’m focused on how agentic systems will change the way we interact with technology.",
   experience: [
     {
       company: "FanDuel",
@@ -220,10 +220,10 @@ export const RESUME_DATA = {
       articleLink: "https://www.forbes.com/sites/mattrybaltowski/2025/03/11/fanduel-launches-first-ai-sports-betting-chat-experience/"
     },
     {
-      title: "The Buyer Base",
+      title: "The Buyer Base: Improving the SaaS Buyer's Journey",
       category: "Entrepreneurship / B2B SaaS Procurement",
       year: "2023",
-      description: "Founded an AI-native B2B procurement engine to rethink the SaaS buying journey.",
+      description: "Founded a company focused on BuyerTech - helping buyers navigate the complex world of SaaS procurement",
       image: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=1200&auto=format&fit=crop",
       aspectRatio: "16/9",
       deepDive: "The Buyer Base was built on the thesis that B2B SaaS procurement is fundamentally broken. By leveraging an AI-native approach, we aimed to streamline the discovery, evaluation, and purchasing lifecycle.",
@@ -231,7 +231,7 @@ export const RESUME_DATA = {
       articleCtaText: "Read Pitch Deck Overview"
     },
     {
-      title: "Relaunching Acoustic Content & COVID-19 Response",
+      title: "Acoustic Content: Relaunching Products and Navigating COVID-19",
       category: "Product Strategy & Market Responsiveness",
       year: "2020",
       description: "Repositioned Acoustic Content to maximize the market opportunity ahead of us and embrace being scrappy without the IBM name.",
@@ -240,7 +240,7 @@ export const RESUME_DATA = {
       deepDive: "Following the divestiture from IBM, I defined the growth strategy for Acoustic Content to transform it into a high-performance standalone solution. I restructured the global product team to focus on core capabilities rather than siloed features and revamped the business model, including pricing and packaging, to facilitate the organization’s first successful cross-sell path into other portfolio products. We achieved a 3x increase in the largest ACV signed and established a trajectory for 10x projected revenue growth over two years. This growth was further accelerated by rapid market adaptations, such as launching a COVID-19 Response Center initiative within a single week to address shifting customer needs during the global shutdown."
     },
     {
-      title: "Modernizing Watson Campaign Automation",
+      title: "Watson Campaign Automation: Modernizing Products and Processes",
       category: "Product Strategy & UX",
       year: "2019",
       description: "Brought modern product practices to IBM's Watson Marketing portfolio.",
@@ -249,7 +249,7 @@ export const RESUME_DATA = {
       deepDive: "I led a comprehensive revitalization of the Watson Campaign Automation platform, focusing on both customer-facing functionality and internal decision-making frameworks. By implementing a rigorous voice-of-the-customer program using metrics like NPS and UMUX-lite, I translated qualitative feedback into a data-driven product roadmap. I introduced journey tagging and advanced analytics to identify user friction points, allowing the team to set precise OKRs that directly addressed performance gaps. These initiatives resulted in a 30% improvement in customer sentiment and transformed the product into a more intuitive, user-centric interface that prioritized high-value requests and modernized foundational marketing workflows."
     },
     {
-      title: "Overlens",
+      title: "Overlens: Using AI to Solve Marketing Attribution",
       category: "Entrepreneurship / Marketing AI & Analytics",
       year: "2016",
       description: "Co-founded an early-stage startup focused on improving conversion and tracking of money spent on product placement.",
@@ -328,7 +328,7 @@ export const RESUME_DATA = {
       { id: "work", label: "02 / Selected Work", title: "Selected Work Highlights", period: "2020 — Present" },
       { id: "background", label: "03 / Career Overview", title: "Career Overview", subtitle: "Career Journey", description: "A timeline that includes early 0-to-1 concepts and global platforms, built on leading teams and creating products that solve real-world problems." },
       { id: "testimonials", label: "04 / Peer Perspectives", title: "Peer Perspectives" },
-      { id: "contact", label: "05 / How I Engage", title: "How I Engage", subtitle: "Ready when you are.", description: "I'm always open to conversations where I can create value. If any of these resonate, please feel free to reach out." }
+      { id: "contact", label: "05 / Contact", title: "How I Engage", subtitle: "Ready when you are.", description: "I'm always open to conversations where I can create value. If any of these resonate, please feel free to reach out." }
     ],
     footer: {
       copyright: "© 2026 ankushmsingla.com.",

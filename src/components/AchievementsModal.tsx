@@ -8,11 +8,13 @@ interface AchievementsModalProps {
   onClose: () => void;
   unlockedIds: AchievementId[];
   currentTheme: string;
+  enabled: boolean;
+  onToggleEnabled: (enabled: boolean) => void;
   onUnlockMatrix: () => void;
   onReplayConfetti: () => void;
 }
 
-export const AchievementsModal: React.FC<AchievementsModalProps> = ({ isOpen, onClose, unlockedIds, currentTheme, onUnlockMatrix, onReplayConfetti }) => {
+export const AchievementsModal: React.FC<AchievementsModalProps> = ({ isOpen, onClose, unlockedIds, currentTheme, enabled, onToggleEnabled, onUnlockMatrix, onReplayConfetti }) => {
   const allAchievements = Object.values(ACHIEVEMENTS);
 
   return (
@@ -40,11 +42,25 @@ export const AchievementsModal: React.FC<AchievementsModalProps> = ({ isOpen, on
             </button>
 
             <div className="mb-12">
-              <span className="text-xs uppercase font-bold tracking-widest text-teal mb-4 block">Gamification</span>
-              <h2 className="text-4xl md:text-5xl font-black mb-2">Achievements</h2>
-              <div className="w-12 h-1 bg-copper mb-4"></div>
-              <p className="text-on-surface/60">
-                You have unlocked {unlockedIds.length} out of {allAchievements.length} available achievements.
+              <span className="text-xs uppercase font-bold tracking-widest text-teal mb-4 block">Personal Records</span>
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <div>
+                  <h2 className="text-4xl md:text-5xl font-black mb-2">Achievements</h2>
+                  <div className="w-12 h-1 bg-copper"></div>
+                </div>
+                
+                <button 
+                  onClick={() => onToggleEnabled(!enabled)}
+                  className={`flex items-center gap-3 px-6 py-2.5 border rounded-sm transition-all hover:scale-[1.02] active:scale-[0.98] ${enabled ? 'border-teal bg-teal/5 text-teal' : 'border-outline-suggested text-on-surface/40'}`}
+                >
+                  <div className={`w-2 h-2 rounded-full ${enabled ? 'bg-teal animate-pulse' : 'bg-on-surface/20'}`} />
+                  <span className="text-[10px] font-black uppercase tracking-widest">
+                    Gamification {enabled ? 'ON' : 'OFF'}
+                  </span>
+                </button>
+              </div>
+              <p className="text-on-surface/60 mt-6 max-w-xl">
+                You have unlocked {unlockedIds.length} out of {allAchievements.length} available achievements. Keep exploring the site to find more hidden secrets.
               </p>
             </div>
 
