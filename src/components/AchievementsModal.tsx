@@ -32,59 +32,61 @@ export const AchievementsModal: React.FC<AchievementsModalProps> = ({ isOpen, on
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 50, opacity: 0 }}
             onClick={(e) => e.stopPropagation()}
-            className="bg-surface border border-outline-suggested w-full max-w-3xl max-h-[80vh] overflow-y-auto p-8 relative shadow-2xl"
+            className="bg-surface border border-outline-suggested w-full max-w-4xl max-h-[85vh] overflow-y-auto p-6 md:p-8 relative shadow-2xl"
           >
             <button 
               onClick={onClose}
-              className="absolute top-6 right-6 p-2 bg-charcoal text-copper hover:bg-copper hover:text-charcoal transition-colors z-10 rounded-full"
+              className="absolute top-4 right-4 p-2 bg-charcoal text-copper hover:bg-copper hover:text-charcoal transition-all z-20 rounded-full border border-copper/20"
             >
-              <X size={24} />
+              <X size={20} />
             </button>
 
-            <div className="mb-12">
-              <span className="text-xs uppercase font-bold tracking-widest text-teal mb-4 block">Personal Records</span>
-              <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                <div>
-                  <h2 className="text-4xl md:text-5xl font-black mb-2">Achievements</h2>
-                  <div className="w-12 h-1 bg-copper"></div>
+            <div className="mb-6 pr-12">
+              <span className="text-[10px] uppercase font-bold tracking-widest text-teal mb-2 block">Personal Records</span>
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                  <div>
+                    <h2 className="text-3xl md:text-4xl font-black mb-1">Achievements</h2>
+                    <div className="w-10 h-1 bg-copper"></div>
+                  </div>
+                  
+                  <button 
+                    onClick={() => onToggleEnabled(!enabled)}
+                    className={`flex items-center gap-2 px-3 md:px-4 py-1 md:py-1.5 border rounded-full transition-all hover:scale-[1.02] active:scale-[0.98] ${enabled ? 'border-teal bg-teal/5 text-teal' : 'border-outline-suggested text-on-surface/40'}`}
+                  >
+                    <div className={`w-1 h-1 md:w-1.5 md:h-1.5 rounded-full ${enabled ? 'bg-teal animate-pulse' : 'bg-on-surface/20'}`} />
+                    <span className="text-[8px] md:text-[9px] font-black uppercase tracking-widest">
+                      {enabled ? 'Gamification ON' : 'OFF'}
+                    </span>
+                  </button>
                 </div>
-                
-                <button 
-                  onClick={() => onToggleEnabled(!enabled)}
-                  className={`flex items-center gap-3 px-6 py-2.5 border rounded-sm transition-all hover:scale-[1.02] active:scale-[0.98] ${enabled ? 'border-teal bg-teal/5 text-teal' : 'border-outline-suggested text-on-surface/40'}`}
-                >
-                  <div className={`w-2 h-2 rounded-full ${enabled ? 'bg-teal animate-pulse' : 'bg-on-surface/20'}`} />
-                  <span className="text-[10px] font-black uppercase tracking-widest">
-                    Gamification {enabled ? 'ON' : 'OFF'}
-                  </span>
-                </button>
               </div>
-              <p className="text-on-surface/60 mt-6 max-w-xl">
+              <p className="text-on-surface/60 mt-4 text-sm max-w-xl">
                 You have unlocked {unlockedIds.length} out of {allAchievements.length} available achievements. Keep exploring the site to find more hidden secrets.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
               {allAchievements.map((achievement) => {
                 const isUnlocked = unlockedIds.includes(achievement.id);
 
                 return (
                   <div 
                     key={achievement.id}
-                    className={`flex items-start gap-4 p-4 border transition-all ${
+                    className={`flex items-start gap-3 p-3 border transition-all ${
                       isUnlocked 
                         ? 'border-copper/50 bg-surface-lowest shadow-[0_0_10px_rgba(235,94,40,0.1)]' 
                         : 'border-outline-suggested bg-surface/50 opacity-50 grayscale'
                     }`}
                   >
-                    <div className="text-4xl">
-                      {isUnlocked ? achievement.icon : <Lock size={32} className="text-on-surface/40 mt-1" />}
+                    <div className="text-2xl shrink-0">
+                      {isUnlocked ? achievement.icon : <Lock size={20} className="text-on-surface/40 mt-1" />}
                     </div>
                     <div>
-                      <h4 className="font-bold text-on-surface text-lg leading-tight mb-1">
+                      <h4 className="font-bold text-on-surface text-sm leading-tight mb-0.5">
                         {isUnlocked ? achievement.title : '???'}
                       </h4>
-                      <p className="text-sm text-on-surface/70 leading-snug">
+                      <p className="text-[11px] text-on-surface/70 leading-tight">
                         {isUnlocked ? achievement.description : achievement.hint}
                       </p>
                     </div>
@@ -94,20 +96,16 @@ export const AchievementsModal: React.FC<AchievementsModalProps> = ({ isOpen, on
             </div>
 
             {unlockedIds.length < allAchievements.length ? (
-              <div className="mt-12 p-8 border border-outline-suggested bg-surface/30 relative overflow-hidden group">
+              <div className="mt-6 p-4 border border-outline-suggested bg-surface/30 relative overflow-hidden group">
                 <div className="absolute inset-0 bg-gradient-to-r from-teal/5 to-copper/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                 
-                {/* Glitch-like decorative elements */}
-                <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-teal/30 to-transparent" />
-                <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-copper/30 to-transparent" />
-                
-                <div className="relative z-10 flex flex-col md:flex-row items-center gap-6">
-                  <div className="w-16 h-16 flex items-center justify-center border border-outline-suggested bg-surface-lowest text-on-surface/20 shrink-0">
-                    <Lock size={32} className="animate-pulse" />
+                <div className="relative z-10 flex flex-col md:flex-row items-center gap-4">
+                  <div className="w-10 h-10 flex items-center justify-center border border-outline-suggested bg-surface-lowest text-on-surface/20 shrink-0">
+                    <Lock size={18} className="animate-pulse" />
                   </div>
                   <div className="text-center md:text-left flex-1">
-                    <h3 className="text-xl font-black mb-1 uppercase tracking-widest text-on-surface/40">Mystery Reward Locked</h3>
-                    <p className="text-xs text-on-surface/50 font-medium">Unlock all {allAchievements.length} achievements to reveal a secret reality. {allAchievements.length - unlockedIds.length} remaining.</p>
+                    <h3 className="text-sm font-black mb-0.5 uppercase tracking-widest text-on-surface/40">Mystery Reward Locked</h3>
+                    <p className="text-[10px] text-on-surface/50 font-medium">Unlock all {allAchievements.length} achievements to reveal a secret reality. {allAchievements.length - unlockedIds.length} remaining.</p>
                   </div>
                   <div className="flex -space-x-2">
                     {Array.from({ length: allAchievements.length }).map((_, i) => (
