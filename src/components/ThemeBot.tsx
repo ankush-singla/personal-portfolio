@@ -34,8 +34,9 @@ export default function ThemeBot({ onThemeChange, onInteract, unlockedIds = [] }
     }
   }, [messages]);
 
-  const handleSend = async () => {
-    if (!input.trim() || isLoading) return;
+  const handleSend = async (directMsg?: string) => {
+    const msgText = directMsg || input;
+    if (!msgText.trim() || isLoading) return;
 
     const userMessageCount = messages.filter(m => m.role === 'user').length;
     if (userMessageCount >= 15) {
@@ -44,7 +45,7 @@ export default function ThemeBot({ onThemeChange, onInteract, unlockedIds = [] }
       return;
     }
 
-    const userMsg = input.trim();
+    const userMsg = msgText.trim();
     setInput('');
     setMessages(prev => [...prev, { role: 'user', text: userMsg }]);
     setIsLoading(true);
@@ -89,7 +90,7 @@ export default function ThemeBot({ onThemeChange, onInteract, unlockedIds = [] }
 
         setMessages(prev => [...prev, { 
           role: 'model', 
-          text: "I'm experiencing a temporary technical glitch with the Google Gemini API. I'm resting my brain while it recovers—please try again in a few moments!"
+          text: "Unfortunately, the free Google Gemini API isn't as reliable as Ankush is! Even the smartest AIs have off days—try again in a few moments."
         }]);
         setIsLoading(false);
         return;
@@ -143,7 +144,7 @@ export default function ThemeBot({ onThemeChange, onInteract, unlockedIds = [] }
         error_type: 'network_error',
         environment: import.meta.env?.MODE || 'production'
       });
-      setMessages(prev => [...prev, { role: 'model', text: "Network error. My neural links to the Google API are a bit tangled right now. I'm resting my circuits for a moment—please check back shortly!" }]);
+      setMessages(prev => [...prev, { role: 'model', text: "Unfortunately, the free Google Gemini API isn't as reliable as Ankush is! Even the smartest AIs have off days—try again in a few moments." }]);
     }
 
     setIsLoading(false);
@@ -215,7 +216,7 @@ export default function ThemeBot({ onThemeChange, onInteract, unlockedIds = [] }
                   ].map((opt, i) => (
                     <button
                       key={i}
-                      onClick={() => setInput(opt.label)}
+                      onClick={() => handleSend(opt.label)}
                       className="flex items-center gap-1.5 text-[11px] font-semibold tracking-wide bg-surface-lowest hover:bg-copper/10 hover:border-copper/50 text-on-surface/70 hover:text-copper px-3 py-1.5 rounded-full border border-outline-suggested transition-all duration-200"
                     >
                       <span>{opt.emoji}</span>

@@ -112,22 +112,27 @@ export function applyThemeToRoot(root: HTMLElement, themeId: string) {
   
   // Mix against white/black to generate surface step variations
   const tint = isBgDark ? '#ffffff' : '#000000';
-  const s_lowest = mixColors(preset.bg, tint, -0.02); // Just in case we need darker
+  const s_lowest = mixColors(preset.bg, tint, -0.02); 
   const s_low = mixColors(preset.bg, tint, 0.04);
   const s_high = mixColors(preset.bg, tint, 0.08);
   const s_highest = mixColors(preset.bg, tint, 0.12);
-  const outline = mixColors(preset.bg, text, 0.2); // 20% opacity border
-  const teal = mixColors(preset.acc, tint, 0.4); // For the secondary 'teal' role
+  const s_accent = mixColors(preset.bg, preset.acc, 0.05); // Subtle accent-tinted surface
+  const outline = mixColors(preset.bg, text, 0.2); 
+  const teal = mixColors(preset.acc, tint, 0.4); 
+
+  const [accR, accG, accB] = hexToRgb(preset.acc);
 
   root.style.setProperty('--color-surface', preset.bg);
   root.style.setProperty('--color-surface-lowest', isBgDark ? s_lowest : preset.bg);
   root.style.setProperty('--color-surface-low', s_low);
   root.style.setProperty('--color-surface-high', s_high);
   root.style.setProperty('--color-surface-highest', s_highest);
+  root.style.setProperty('--color-surface-accent', s_accent);
   
   root.style.setProperty('--color-on-surface', text);
-  root.style.setProperty('--color-charcoal', buttonText); // Text color FOR THE COPPER BUTTON
+  root.style.setProperty('--color-charcoal', buttonText); 
   root.style.setProperty('--color-copper', preset.acc);
+  root.style.setProperty('--color-copper-rgb', `${accR}, ${accG}, ${accB}`);
   root.style.setProperty('--color-copper-deep', mixColors(preset.acc, '#000000', 0.2));
   root.style.setProperty('--color-teal', teal);
   root.style.setProperty('--color-outline-suggested', outline);

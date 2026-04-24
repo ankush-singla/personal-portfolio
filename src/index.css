@@ -105,3 +105,77 @@
 .chat-markdown code {
     @apply bg-charcoal px-1 py-0.5 rounded text-copper font-mono text-[11px];
 }
+
+/* --- Theme Enhancements --- */
+
+/* Matrix Theme */
+.matrix-mode img {
+    filter: sepia(1) saturate(5) hue-rotate(90deg) brightness(0.8) contrast(1.2);
+}
+
+.matrix-mode .monolith-btn-primary {
+    position: relative;
+    overflow: hidden;
+}
+
+.matrix-mode .monolith-btn-primary::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--color-copper);
+    animation: terminal-blink 1s step-end infinite;
+}
+
+@keyframes terminal-blink {
+    from, to { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+.glitch-flash {
+    animation: matrix-reboot 0.8s cubic-bezier(0.19, 1, 0.22, 1) both;
+    background: black !important;
+}
+
+@keyframes matrix-reboot {
+    0% { opacity: 1; transform: scale(1); filter: brightness(1); }
+    5% { opacity: 1; transform: scaleY(0.005) scaleX(1); background: white; } /* CRT Line */
+    10% { opacity: 0; transform: scale(0); } /* Blackout */
+    40% { opacity: 0; }
+    45% { opacity: 0.3; transform: scale(1.2) skewX(20deg); filter: sepia(1) hue-rotate(90deg); } /* Glitch Flash */
+    50% { opacity: 0; }
+    55% { opacity: 0.5; transform: scale(1) translate(10px, -5px); filter: invert(1); } /* Inverted Flash */
+    60% { opacity: 0; }
+    100% { opacity: 1; transform: scale(1); filter: brightness(1); }
+}
+
+/* Basketball Theme */
+.basketball-mode .monolith-btn-primary {
+    border-radius: 9999px !important;
+    box-shadow: 0 4px 0px 0px var(--color-copper-deep);
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.basketball-mode .monolith-btn-primary:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0px 0px var(--color-copper-deep);
+}
+
+.basketball-mode [data-year],
+.basketball-mode .vertical-label {
+    font-family: "VT323", monospace;
+    letter-spacing: 0.1em;
+}
+
+.sticky-shield::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: -100vw;
+    right: -100vw;
+    height: 100px;
+    background: inherit;
+    pointer-events: none;
+}

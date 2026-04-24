@@ -13,6 +13,8 @@ import { AchievementToast } from './components/AchievementToast';
 import { AchievementsModal } from './components/AchievementsModal';
 import { Camera, Gamepad2, Users, Briefcase, Mail, Github, Linkedin, Twitter, ArrowRight, X, ChevronLeft, ChevronRight, Menu, Play, Pause, Trophy } from 'lucide-react';
 import { applyThemeToRoot } from './utils/theme';
+import MatrixRain from './components/MatrixRain';
+import BasketballParquet from './components/BasketballParquet';
 
 export default function App() {
   const [theme, setTheme] = useState<string>('monolith');
@@ -29,6 +31,7 @@ export default function App() {
   const [hasFiredConfetti, setHasFiredConfetti] = useState(() => {
     return localStorage.getItem('has-fired-confetti') === 'true';
   });
+  const [isGlitching, setIsGlitching] = useState(false);
   const timelineRef = React.useRef<HTMLDivElement>(null);
 
   const { enabled, setEnabled, unlockedIds, unlock, latestAchievement, clearLatest } = useAchievements();
@@ -213,7 +216,16 @@ export default function App() {
   useEffect(() => {
     const root = document.documentElement;
     applyThemeToRoot(root, theme);
-  }, [theme]);
+
+    if (theme !== prevTheme) {
+      if (theme === 'matrix') {
+        setIsGlitching(true);
+        const timer = setTimeout(() => setIsGlitching(false), 800);
+        return () => clearTimeout(timer);
+      }
+      setIsGlitching(false);
+    }
+  }, [theme, prevTheme]);
 
   // Load special fonts if needed
   useEffect(() => {
@@ -257,7 +269,14 @@ export default function App() {
   }));
 
   return (
-    <div className={`min-h-screen transition-colors duration-700 selection:bg-copper selection:text-charcoal text-on-surface bg-surface`}>
+    <>
+      <div className={`min-h-screen transition-colors duration-700 selection:bg-copper selection:text-charcoal text-on-surface bg-surface relative ${theme === 'matrix' ? 'matrix-mode' : ''} ${theme === 'basketball' ? 'basketball-mode' : ''} ${isGlitching ? 'glitch-flash' : ''}`}>
+        <div className="noise-overlay" />
+      <div className="mesh-background">
+        <div className="mesh-gradient" />
+        {theme === 'matrix' && <MatrixRain />}
+        {theme === 'basketball' && <BasketballParquet />}
+      </div>
       {/* Navigation */}
       <header className="fixed top-0 left-0 right-0 z-[60] bg-surface/80 backdrop-blur-md border-b border-outline-suggested transition-all duration-500">
         <div className="max-w-[1800px] mx-auto px-6 h-20 flex items-center justify-between lg:grid lg:grid-cols-[1fr_auto_1fr]">
@@ -479,7 +498,7 @@ export default function App() {
                         }} 
                         className="block group text-left"
                       >
-                        <span className={`text-[10px] font-bold tracking-[0.2em] block transition-colors ${currentProjectIndex === idx ? 'text-copper scale-105 origin-left' : 'text-on-surface/40 group-hover:text-copper'}`}>{proj.year}</span>
+                        <span data-year className={`text-[10px] font-bold tracking-[0.2em] block transition-colors ${currentProjectIndex === idx ? 'text-copper scale-105 origin-left' : 'text-on-surface/40 group-hover:text-copper'}`}>{proj.year}</span>
                         <span className={`text-sm font-bold transition-all ${currentProjectIndex === idx ? 'text-on-surface translate-x-2' : 'text-on-surface/20 group-hover:text-on-surface/60'}`}>{proj.title}</span>
                       </button>
                     </div>
@@ -606,7 +625,7 @@ export default function App() {
             <span className="vertical-label sticky top-[550px]">03 / Career Overview</span>
           </div>
 
-          <div className="max-w-6xl mx-auto mb-32 hidden md:block sticky top-16 z-[45] bg-surface-lowest/95 backdrop-blur-md pt-12 pb-8 -mx-4 px-4 border-b border-outline-suggested/30 transition-all duration-300">
+          <div className="max-w-6xl mx-auto mb-32 hidden md:block sticky top-20 z-50 bg-surface-lowest pt-12 pb-8 -mx-4 px-4 border-b border-outline-suggested/30 transition-all duration-300 sticky-shield">
             <div className="flex justify-between items-center mb-16 border-b border-outline-suggested pb-4">
               <h2 className="text-4xl md:text-6xl font-black">Career Overview</h2>
               <div className="flex gap-4">
@@ -1066,25 +1085,26 @@ export default function App() {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Gamification Toast */}
-      <AchievementToast achievement={latestAchievement} onClose={clearLatest} />
-
-      {/* Gamification Modal */}
-      <AchievementsModal
-        isOpen={isAchievementsModalOpen}
-        onClose={() => setIsAchievementsModalOpen(false)}
-        unlockedIds={unlockedIds}
-        currentTheme={theme}
-        enabled={enabled}
-        onToggleEnabled={setEnabled}
-        onUnlockMatrix={() => {
-          const next = theme === 'matrix' ? prevTheme : 'matrix';
-          setPrevTheme(theme);
-          setTheme(next);
-        }}
-        onReplayConfetti={fireConfetti}
-      />
     </div>
+
+    {/* Gamification Toast */}
+    <AchievementToast achievement={latestAchievement} onClose={clearLatest} />
+
+    {/* Gamification Modal */}
+    <AchievementsModal
+      isOpen={isAchievementsModalOpen}
+      onClose={() => setIsAchievementsModalOpen(false)}
+      unlockedIds={unlockedIds}
+      currentTheme={theme}
+      enabled={enabled}
+      onToggleEnabled={setEnabled}
+      onUnlockMatrix={() => {
+        const next = theme === 'matrix' ? prevTheme : 'matrix';
+        setPrevTheme(theme);
+        setTheme(next);
+      }}
+      onReplayConfetti={fireConfetti}
+    />
+    </>
   );
 }

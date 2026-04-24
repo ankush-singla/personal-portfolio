@@ -94,7 +94,7 @@ export default async function handler(req: Request) {
   const rateData = ipMap.get(ip) || { count: 0, lastTime: now };
 
   if (now - rateData.lastTime < 2000 && rateData.count > 0) {
-    return new Response(JSON.stringify({ error: 'Rate limit exceeded. Please wait a moment.' }), {
+    return new Response(JSON.stringify({ error: "The free Google Gemini API isn't as reliable as Ankush is! It's currently taking a breather—please wait a moment." }), {
       status: 429,
       headers: { 'Content-Type': 'application/json' }
     });
@@ -105,7 +105,7 @@ export default async function handler(req: Request) {
   ipMap.set(ip, rateData);
 
   if (rateData.count > 15) {
-    return new Response(JSON.stringify({ error: 'Max usage reached for this session.' }), {
+    return new Response(JSON.stringify({ error: "Even the smartest AIs have off days! We've reached the maximum number of messages for this session." }), {
       status: 403,
       headers: { 'Content-Type': 'application/json' }
     });
@@ -148,7 +148,7 @@ If they have found everything, acknowledge their mastery and suggest they check 
     });
   } catch (error) {
     return new Response(JSON.stringify({ 
-      error: "Technical glitch",
+      error: "Unfortunately, the free Google Gemini API isn't as reliable as Ankush is! Even the smartest AIs have off days.",
       details: error instanceof Error ? error.message : String(error)
     }), { status: 500 });
   }
