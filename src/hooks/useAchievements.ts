@@ -92,10 +92,10 @@ export const useAchievements = () => {
       const newAchievement = ACHIEVEMENTS[id];
       setLatestAchievement(newAchievement);
       
-      // Auto-hide the toast after 4 seconds
+      // Auto-hide the toast after 8 seconds
       setTimeout(() => {
         setLatestAchievement(current => current?.id === id ? null : current);
-      }, 4000);
+      }, 8000);
       
       return [...prev, id];
     });

@@ -273,17 +273,17 @@ export const RESUME_DATA = {
     },
     {
       quote: "His ability to set a north star while allowing priorities to evolve has been critical in an AI landscape that changes week to week. His steady demeanor and collaborative style build trust and make others better.",
-      author: "Executive / Previous Manager",
+      author: "Executive / Previous Manager, FanDuel",
       context: "... about my cross-functional leadership"
     },
     {
       quote: "I experienced Ankush being helpful, diplomatic, optimistic, encouraging of colleagues, and at the same time holding high standards, communicating clearly, and making hard decisions for the benefit of the overall customer and user experience.",
-      author: "Lead UX Designer",
+      author: "Lead UX Designer, IBM",
       context: "... about cross-functional leadership and product standards"
     },
     {
       quote: "Ankush's calmness through the chaos, ability to brush off the pressure from executives and general smooth demeanor in tense meetings was amazing.",
-      author: "Lead Architect",
+      author: "Lead Architect, Acoustic",
       context: "... about executive presence under pressure"
     },
     {

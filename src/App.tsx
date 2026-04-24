@@ -205,12 +205,12 @@ export default function App() {
 
   const educationExperiences = RESUME_DATA.experience.filter(exp => exp.isEducation);
 
-  const timelineGroups = [...groupedExperiences].reverse().map(g => ({
+  const timelineGroups = [...groupedExperiences].map(g => ({
     ...g,
     experiences: [...g.experiences].sort((a, b) => {
       const yearA = parseInt(a.period.match(/\d{4}/)?.[0] || "0");
       const yearB = parseInt(b.period.match(/\d{4}/)?.[0] || "0");
-      return yearA - yearB;
+      return yearB - yearA;
     })
   }));
 
@@ -249,8 +249,8 @@ export default function App() {
                 key={item.id}
                 href={`#${item.id}`}
                 className={item.id === 'contact'
-                  ? "bg-copper text-charcoal px-5 py-2.5 text-[10px] uppercase tracking-[0.2em] font-black hover:bg-copper-deep transition-all ml-4 shadow-[0_4px_20px_rgba(235,94,40,0.2)] active:scale-95"
-                  : `text-[10px] uppercase tracking-[0.2em] transition-colors font-semibold relative ${activeSection === item.id ? 'text-copper' : 'text-on-surface hover:text-copper'}`
+                  ? "bg-copper text-charcoal px-5 py-2.5 text-[11px] uppercase tracking-[0.2em] font-black hover:bg-copper-deep transition-all ml-4 shadow-[0_4px_20px_rgba(235,94,40,0.2)] active:scale-95"
+                  : `text-[11px] uppercase tracking-[0.2em] transition-colors font-semibold relative ${activeSection === item.id ? 'text-copper' : 'text-on-surface hover:text-copper'}`
                 }
               >
                 {RESUME_DATA.siteMetadata.sections.find(s => s.id === item.id)?.label.split(' / ')[1]}
@@ -469,23 +469,23 @@ export default function App() {
             </div>
             <div ref={timelineRef} className="relative w-full overflow-x-auto no-scrollbar scroll-smooth flex pb-8 pt-8">
               <div className="flex items-start min-w-max px-4 relative gap-16">
-                <div className="h-[1px] w-full bg-outline-suggested absolute top-[76px] -z-10 left-0 right-0"></div>
+                <div className="h-[2px] w-full bg-outline-suggested/60 absolute top-[84px] -z-10 left-0 right-0"></div>
                 {timelineGroups.map((group, gIdx) => (
                   <div key={`tl-g-${gIdx}`} className="flex flex-col relative pt-8">
                     {/* Spanning Indicator */}
-                    <div className="absolute top-0 left-0 right-4 h-[2px] bg-copper/30"></div>
-                    <div className="absolute top-0 left-0 w-[2px] h-2 bg-copper/30"></div>
-                    <div className="absolute top-0 right-4 w-[2px] h-2 bg-copper/30"></div>
+                    <div className="absolute top-0 left-0 right-4 h-[3px] bg-copper/60"></div>
+                    <div className="absolute top-0 left-0 w-[3px] h-3 bg-copper/60"></div>
+                    <div className="absolute top-0 right-4 w-[3px] h-3 bg-copper/60"></div>
 
-                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface/40 absolute -top-6 left-0 whitespace-nowrap">{group.group}</span>
+                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface/80 absolute -top-6 left-0 whitespace-nowrap">{group.group}</span>
 
                     <div className="flex gap-4 mt-2">
                       {group.experiences.filter((exp, index, self) => index === self.findIndex((t) => t.company === exp.company)).map((exp, idx) => (
-                        <a href={`#exp-${exp.company.replace(/\s+/g, '-')}-${exp.period.replace(/\s+/g, '')}`} data-company={exp.company} key={`tl-n-${idx}-${exp.company}`} className={`flex flex-col items-center relative group w-32 px-2 cursor-pointer transition-opacity duration-300 ${activeCompany === exp.company ? 'opacity-100' : 'opacity-50 hover:opacity-100'}`}>
-                          <div className={`w-6 h-6 rounded-full border-2 transition-colors flex items-center justify-center ${activeCompany === exp.company ? 'border-copper bg-surface' : 'border-outline-suggested bg-surface-lowest group-hover:border-copper'}`}>
-                            <div className={`w-2 h-2 rounded-full bg-copper transition-opacity ${activeCompany === exp.company ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}></div>
+                        <a href={`#exp-${exp.company.replace(/\s+/g, '-')}-${exp.period.replace(/\s+/g, '')}`} data-company={exp.company} key={`tl-n-${idx}-${exp.company}`} className={`flex flex-col items-center relative group w-32 px-2 cursor-pointer transition-opacity duration-300 ${activeCompany === exp.company ? 'opacity-100' : 'opacity-60 hover:opacity-100'}`}>
+                          <div className={`w-8 h-8 rounded-full border-2 transition-all duration-300 flex items-center justify-center ${activeCompany === exp.company ? 'border-copper bg-surface shadow-[0_0_15px_rgba(235,94,40,0.4)] scale-110' : 'border-outline-suggested bg-surface-lowest group-hover:border-copper'}`}>
+                            <div className={`w-3 h-3 rounded-full bg-copper transition-opacity ${activeCompany === exp.company ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}></div>
                           </div>
-                          <span className={`text-[10px] font-bold tracking-widest mt-4 ${activeCompany === exp.company ? 'text-copper' : 'text-teal'}`}>{getDisplayPeriod(group.experiences, exp.company).match(/\d{4}/)?.[0] || exp.period}</span>
+                          <span className={`text-[10px] font-bold tracking-widest mt-4 ${activeCompany === exp.company ? 'text-copper' : 'text-teal'}`}>{getDisplayPeriod(group.experiences, exp.company)}</span>
                           <span className={`text-[10px] font-semibold text-center mt-2 transition-colors line-clamp-2 uppercase tracking-wider ${activeCompany === exp.company ? 'text-on-surface' : 'group-hover:text-copper'}`}>{exp.company}</span>
                         </a>
                       ))}
@@ -518,8 +518,8 @@ export default function App() {
                             }}
                             className="block group text-left w-full"
                           >
-                            <span className={`text-xs font-bold tracking-[0.2em] block transition-colors ${activeCompany === exp.company ? 'text-copper scale-105 origin-left' : 'text-teal group-hover:text-copper'}`}>{exp.company}</span>
-                            <span className={`text-sm font-semibold transition-opacity ${activeCompany === exp.company ? 'opacity-100' : 'opacity-40 group-hover:opacity-100'}`}>{getDisplayPeriod(group.experiences, exp.company)}</span>
+                            <span className={`text-sm font-bold tracking-[0.15em] block transition-colors ${activeCompany === exp.company ? 'text-copper scale-105 origin-left' : 'text-teal group-hover:text-copper'}`}>{exp.company}</span>
+                            <span className={`text-xs font-semibold transition-opacity ${activeCompany === exp.company ? 'opacity-100' : 'opacity-40 group-hover:opacity-100'}`}>{getDisplayPeriod(group.experiences, exp.company)}</span>
                           </button>
                         </div>
                       ))}
@@ -540,8 +540,8 @@ export default function App() {
                             }}
                             className="block group text-left w-full"
                           >
-                            <span className={`text-xs font-bold tracking-[0.2em] block transition-colors ${activeCompany === exp.company ? 'text-copper scale-105 origin-left' : 'text-teal group-hover:text-copper'}`}>{exp.company}</span>
-                            <span className={`text-sm font-semibold transition-opacity ${activeCompany === exp.company ? 'opacity-100' : 'opacity-40 group-hover:opacity-100'}`}>{exp.period}</span>
+                            <span className={`text-sm font-bold tracking-[0.15em] block transition-colors ${activeCompany === exp.company ? 'text-copper scale-105 origin-left' : 'text-teal group-hover:text-copper'}`}>{exp.company}</span>
+                            <span className={`text-xs font-semibold transition-opacity ${activeCompany === exp.company ? 'opacity-100' : 'opacity-40 group-hover:opacity-100'}`}>{exp.period}</span>
                           </button>
                         </div>
                       ))}
@@ -601,10 +601,10 @@ export default function App() {
                         <p className={`uppercase text-xs font-bold tracking-widest mb-6 ${exp.isEducation ? 'text-teal/80' : 'text-copper'}`}>{exp.role}</p>
                         {exp.motivation && (
                           <div className="border-l-2 border-copper/40 pl-4 mb-6">
-                            <p className="text-sm italic text-on-surface/50 leading-relaxed font-serif">{exp.motivation}</p>
+                            <p className="text-sm italic text-on-surface/70 leading-[1.7] font-serif">{exp.motivation}</p>
                           </div>
                         )}
-                        <p className="text-lg text-on-surface/70 leading-relaxed max-w-2xl">{exp.description}</p>
+                        <p className="text-lg text-on-surface/90 leading-[1.8] max-w-2xl font-light">{exp.description}</p>
                       </motion.div>
                     )
                   })}
@@ -642,10 +642,10 @@ export default function App() {
                       <p className={`uppercase text-xs font-bold tracking-widest mb-6 ${exp.isEducation ? 'text-teal/80' : 'text-copper'}`}>{exp.role}</p>
                       {exp.motivation && (
                         <div className="border-l-2 border-copper/40 pl-4 mb-6">
-                          <p className="text-sm italic text-on-surface/50 leading-relaxed font-serif">{exp.motivation}</p>
+                          <p className="text-sm italic text-on-surface/70 leading-[1.7] font-serif">{exp.motivation}</p>
                         </div>
                       )}
-                      <p className="text-lg text-on-surface/70 leading-relaxed max-w-2xl">{exp.description}</p>
+                      <p className="text-lg text-on-surface/90 leading-[1.8] max-w-2xl font-light">{exp.description}</p>
                     </motion.div>
                   ))}
                 </div>
@@ -822,9 +822,9 @@ export default function App() {
                 <h2 className="text-4xl md:text-6xl font-black mb-6">{selectedProject.title}</h2>
                 <div className="w-12 h-1 bg-copper mb-8"></div>
                 <div className="prose prose-invert max-w-3xl">
-                  <p className="text-xl md:text-2xl font-light text-on-surface/80 leading-relaxed mb-8">{selectedProject.description}</p>
+                  <p className="text-xl md:text-2xl font-light text-on-surface/95 leading-[1.6] mb-8">{selectedProject.description}</p>
 
-                  <p className="text-lg text-on-surface/70 leading-relaxed font-serif whitespace-pre-line mb-8 mt-8">
+                  <p className="text-lg text-on-surface/90 leading-[1.8] font-serif whitespace-pre-line mb-8 mt-8">
                     {selectedProject.deepDive || "Deep dive content coming soon."}
                   </p>
 
