@@ -73,7 +73,10 @@ export default function App() {
         const container = timelineRef.current;
         const activeElement = container.querySelector(`[data-company="${activeCompany}"]`) as HTMLElement;
         if (activeElement) {
-          const scrollLeft = activeElement.offsetLeft - (container.clientWidth / 2) + (activeElement.clientWidth / 2);
+          const containerRect = container.getBoundingClientRect();
+          const elementRect = activeElement.getBoundingClientRect();
+          const relativeLeft = elementRect.left - containerRect.left + container.scrollLeft;
+          const scrollLeft = relativeLeft - (container.clientWidth / 2) + (activeElement.clientWidth / 2);
           container.scrollTo({ left: scrollLeft, behavior: 'smooth' });
         }
       }
@@ -340,7 +343,7 @@ export default function App() {
             <span className="vertical-label sticky top-32">{RESUME_DATA.siteMetadata.sections[0].label}</span>
           </div>
 
-          <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-end gap-12">
+          <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-12">
             <div className="w-full md:w-3/5 z-10">
               <motion.h1
                 initial={{ y: 50, opacity: 0 }}
@@ -450,13 +453,13 @@ export default function App() {
         </section>
 
         {/* Background / Resume Section */}
-        <section id="background" className="relative bg-surface-lowest px-6 md:px-24 py-32 mb-64 scroll-mt-32">
+        <section id="background" className="relative bg-surface-lowest px-6 md:px-24 pt-32 pb-[600px] mb-64 scroll-mt-32">
           <div className="hidden md:flex absolute left-6 md:left-12 top-0 h-full items-start">
-            <span className="vertical-label sticky top-32">03 / Career Overview</span>
+            <span className="vertical-label sticky top-[550px]">03 / Career Overview</span>
           </div>
 
-          <div className="max-w-6xl mx-auto mb-32 hidden md:block">
-            <div className="flex justify-between items-center mb-12 border-b border-outline-suggested pb-4">
+          <div className="max-w-6xl mx-auto mb-32 hidden md:block sticky top-16 z-[45] bg-surface-lowest/95 backdrop-blur-md pt-12 pb-8 -mx-4 px-4 border-b border-outline-suggested/30 transition-all duration-300">
+            <div className="flex justify-between items-center mb-16 border-b border-outline-suggested pb-4">
               <h2 className="text-4xl md:text-6xl font-black">Career Overview</h2>
               <div className="flex gap-4">
                 <button onClick={() => scrollTimeline('left')} className="p-2 border border-outline-suggested hover:bg-copper hover:text-charcoal transition-colors">
@@ -467,9 +470,9 @@ export default function App() {
                 </button>
               </div>
             </div>
-            <div ref={timelineRef} className="relative w-full overflow-x-auto no-scrollbar scroll-smooth flex pb-8 pt-8">
+            <div ref={timelineRef} className="relative w-full overflow-x-auto no-scrollbar scroll-smooth flex pb-8 pt-12">
               <div className="flex items-start min-w-max px-4 relative gap-16">
-                <div className="h-[2px] w-full bg-outline-suggested/60 absolute top-[84px] -z-10 left-0 right-0"></div>
+                <div className="h-[2px] w-full bg-outline-suggested/60 absolute top-[68px] -z-10 left-0 right-0"></div>
                 {timelineGroups.map((group, gIdx) => (
                   <div key={`tl-g-${gIdx}`} className="flex flex-col relative pt-8">
                     {/* Spanning Indicator */}
@@ -477,13 +480,20 @@ export default function App() {
                     <div className="absolute top-0 left-0 w-[3px] h-3 bg-copper/60"></div>
                     <div className="absolute top-0 right-4 w-[3px] h-3 bg-copper/60"></div>
 
-                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface/80 absolute -top-6 left-0 whitespace-nowrap">{group.group}</span>
+                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface/80 absolute -top-10 left-0 max-w-[150px] leading-relaxed">{group.group}</span>
 
                     <div className="flex gap-4 mt-2">
                       {group.experiences.filter((exp, index, self) => index === self.findIndex((t) => t.company === exp.company)).map((exp, idx) => (
                         <a href={`#exp-${exp.company.replace(/\s+/g, '-')}-${exp.period.replace(/\s+/g, '')}`} data-company={exp.company} key={`tl-n-${idx}-${exp.company}`} className={`flex flex-col items-center relative group w-32 px-2 cursor-pointer transition-opacity duration-300 ${activeCompany === exp.company ? 'opacity-100' : 'opacity-60 hover:opacity-100'}`}>
-                          <div className={`w-8 h-8 rounded-full border-2 transition-all duration-300 flex items-center justify-center ${activeCompany === exp.company ? 'border-copper bg-surface shadow-[0_0_15px_rgba(235,94,40,0.4)] scale-110' : 'border-outline-suggested bg-surface-lowest group-hover:border-copper'}`}>
-                            <div className={`w-3 h-3 rounded-full bg-copper transition-opacity ${activeCompany === exp.company ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}></div>
+                          <div className={`w-8 h-8 rounded-full border-2 transition-all duration-500 flex items-center justify-center relative ${activeCompany === exp.company ? 'border-copper bg-surface shadow-[0_0_20px_rgba(235,94,40,0.3)]' : 'border-outline-suggested/40 bg-surface-lowest group-hover:border-copper/40'}`}>
+                            <div className={`w-3 h-3 rounded-full bg-on-surface/20 transition-all ${activeCompany === exp.company ? 'bg-copper' : ''}`}></div>
+                            {activeCompany === exp.company && (
+                              <motion.div 
+                                layoutId="activeIndicator"
+                                className="absolute inset-0 border-2 border-copper rounded-full"
+                                transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                              />
+                            )}
                           </div>
                           <span className={`text-[10px] font-bold tracking-widest mt-4 ${activeCompany === exp.company ? 'text-copper' : 'text-teal'}`}>{getDisplayPeriod(group.experiences, exp.company)}</span>
                           <span className={`text-[10px] font-semibold text-center mt-2 transition-colors line-clamp-2 uppercase tracking-wider ${activeCompany === exp.company ? 'text-on-surface' : 'group-hover:text-copper'}`}>{exp.company}</span>
@@ -497,10 +507,10 @@ export default function App() {
           </div>
 
           <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-start gap-16">
-            <div className="w-full md:w-1/3 md:sticky md:top-48">
+            <div className="w-full md:w-1/3 md:sticky md:top-[550px]">
               <div id="left-sidebar-nav" className="max-h-[calc(100vh-16rem)] overflow-y-auto no-scrollbar pb-16">
                 <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-teal mb-4">Career Journey</h3>
-                <p className="text-on-surface/50 max-w-xs mb-12 leading-relaxed">A timeline of leading teams, executing product strategy, and shipping architectures that define the front edge of AI.</p>
+                <p className="text-on-surface/50 max-w-xs mb-12 leading-relaxed">{RESUME_DATA.siteMetadata.sections.find(s => s.id === 'background')?.description}</p>
 
                 <div className="hidden md:block space-y-8 border-l border-outline-suggested pl-8 mb-16">
                   {groupedExperiences.map(group => (
@@ -512,7 +522,7 @@ export default function App() {
                             onClick={() => {
                               const el = document.getElementById(`exp-${exp.company.replace(/\s+/g, '-')}-${exp.period.replace(/\s+/g, '')}`);
                               if (el) {
-                                const y = el.getBoundingClientRect().top + window.scrollY - 120;
+                                const y = el.getBoundingClientRect().top + window.scrollY - 550;
                                 window.scrollTo({ top: y, behavior: 'smooth' });
                               }
                             }}
@@ -534,7 +544,7 @@ export default function App() {
                             onClick={() => {
                               const el = document.getElementById(`exp-${exp.company.replace(/\s+/g, '-')}`);
                               if (el) {
-                                const y = el.getBoundingClientRect().top + window.scrollY - 120;
+                                const y = el.getBoundingClientRect().top + window.scrollY - 550;
                                 window.scrollTo({ top: y, behavior: 'smooth' });
                               }
                             }}
@@ -550,7 +560,7 @@ export default function App() {
                 </div>
               </div>
 
-              <div className="space-y-8 bg-surface p-6 border border-outline-suggested">
+              <div className="hidden md:block space-y-8 bg-surface p-6 border border-outline-suggested">
                 <span className="text-xs uppercase font-bold tracking-widest text-teal block mb-4 border-b border-outline-suggested pb-2">Board & Advisory Roles</span>
                 {RESUME_DATA.otherRoles.map(role => (
                   <div key={role.org} className="space-y-1">
@@ -567,7 +577,7 @@ export default function App() {
             <div className="w-full md:w-2/3 space-y-32">
               {groupedExperiences.map(group => (
                 <div key={`detail-group-${group.group}`} className="space-y-32">
-                  <div className="border-b border-outline-suggested pb-4 mb-16">
+                  <div className="border-b border-outline-suggested pb-4 mb-16 scroll-mt-[550px]">
                     <h3 className="text-2xl font-black text-copper/80 tracking-widest uppercase">{group.group}</h3>
                   </div>
                   {group.experiences.map((exp, expIdx) => {
@@ -578,8 +588,8 @@ export default function App() {
                         key={`${exp.company}-${exp.period}`}
                         id={`exp-${exp.company.replace(/\s+/g, '-')}-${exp.period.replace(/\s+/g, '')}`}
                         onViewportEnter={() => setActiveCompany(exp.company)}
-                        viewport={{ once: false, amount: 0.1, margin: "-10% 0px -45% 0px" }}
-                        className={`relative scroll-mt-32 ${isRepeatCompany ? '-mt-24' : ''}`}
+                        viewport={{ once: false, amount: 0.1, margin: "-50% 0px -30% 0px" }}
+                        className={`relative scroll-mt-[550px] ${isRepeatCompany ? '-mt-24' : ''}`}
                       >
                         {!isRepeatCompany && (
                           <h3 className="text-3xl font-bold mb-2">
@@ -606,14 +616,14 @@ export default function App() {
                         )}
                         <p className="text-lg text-on-surface/90 leading-[1.8] max-w-2xl font-light">{exp.description}</p>
                       </motion.div>
-                    )
+                    );
                   })}
                 </div>
               ))}
 
               {educationExperiences.length > 0 && (
                 <div className="space-y-32">
-                  <div className="border-b border-outline-suggested pb-4 mb-16">
+                  <div className="border-b border-outline-suggested pb-4 mb-16 scroll-mt-[550px]">
                     <h3 className="text-2xl font-black text-copper/80 tracking-widest uppercase">Education</h3>
                   </div>
                   {educationExperiences.map((exp) => (
@@ -621,8 +631,8 @@ export default function App() {
                       key={exp.company}
                       id={`exp-${exp.company.replace(/\s+/g, '-')}`}
                       onViewportEnter={() => setActiveCompany(exp.company)}
-                      viewport={{ once: false, amount: 0.1, margin: "-10% 0px -45% 0px" }}
-                      className="relative scroll-mt-32"
+                      viewport={{ once: false, amount: 0.1, margin: "-50% 0px -30% 0px" }}
+                      className="relative scroll-mt-[550px]"
                     >
                       <h3 className="text-3xl font-bold mb-2">
                         {RESUME_DATA.projects.find(p => p.title === exp.company) ? (
@@ -646,10 +656,24 @@ export default function App() {
                         </div>
                       )}
                       <p className="text-lg text-on-surface/90 leading-[1.8] max-w-2xl font-light">{exp.description}</p>
-                    </motion.div>
-                  ))}
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+            {/* Board & Advisory Roles for Mobile */}
+            <div className="md:hidden space-y-8 bg-surface p-6 border border-outline-suggested mt-32">
+              <span className="text-xs uppercase font-bold tracking-widest text-teal block mb-4 border-b border-outline-suggested pb-2">Board & Advisory Roles</span>
+              {RESUME_DATA.otherRoles.map(role => (
+                <div key={role.org} className="space-y-1">
+                  <a href={role.link} target="_blank" rel="noopener noreferrer" className="hover:text-copper transition-colors">
+                    <p className="text-xs font-bold uppercase tracking-widest text-on-surface">{role.org}</p>
+                  </a>
+                  <p className="text-[10px] text-copper font-bold uppercase tracking-widest">{role.role}</p>
+                  <p className="text-[10px] text-on-surface/40 uppercase tracking-widest">{role.period}</p>
                 </div>
-              )}
+              ))}
             </div>
           </div>
         </section>

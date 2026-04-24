@@ -3,7 +3,7 @@ import { Experience, Project, Testimonial, OtherRole } from '../types';
 export const RESUME_DATA = {
   name: "Ankush Singla",
   role: "Product Executive & AI Strategist",
-  bio: "I build products that move the needle on user engagement and business growth, capturing headlines along the way. From 0-to-1 concepts to 10-to-100 scaling, I specialize in turning emerging tech — like Generative AI, agentic systems, and IoT — into real things that ship and scale.\n\nMy work doesn't just drive metrics; it gets featured in Forbes, presented to Boards, and cited in investor 10-Ks.\n\nCurrently operating at the intersection of AI, consumer experience, and rethinking the future of work at FanDuel.",
+  bio: "I lead teams that build new products. My focus is on turning emerging technologies—today, Generative AI and agents—into tangible tools that actually work for people. I don’t just bridge the gap between strategy and execution; I build the strategy and then I lead the work to deliver it.\n\nSuccess for me is always measured by three things: making a real impact on business metrics, building something worth presenting to a Board, and creating work that earns its way into Forbes or an investor 10-K.\n\nI’ve spent my career navigating the messy \"0 to 1\" phase and the discipline of scaling from 10 to 100 in companies of all sizes. Right now, I’m building AI products at FanDuel, where I’m focused on how agentic systems will change the way we interact with technology.",
   experience: [
     {
       company: "FanDuel",
@@ -200,11 +200,11 @@ export const RESUME_DATA = {
       category: "Leadership Philosophy",
       year: "2026",
       description: "A demonstration of how I use AI tooling - from custom MCP pipelines to commercial agents - to support daily executive execution.",
-      image: "https://drive.google.com/thumbnail?id=1tu9Dv22jC-FMSzBSvlHJithJ6IyyMK5I&sz=w1000",
+      image: "https://drive.google.com/thumbnail?id=1lJMU9V9Usd1jK1PS1La4_xCmD6IT-qO2&sz=w1000",
       aspectRatio: "16/9",
       deepDive: "Effective AI executives must remain hands-on to understand friction, evaluate capabilities, and push the boundaries of what their teams can build. My daily operational speed is augmented by a fluid ecosystem of tools, ranging from the Claude Suite (including Claude Code) to proprietary internal MCP-based platform tools we've designed for specific workflows and data pipelines.\n\nAs a practical example of this philosophy, I architected this portfolio through generative AI:\n\n1. Google Stitch: Defined the design system, creating the tokens, colors, and layout foundations.\n2. Google AI Studio: Used for the initial rapid prototyping and structuring of the component architecture.\n3. Google Antigravity: Acted as the primary IDE agent for refining the complex logic, timeline carousels, and responsive layouts.\n\nBy continually building across diverse AI ecosystems, I maintain the hands-on capability to lead AI product teams and drive enterprise AI transformation.",
       screenshots: [
-        { url: "https://drive.google.com/thumbnail?id=1tu9Dv22jC-FMSzBSvlHJithJ6IyyMK5I&sz=w1000", caption: "Google Stitch: Design System" },
+        { url: "https://drive.google.com/thumbnail?id=1lJMU9V9Usd1jK1PS1La4_xCmD6IT-qO2&sz=w1000", caption: "Google Stitch: Design System" },
         { url: "https://drive.google.com/thumbnail?id=17jBzZkB-YZVRhzwzTGNWx9EjPMTbR_rP&sz=w1000", caption: "Google AI Studio: Prototyping" },
         { url: "https://drive.google.com/thumbnail?id=1MhWlUlyGOS5YHJfELPFyRHNqcXdbxu4i&sz=w1000", caption: "Google Antigravity: IDE Refinement" }
       ]
@@ -253,7 +253,7 @@ export const RESUME_DATA = {
       category: "Entrepreneurship / Marketing AI & Analytics",
       year: "2016",
       description: "Co-founded an early-stage startup focused on improving conversion and tracking of money spent on product placement.",
-      image: "/images/pointing_at_tv.png",
+      image: "https://drive.google.com/thumbnail?id=1C-ycMA_xO5O141xNYjqoJkpL_dv-waLk&sz=w1000",
       aspectRatio: "16/9",
       deepDive: "Overlens represented a deep dive into the mechanics of early-stage entrepreneurship. Operating in a highly ambiguous environment, our focus was entirely on validating a concept, getting feedback from potential customers, and proving the concept could be built and would resonate with marketers.",
       articleLink: "https://drive.google.com/file/d/11EVH0b5nenL98wiJw2_GwXCGrVetnHfn/view?usp=drive_link",
@@ -326,7 +326,7 @@ export const RESUME_DATA = {
     sections: [
       { id: "home", label: "01 / Home", title: "Home" },
       { id: "work", label: "02 / Selected Work", title: "Selected Work Highlights", period: "2020 — Present" },
-      { id: "background", label: "03 / Career Overview", title: "Career Overview", subtitle: "Career Journey", description: "A timeline of leading teams, executing product strategy, and shipping architectures that define the front edge of AI." },
+      { id: "background", label: "03 / Career Overview", title: "Career Overview", subtitle: "Career Journey", description: "A timeline that includes early 0-to-1 concepts and global platforms, built on leading teams and creating products that solve real-world problems." },
       { id: "testimonials", label: "04 / Peer Perspectives", title: "Peer Perspectives" },
       { id: "contact", label: "05 / How I Engage", title: "How I Engage", subtitle: "Ready when you are.", description: "I'm always open to conversations where I can create value. If any of these resonate, please feel free to reach out." }
     ],
