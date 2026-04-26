@@ -67,3 +67,4 @@ If you are an AI assistant (like Antigravity or Cursor) making changes to this c
         2.  **External Link:** Fallback to `experience.link` if no project match is found. (Triggers a new tab).
         3.  **Plain Text:** Default if neither exists.
     *   **Maintenance:** To upgrade a role to a deep dive, simply add a `Project` with a matching `company` field in `resume.ts`.
+6.  **Model Names:** NEVER change the AI model names (e.g., `gemini-3-flash-preview`) without explicit user permission. Even if they look like placeholders or typos, assume they are correct for this specific project's backend configuration.

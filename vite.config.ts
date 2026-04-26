@@ -50,7 +50,7 @@ export default defineConfig(({mode}) => {
 
                   const genAI = new GoogleGenAI(apiKey);
                   const model = genAI.getGenerativeModel({ 
-                    model: "gemini-1.5-flash",
+                    model: "gemini-3-flash-preview",
                     systemInstruction: SYSTEM_INSTRUCTION + achievementContext
                   });
 
