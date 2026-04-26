@@ -20,9 +20,16 @@
 }
 
 @layer base {
-  body {
+  html, body {
     @apply bg-surface text-on-surface font-sans;
     background-color: var(--color-surface);
+    overflow-x: hidden;
+    width: 100%;
+    position: relative;
+  }
+
+  body {
+    -webkit-tap-highlight-color: transparent;
   }
 
   h1, h2, h3, h4, h5, h6 {

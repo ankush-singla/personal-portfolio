@@ -45,3 +45,15 @@ This project goes beyond a standard resume by integrating a custom generative AI
 
 ## 🚢 Deployment
 This project is configured for seamless deployment on [Vercel](https://vercel.com). Simply import the repository and ensure your `GEMINI_API_KEY` is added to the Vercel Environment Variables settings.
+
+---
+
+## 🤖 AI Maintenance
+
+If you are an AI assistant (like Antigravity or Cursor) making changes to this codebase, please follow these rules:
+
+1.  **Chatbot Prompts:** The chatbot logic is shared between the local development environment (`vite.config.ts`) and the production Edge Function (`api/handler.ts`). 
+    *   **Shared Source:** All system instructions and achievement context logic MUST be edited in [prompts.ts](file:///c:/Users/ankus/Downloads/ankush-singla-_-ai-product-leader/src/data/prompts.ts). 
+    *   **Do Not Duplicate:** Do not re-introduce hardcoded prompts into the handler or config files.
+2.  **Environment Variables:** Always check for `GEMINI_API_KEY` in the local `.env` and remind the user to set it in Vercel for production.
+3.  **Achievement Logic:** Achievement definitions are located in `src/hooks/useAchievements.ts`. If adding new achievements, ensure the hints are updated in the chatbot prompt context via `prompts.ts`.

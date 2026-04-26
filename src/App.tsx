@@ -33,6 +33,7 @@ export default function App() {
   });
   const [isGlitching, setIsGlitching] = useState(false);
   const timelineRef = React.useRef<HTMLDivElement>(null);
+  const isDraggingRef = useRef(false);
 
   const { enabled, setEnabled, unlockedIds, unlock, latestAchievement, clearLatest } = useAchievements();
 
@@ -329,7 +330,7 @@ export default function App() {
 
   return (
     <>
-      <div className={`min-h-screen transition-colors duration-700 selection:bg-copper selection:text-charcoal text-on-surface bg-surface relative ${theme === 'matrix' ? 'matrix-mode' : ''} ${theme === 'basketball' ? 'basketball-mode' : ''} ${isGlitching ? 'glitch-flash' : ''}`}>
+      <div className={`min-h-screen overflow-x-hidden transition-colors duration-700 selection:bg-copper selection:text-charcoal text-on-surface bg-surface relative ${theme === 'matrix' ? 'matrix-mode' : ''} ${theme === 'basketball' ? 'basketball-mode' : ''} ${isGlitching ? 'glitch-flash' : ''}`}>
         <div className="noise-overlay" />
       <div className="mesh-background">
         <div className="mesh-gradient" />
@@ -498,8 +499,16 @@ export default function App() {
             <span className="vertical-label sticky top-32">{RESUME_DATA.siteMetadata.sections[0].label}</span>
           </div>
 
-          <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-12">
-            <div className="w-full md:w-3/5 z-10">
+          <div className="max-w-6xl mx-auto flex flex-col-reverse md:flex-row items-center gap-12 md:gap-24">
+            <div className="w-full md:w-3/5 z-10 text-center md:text-left">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="inline-block px-3 py-1 bg-copper/10 border border-copper/20 mb-6 md:hidden"
+              >
+                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-copper">Executive Portfolio</span>
+              </motion.div>
               <motion.h1
                 initial={{ y: 50, opacity: 0 }}
                 whileInView={{ y: 0, opacity: 1 }}
@@ -516,7 +525,7 @@ export default function App() {
                 {RESUME_DATA.bio}
               </p>
 
-              <div className="flex flex-wrap gap-8">
+              <div className="flex flex-wrap gap-8 justify-center md:justify-start">
                 <a href="#work" className="monolith-btn-primary">Explore Work</a>
               </div>
             </div>
@@ -566,7 +575,7 @@ export default function App() {
               </div>
 
               {/* Rotating Carousel View */}
-              <div className="w-full lg:w-3/4 h-[500px] md:h-[600px] lg:h-[700px] relative flex items-center justify-center overflow-visible">
+              <div className="w-full lg:w-3/4 h-[500px] md:h-[600px] lg:h-[700px] relative flex items-center justify-center">
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                   <div className="w-[120%] h-[1px] bg-outline-suggested/20" />
                 </div>
@@ -587,6 +596,37 @@ export default function App() {
                       return (
                         <motion.div
                           key={proj.title}
+                          drag="x"
+                          dragConstraints={{ left: 0, right: 0 }}
+                          dragElastic={0.2}
+                          dragListener={!selectedProject}
+                          onDragStart={() => {
+                            isDraggingRef.current = true;
+                          }}
+                          onDragEnd={(_, info) => {
+                            const swipeThreshold = 50;
+                            if (info.offset.x > swipeThreshold) {
+                              prevProject();
+                              setIsProjectAutoPlayPaused(true);
+                            } else if (info.offset.x < -swipeThreshold) {
+                              nextProject();
+                              setIsProjectAutoPlayPaused(true);
+                            }
+                            // Small delay to ensure onTap doesn't catch the tail end of a drag
+                            setTimeout(() => {
+                              isDraggingRef.current = false;
+                            }, 100);
+                          }}
+                          onTap={() => {
+                            if (isDraggingRef.current || selectedProject) return;
+                            
+                            if (Math.abs(offset) > 0.1) {
+                              setCurrentProjectIndex(idx);
+                              setActiveYear(proj.year);
+                            } else {
+                              handleProjectSelect(proj);
+                            }
+                          }}
                           initial={{ opacity: 0, scale: 0.6, x: offset * 400 }}
                           animate={{ 
                             opacity: offset === 0 ? 1 : Math.abs(offset) === 1 ? 0.3 : 0,
@@ -597,15 +637,17 @@ export default function App() {
                             filter: offset === 0 ? 'blur(0px)' : 'blur(6px)'
                           }}
                           transition={{ type: "spring", stiffness: 180, damping: 24 }}
-                          onClick={() => {
-                            if (offset === 0) {
-                              handleProjectSelect(proj);
-                            } else {
+                          onTap={() => {
+                            if (Math.abs(offset) > 0.1) {
+                              // If it's a neighbor, go to it
                               setCurrentProjectIndex(idx);
                               setActiveYear(proj.year);
+                            } else {
+                              // If it's the active one, open modal
+                              handleProjectSelect(proj);
                             }
                           }}
-                          className={`absolute w-full max-w-[90vw] md:max-w-2xl lg:max-w-3xl aspect-[16/9] bg-surface-low border border-outline-suggested shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] overflow-hidden cursor-pointer group`}
+                          className={`absolute w-full max-w-[90vw] md:max-w-2xl lg:max-w-3xl aspect-[16/9] bg-surface-low border border-outline-suggested shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] overflow-hidden cursor-pointer group touch-pan-y`}
                         >
                           <img
                             src={proj.image}
@@ -636,40 +678,40 @@ export default function App() {
                 </div>
 
                 {/* Carousel Controls */}
-                <div className="absolute -bottom-16 w-full max-w-[90vw] md:max-w-2xl lg:max-w-3xl flex justify-center items-center z-30">
-                  <div className="flex gap-8 items-center">
+                <div className="absolute -bottom-24 md:-bottom-16 w-full max-w-[90vw] md:max-w-2xl lg:max-w-3xl flex flex-col md:flex-row justify-center items-center gap-6 z-30">
+                  <div className="flex gap-4 md:gap-8 items-center">
                     <button 
                       onClick={prevProject}
-                      className="p-4 rounded-full border border-outline-suggested hover:bg-copper hover:text-charcoal transition-all group"
+                      className="p-3 md:p-4 rounded-full border border-outline-suggested hover:bg-copper hover:text-charcoal transition-all group"
                     >
-                      <ChevronLeft size={24} className="group-hover:-translate-x-1 transition-transform" />
+                      <ChevronLeft size={20} className="md:size-24 group-hover:-translate-x-1 transition-transform" />
                     </button>
 
-                    <div className="flex gap-2 mx-4">
+                    <div className="flex gap-2 mx-2 md:mx-4">
                       {RESUME_DATA.projects.map((_, i) => (
                         <div 
                           key={`dot-${i}`}
-                          className={`h-1 transition-all duration-500 ${currentProjectIndex === i ? 'w-8 bg-copper' : 'w-2 bg-on-surface/20'}`}
+                          className={`h-1 transition-all duration-500 ${currentProjectIndex === i ? 'w-6 md:w-8 bg-copper' : 'w-1.5 md:w-2 bg-on-surface/20'}`}
                         />
                       ))}
                     </div>
 
                     <button 
                       onClick={nextProject}
-                      className="p-4 rounded-full border border-outline-suggested hover:bg-copper hover:text-charcoal transition-all group"
+                      className="p-3 md:p-4 rounded-full border border-outline-suggested hover:bg-copper hover:text-charcoal transition-all group"
                     >
-                      <ChevronRight size={24} className="group-hover:translate-x-1 transition-transform" />
+                      <ChevronRight size={20} className="md:size-24 group-hover:translate-x-1 transition-transform" />
                     </button>
                   </div>
 
-                  {/* Absolute positioned pause button aligned to right edge of max-w-3xl */}
-                  <div className="absolute right-0">
+                  {/* Pause button integrated into the group on mobile, absolute on desktop */}
+                  <div className="md:absolute md:right-0">
                     <button 
                       onClick={() => setIsProjectAutoPlayPaused(!isProjectAutoPlayPaused)}
-                      className={`p-4 rounded-full border transition-all ${isProjectAutoPlayPaused ? 'bg-copper text-charcoal border-copper shadow-lg scale-105' : 'border-outline-suggested hover:bg-copper/10 text-on-surface'}`}
+                      className={`p-3 md:p-4 rounded-full border transition-all ${isProjectAutoPlayPaused ? 'bg-copper text-charcoal border-copper shadow-lg scale-105' : 'border-outline-suggested hover:bg-copper/10 text-on-surface'}`}
                       title={isProjectAutoPlayPaused ? "Resume Auto-play" : "Pause Auto-play"}
                     >
-                      {isProjectAutoPlayPaused ? <Play size={24} /> : <Pause size={24} fill="currentColor" />}
+                      {isProjectAutoPlayPaused ? <Play size={20} className="md:size-24" /> : <Pause size={20} className="md:size-24" fill="currentColor" />}
                     </button>
                   </div>
                 </div>
@@ -742,9 +784,23 @@ export default function App() {
 
           <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-start gap-16">
             <div className="w-full md:w-1/3 md:sticky md:top-[550px]">
+              {/* Mobile Section Header */}
+              <div className="md:hidden mb-12">
+                <h2 className="text-4xl font-black mb-4">Career Overview</h2>
+                <div className="w-12 h-1 bg-copper"></div>
+              </div>
+
               <div id="left-sidebar-nav" className="max-h-[calc(100vh-16rem)] overflow-y-auto no-scrollbar pb-16">
-                <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-teal mb-4">Career Journey</h3>
-                <p className="text-on-surface/50 max-w-xs mb-12 leading-relaxed">{RESUME_DATA.siteMetadata.sections.find(s => s.id === 'background')?.description}</p>
+                <div className="relative pl-6 md:pl-0">
+                  {/* Decorative Vertical Line for Mobile */}
+                  <div className="absolute left-0 top-0 bottom-0 w-[1px] bg-outline-suggested md:hidden"></div>
+                  <div className="absolute left-0 top-0 w-[1px] h-8 bg-copper md:hidden"></div>
+                  
+                  <h3 className="text-xs font-black uppercase tracking-[0.25em] text-copper mb-4">Career Journey</h3>
+                  <p className="text-base md:text-sm text-on-surface/70 max-w-lg md:max-w-xs mb-12 leading-relaxed font-serif italic">
+                    {RESUME_DATA.siteMetadata.sections.find(s => s.id === 'background')?.description}
+                  </p>
+                </div>
 
                 <div className="hidden md:block space-y-8 border-l border-outline-suggested pl-8 mb-16">
                   {groupedExperiences.map(group => (
@@ -1006,20 +1062,22 @@ export default function App() {
             </div>
 
             {/* CTA Bar */}
-            <div className="glass p-10 md:p-14 flex flex-col md:flex-row justify-between items-center gap-8">
-              <div>
+            <div className="glass p-8 md:p-14 flex flex-col md:flex-row justify-between items-start md:items-center gap-10">
+              <div className="text-left">
                 <p className="text-xs uppercase tracking-[0.3em] text-teal mb-2">Let's connect</p>
-                <h3 className="text-3xl md:text-4xl font-black">Ready when you are.</h3>
+                <h3 className="text-3xl md:text-4xl font-black leading-tight">Ready when you are.</h3>
               </div>
-              <div className="flex flex-wrap gap-4 items-center">
-                <a href={RESUME_DATA.contact.contactForm} onClick={() => unlock('the-networker')} target="_blank" rel="noopener noreferrer" className="monolith-btn-primary">Get in Touch</a>
-                <a href={RESUME_DATA.contact.linkedin} onClick={() => unlock('the-networker')} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 px-6 py-4 border border-outline-suggested text-on-surface font-bold uppercase tracking-widest text-sm hover:bg-copper hover:text-charcoal hover:border-copper transition-colors">
+              <div className="flex flex-wrap gap-4 items-center justify-start w-full md:w-auto">
+                <a href={RESUME_DATA.contact.contactForm} onClick={() => unlock('the-networker')} target="_blank" rel="noopener noreferrer" className="monolith-btn-primary w-full md:w-auto">Get in Touch</a>
+                <a href={RESUME_DATA.contact.linkedin} onClick={() => unlock('the-networker')} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-3 px-6 py-4 border border-outline-suggested text-on-surface font-bold uppercase tracking-widest text-sm hover:bg-copper hover:text-charcoal hover:border-copper transition-colors w-full md:w-auto">
                   <Linkedin size={16} /> LinkedIn
                 </a>
-                <a href="https://www.instagram.com/ankkkkkkk" onClick={() => unlock('the-networker')} target="_blank" rel="noopener noreferrer" className="hover:text-copper transition-colors"><Camera size={20} /></a>
-                {RESUME_DATA.contact.github && (
-                  <a href={RESUME_DATA.contact.github} onClick={() => unlock('the-networker')} target="_blank" rel="noopener noreferrer" className="hover:text-copper transition-colors"><Github size={20} /></a>
-                )}
+                <div className="flex items-center gap-6 mt-4 md:mt-0">
+                  <a href="https://www.instagram.com/ankkkkkkk" onClick={() => unlock('the-networker')} target="_blank" rel="noopener noreferrer" className="hover:text-copper transition-colors"><Camera size={22} /></a>
+                  {RESUME_DATA.contact.github && (
+                    <a href={RESUME_DATA.contact.github} onClick={() => unlock('the-networker')} target="_blank" rel="noopener noreferrer" className="hover:text-copper transition-colors"><Github size={22} /></a>
+                  )}
+                </div>
               </div>
             </div>
 
