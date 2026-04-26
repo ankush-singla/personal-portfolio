@@ -5,6 +5,8 @@ import Markdown from 'react-markdown';
 import posthog from 'posthog-js';
 import { ThemeType } from '../types';
 
+import { SmartNav } from './SmartNav';
+
 interface Message {
   role: 'user' | 'model';
   text: string;
@@ -153,6 +155,7 @@ export default function ThemeBot({ onThemeChange, onInteract, unlockedIds = [] }
   // Fixed: flex-col items-end ensures the toggle button stays anchored to the right when the chat window opens/closes
   return (
     <div className="fixed bottom-4 right-4 md:bottom-8 md:right-8 z-[100] flex flex-col items-end">
+      <SmartNav isVisible={!isOpen} />
       <AnimatePresence>
         {isOpen && (
           <motion.div
