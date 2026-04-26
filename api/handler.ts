@@ -28,9 +28,13 @@ export default async function handler(req: any, res: any) {
     }
 
     try {
+      const proxyHeaders = { ...headers };
+      delete proxyHeaders['host'];
+      delete proxyHeaders['connection'];
+
       const phResponse = await fetch(posthogUrl, {
         method,
-        headers: headers as any,
+        headers: proxyHeaders as any,
         body: method !== 'GET' ? (typeof reqBody === 'string' ? reqBody : JSON.stringify(reqBody)) : null,
       });
 
