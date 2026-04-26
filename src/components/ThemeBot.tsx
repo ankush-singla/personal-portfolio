@@ -77,7 +77,7 @@ export default function ThemeBot({ onThemeChange, onInteract, unlockedIds = [] }
         console.error("AI API Error:", errorDetails);
         
         posthog.capture('$ai_generation', {
-          $ai_model: 'gemini-3-flash-preview',
+          $ai_model: 'gemini-1.5-flash',
           $ai_provider: 'google',
           $ai_input: [{ role: 'user', content: userMsg }],
           $ai_output_choices: [{ role: 'assistant', content: errorDetails }],
@@ -119,7 +119,7 @@ export default function ThemeBot({ onThemeChange, onInteract, unlockedIds = [] }
 
       // PostHog Tracking (Success)
       posthog.capture('$ai_generation', {
-        $ai_model: 'gemini-3-flash-preview',
+        $ai_model: 'gemini-1.5-flash',
         $ai_provider: 'google',
         $ai_input: [{ role: 'user', content: userMsg }],
         $ai_output_choices: [{ role: 'assistant', content: cleanResponse }],

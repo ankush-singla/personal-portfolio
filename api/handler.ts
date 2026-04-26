@@ -96,19 +96,22 @@ export default async function handler(req: Request) {
       lockedAchievements.map(a => a.hint)
     );
 
-    const ai = new GoogleGenAI({ apiKey });
-    const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+    const genAI = new GoogleGenAI(apiKey);
+    const model = genAI.getGenerativeModel({ 
+      model: "gemini-1.5-flash",
+      systemInstruction: SYSTEM_INSTRUCTION + achievementContext
+    });
+
+    const result = await model.generateContent({
       contents: [
         ...(history || []),
         { role: 'user', parts: [{ text: message }] }
-      ],
-      config: {
-        systemInstruction: SYSTEM_INSTRUCTION + achievementContext,
-      }
-    }); });
+      ]
+    });
 
-    return new Response(JSON.stringify({ text: response.text || "I'm sorry, I couldn't process that." }), {
+    const responseText = result.response.text();
+
+    return new Response(JSON.stringify({ text: responseText || "I'm sorry, I couldn't process that." }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' }
     });
