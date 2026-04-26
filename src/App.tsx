@@ -684,7 +684,7 @@ export default function App() {
                       onClick={prevProject}
                       className="p-3 md:p-4 rounded-full border border-outline-suggested hover:bg-copper hover:text-charcoal transition-all group"
                     >
-                      <ChevronLeft size={20} className="md:size-24 group-hover:-translate-x-1 transition-transform" />
+                      <ChevronLeft size={20} className="md:w-6 md:h-6 group-hover:-translate-x-1 transition-transform" />
                     </button>
 
                     <div className="flex gap-2 mx-2 md:mx-4">
@@ -700,7 +700,7 @@ export default function App() {
                       onClick={nextProject}
                       className="p-3 md:p-4 rounded-full border border-outline-suggested hover:bg-copper hover:text-charcoal transition-all group"
                     >
-                      <ChevronRight size={20} className="md:size-24 group-hover:translate-x-1 transition-transform" />
+                      <ChevronRight size={20} className="md:w-6 md:h-6 group-hover:translate-x-1 transition-transform" />
                     </button>
                   </div>
 
@@ -711,7 +711,7 @@ export default function App() {
                       className={`p-3 md:p-4 rounded-full border transition-all ${isProjectAutoPlayPaused ? 'bg-copper text-charcoal border-copper shadow-lg scale-105' : 'border-outline-suggested hover:bg-copper/10 text-on-surface'}`}
                       title={isProjectAutoPlayPaused ? "Resume Auto-play" : "Pause Auto-play"}
                     >
-                      {isProjectAutoPlayPaused ? <Play size={20} className="md:size-24" /> : <Pause size={20} className="md:size-24" fill="currentColor" />}
+                      {isProjectAutoPlayPaused ? <Play size={20} className="md:w-6 md:h-6" /> : <Pause size={20} className="md:w-6 md:h-6" fill="currentColor" />}
                     </button>
                   </div>
                 </div>
