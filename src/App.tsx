@@ -11,7 +11,7 @@ import ThemeBot from './components/ThemeBot';
 import { useAchievements } from './hooks/useAchievements';
 import { AchievementToast } from './components/AchievementToast';
 import { AchievementsModal } from './components/AchievementsModal';
-import { Camera, Gamepad2, Users, Briefcase, Mail, Github, Linkedin, Twitter, ArrowRight, X, ChevronLeft, ChevronRight, Menu, Play, Pause, Trophy } from 'lucide-react';
+import { Camera, Gamepad2, Users, Briefcase, Mail, Github, Linkedin, Twitter, ArrowRight, X, ChevronLeft, ChevronRight, Menu, Play, Pause, Trophy, ExternalLink } from 'lucide-react';
 import { applyThemeToRoot } from './utils/theme';
 import MatrixRain from './components/MatrixRain';
 import BasketballParquet from './components/BasketballParquet';
@@ -330,7 +330,8 @@ export default function App() {
 
   return (
     <>
-      <div className={`min-h-screen overflow-x-hidden transition-colors duration-700 selection:bg-copper selection:text-charcoal text-on-surface bg-surface relative ${theme === 'matrix' ? 'matrix-mode' : ''} ${theme === 'basketball' ? 'basketball-mode' : ''} ${isGlitching ? 'glitch-flash' : ''}`}>
+      {/* Fixed: overflow-x-clip is used instead of hidden to prevent horizontal scroll while preserving position:sticky functionality */}
+      <div className={`min-h-screen overflow-x-clip transition-colors duration-700 selection:bg-copper selection:text-charcoal text-on-surface bg-surface relative ${theme === 'matrix' ? 'matrix-mode' : ''} ${theme === 'basketball' ? 'basketball-mode' : ''} ${isGlitching ? 'glitch-flash' : ''}`}>
         <div className="noise-overlay" />
       <div className="mesh-background">
         <div className="mesh-gradient" />
@@ -783,7 +784,7 @@ export default function App() {
           </div>
 
           <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-start gap-16">
-            <div className="w-full md:w-1/3 md:sticky md:top-[550px]">
+            <div className="w-full md:w-1/3 md:sticky md:top-64">
               {/* Mobile Section Header */}
               <div className="md:hidden mb-12">
                 <h2 className="text-4xl font-black mb-4">Career Overview</h2>
@@ -883,18 +884,26 @@ export default function App() {
                       >
                         {!isRepeatCompany && (
                           <h3 className="text-3xl font-bold mb-2">
-                            {RESUME_DATA.projects.find(p => p.title === exp.company) ? (
-                              <button onClick={() => handleProjectSelect(RESUME_DATA.projects.find(p => p.title === exp.company)!)} className="hover:text-copper text-left flex items-center gap-4 transition-colors group/modalbtn">
-                                {exp.company}
-                                <span className="text-xs uppercase font-bold tracking-widest text-charcoal bg-copper px-3 py-1 rounded-sm flex items-center gap-2 shadow-sm opacity-0 group-hover/modalbtn:opacity-100 transition-opacity">View Deep Dive <ArrowRight size={12} /></span>
-                              </button>
-                            ) : exp.link ? (
-                              <a href={exp.link} target="_blank" rel="noopener noreferrer" className="hover:text-copper transition-colors underline decoration-outline-suggested underline-offset-4 hover:decoration-copper">
-                                {exp.company}
-                              </a>
-                            ) : (
-                              exp.company
-                            )}
+                            {(() => {
+                              const linkedProject = RESUME_DATA.projects.find(p => p.company === exp.company || p.title === exp.company);
+                              return linkedProject ? (
+                                <button onClick={() => handleProjectSelect(linkedProject)} className="hover:text-copper text-left flex flex-wrap items-center gap-4 transition-colors group/modalbtn cursor-pointer">
+                                  {exp.company}
+                                  <span className="text-[9px] uppercase font-sans font-bold tracking-[0.2em] text-copper border border-copper/40 px-3 py-1 rounded-full opacity-60 group-hover/modalbtn:opacity-100 group-hover/modalbtn:bg-copper group-hover/modalbtn:text-charcoal transition-all flex items-center gap-2 shadow-sm">
+                                    Deep Dive <ArrowRight size={8} />
+                                  </span>
+                                </button>
+                              ) : exp.link ? (
+                                <a href={exp.link} target="_blank" rel="noopener noreferrer" className="hover:text-copper transition-colors flex items-center gap-4 group/extlink">
+                                  {exp.company}
+                                  <span className="text-[9px] uppercase font-sans font-bold tracking-[0.2em] text-teal border border-teal/40 px-3 py-1 rounded-full opacity-60 group-hover/extlink:opacity-100 group-hover/extlink:bg-teal group-hover/extlink:text-charcoal transition-all flex items-center gap-2 shadow-sm">
+                                    External Link <ExternalLink size={8} />
+                                  </span>
+                                </a>
+                              ) : (
+                                <span className="text-on-surface/90">{exp.company}</span>
+                              );
+                            })()}
                           </h3>
                         )}
                         <span className="text-xs font-bold tracking-[0.3em] text-teal block mb-4">{exp.period}</span>
@@ -925,18 +934,26 @@ export default function App() {
                       className="relative scroll-mt-[550px]"
                     >
                       <h3 className="text-3xl font-bold mb-2">
-                        {RESUME_DATA.projects.find(p => p.title === exp.company) ? (
-                          <button onClick={() => handleProjectSelect(RESUME_DATA.projects.find(p => p.title === exp.company)!)} className="hover:text-copper text-left flex items-center gap-4 transition-colors group/modalbtn">
+                      {(() => {
+                        const linkedProject = RESUME_DATA.projects.find(p => p.company === exp.company || p.title === exp.company);
+                        return linkedProject ? (
+                          <button onClick={() => handleProjectSelect(linkedProject)} className="hover:text-copper text-left flex flex-wrap items-center gap-4 transition-colors group/modalbtn cursor-pointer">
                             {exp.company}
-                            <span className="text-xs uppercase font-bold tracking-widest text-charcoal bg-copper px-3 py-1 rounded-sm flex items-center gap-2 shadow-sm opacity-0 group-hover/modalbtn:opacity-100 transition-opacity">View Deep Dive <ArrowRight size={12} /></span>
+                            <span className="text-[9px] uppercase font-sans font-bold tracking-[0.2em] text-copper border border-copper/40 px-3 py-1 rounded-full opacity-60 group-hover/modalbtn:opacity-100 group-hover/modalbtn:bg-copper group-hover/modalbtn:text-charcoal transition-all flex items-center gap-2 shadow-sm">
+                              Deep Dive <ArrowRight size={8} />
+                            </span>
                           </button>
                         ) : exp.link ? (
-                          <a href={exp.link} target="_blank" rel="noopener noreferrer" className="hover:text-copper transition-colors underline decoration-outline-suggested underline-offset-4 hover:decoration-copper">
+                          <a href={exp.link} target="_blank" rel="noopener noreferrer" className="hover:text-copper transition-colors flex items-center gap-4 group/extlink">
                             {exp.company}
+                            <span className="text-[9px] uppercase font-sans font-bold tracking-[0.2em] text-teal border border-teal/40 px-3 py-1 rounded-full opacity-60 group-hover/extlink:opacity-100 group-hover/extlink:bg-teal group-hover/extlink:text-charcoal transition-all flex items-center gap-2 shadow-sm">
+                              External Link <ExternalLink size={8} />
+                            </span>
                           </a>
                         ) : (
-                          exp.company
-                        )}
+                          <span className="text-on-surface/90">{exp.company}</span>
+                        );
+                      })()}
                       </h3>
                       <span className="text-xs font-bold tracking-[0.3em] text-teal block mb-4">{exp.period}</span>
                       <p className={`uppercase text-xs font-bold tracking-widest mb-6 ${exp.isEducation ? 'text-teal/80' : 'text-copper'}`}>{exp.role}</p>

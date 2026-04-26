@@ -17,6 +17,7 @@ export interface OtherRole {
 }
 
 export interface Project {
+  company?: string;
   title: string;
   category: string;
   description: string;

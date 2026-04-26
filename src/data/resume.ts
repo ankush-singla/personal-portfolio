@@ -210,6 +210,7 @@ export const RESUME_DATA = {
       ]
     },
     {
+      company: "FanDuel",
       title: "Ace AI: The First Conversational AI for Sports Bettors",
       category: "Consumer GenAI Product",
       year: "2025",
@@ -220,6 +221,7 @@ export const RESUME_DATA = {
       articleLink: "https://www.forbes.com/sites/mattrybaltowski/2025/03/11/fanduel-launches-first-ai-sports-betting-chat-experience/"
     },
     {
+      company: "The Buyer Base",
       title: "The Buyer Base: Improving the SaaS Buyer's Journey",
       category: "Entrepreneurship / B2B SaaS Procurement",
       year: "2023",
@@ -231,6 +233,7 @@ export const RESUME_DATA = {
       articleCtaText: "Read Pitch Deck Overview"
     },
     {
+      company: "Acoustic (formerly IBM Watson Marketing)",
       title: "Acoustic Content: Relaunching Products and Navigating COVID-19",
       category: "Product Strategy & Market Responsiveness",
       year: "2020",
@@ -240,6 +243,7 @@ export const RESUME_DATA = {
       deepDive: "Following the divestiture from IBM, I defined the growth strategy for Acoustic Content to transform it into a high-performance standalone solution. I restructured the global product team to focus on core capabilities rather than siloed features and revamped the business model, including pricing and packaging, to facilitate the organization’s first successful cross-sell path into other portfolio products. We achieved a 3x increase in the largest ACV signed and established a trajectory for 10x projected revenue growth over two years. This growth was further accelerated by rapid market adaptations, such as launching a COVID-19 Response Center initiative within a single week to address shifting customer needs during the global shutdown."
     },
     {
+      company: "IBM, Watson Marketing",
       title: "Watson Campaign Automation: Modernizing Products and Processes",
       category: "Product Strategy & UX",
       year: "2019",
@@ -249,6 +253,7 @@ export const RESUME_DATA = {
       deepDive: "I led a comprehensive revitalization of the Watson Campaign Automation platform, focusing on both customer-facing functionality and internal decision-making frameworks. By implementing a rigorous voice-of-the-customer program using metrics like NPS and UMUX-lite, I translated qualitative feedback into a data-driven product roadmap. I introduced journey tagging and advanced analytics to identify user friction points, allowing the team to set precise OKRs that directly addressed performance gaps. These initiatives resulted in a 30% improvement in customer sentiment and transformed the product into a more intuitive, user-centric interface that prioritized high-value requests and modernized foundational marketing workflows."
     },
     {
+      company: "Overlens",
       title: "Overlens: Using AI to Solve Marketing Attribution",
       category: "Entrepreneurship / Marketing AI & Analytics",
       year: "2016",

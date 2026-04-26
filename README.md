@@ -57,3 +57,13 @@ If you are an AI assistant (like Antigravity or Cursor) making changes to this c
     *   **Do Not Duplicate:** Do not re-introduce hardcoded prompts into the handler or config files.
 2.  **Environment Variables:** Always check for `GEMINI_API_KEY` in the local `.env` and remind the user to set it in Vercel for production.
 3.  **Achievement Logic:** Achievement definitions are located in `src/hooks/useAchievements.ts`. If adding new achievements, ensure the hints are updated in the chatbot prompt context via `prompts.ts`.
+4.  **Career Overview Stickiness (Desktop):** 
+    *   The "Career Journey" sidebar (left side) and the horizontal timeline navigation MUST be `sticky` on desktop while the user scrolls through the entire `career-overview` section.
+    *   **Sidebar:** Use `md:sticky md:top-64` (or similar) to ensure it stays in view without overlapping the top navigation.
+    *   **Timeline:** Use `sticky top-20` and ensure the `sticky-shield` class is preserved for smooth visual transitions.
+5.  **Experience Linking Logic:** 
+    *   Interactivity in the `Career Overview` section follows a strict hierarchy:
+        1.  **Deep Dive:** Matches `experience.company` with `project.company` or `project.title`. (Highest priority; triggers a modal).
+        2.  **External Link:** Fallback to `experience.link` if no project match is found. (Triggers a new tab).
+        3.  **Plain Text:** Default if neither exists.
+    *   **Maintenance:** To upgrade a role to a deep dive, simply add a `Project` with a matching `company` field in `resume.ts`.

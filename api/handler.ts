@@ -1,11 +1,9 @@
 import { GoogleGenAI } from "@google/genai";
 import { RESUME_DATA } from "../src/data/resume";
-import { ACHIEVEMENTS } from "../src/hooks/useAchievements";
+import { ACHIEVEMENTS } from "../src/data/achievements";
 import { SYSTEM_INSTRUCTION, getAchievementContext } from "../src/data/prompts";
 
-export const config = {
-  runtime: 'edge',
-};
+// Note: Using Node.js runtime instead of 'edge' to support the full @google/genai library and relative imports from /src
 
 const ipMap = new Map<string, { count: number; lastTime: number }>();
 
