@@ -7,8 +7,8 @@ import { SYSTEM_INSTRUCTION, getAchievementContext } from "../src/data/prompts";
 
 const ipMap = new Map<string, { count: number; lastTime: number }>();
 
-export default async function handler(req: Request) {
-  const url = new URL(req.url);
+export default async function handler(req: any, res: any) {
+  const url = new URL(req.url!, `http://${req.headers.host}`);
 
   // --- PostHog Proxy Logic ---
   const isProxy = url.pathname.includes('/api/collect') || 
@@ -20,71 +20,64 @@ export default async function handler(req: Request) {
     const posthogUrl = `https://us.i.posthog.com${path}${url.search}`;
 
     if (req.method === 'OPTIONS') {
-      return new Response(null, {
-        status: 204,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-          'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
-        },
-      });
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+      return res.status(204).end();
     }
 
     try {
       const response = await fetch(posthogUrl, {
         method: req.method,
-        headers: req.headers,
-        body: req.method !== 'GET' ? await req.text() : null,
+        headers: req.headers as any,
+        body: req.method !== 'GET' ? JSON.stringify(req.body) : null,
       });
 
-      const resHeaders = new Headers(response.headers);
-      resHeaders.set('Access-Control-Allow-Origin', '*');
-
-      return new Response(response.body, {
-        status: response.status,
-        headers: resHeaders,
+      const resHeaders = response.headers;
+      resHeaders.forEach((value, key) => {
+        if (key.toLowerCase() !== 'content-encoding') {
+          res.setHeader(key, value);
+        }
       });
+      res.setHeader('Access-Control-Allow-Origin', '*');
+
+      const body = await response.arrayBuffer();
+      return res.status(response.status).send(Buffer.from(body));
     } catch (err) {
-      return new Response(JSON.stringify({ error: 'Proxy Error', details: err }), { status: 500 });
+      return res.status(500).json({ error: 'Proxy Error', details: err });
     }
   }
 
   // --- AI Chatbot Logic ---
   if (!url.pathname.endsWith('/chat')) {
-    return new Response(JSON.stringify({ error: 'Not Found' }), { status: 404 });
+    return res.status(404).json({ error: 'Not Found' });
   }
 
   if (req.method !== 'POST') {
-    return new Response(JSON.stringify({ error: 'Method Not Allowed' }), { status: 405 });
+    return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  const ip = req.headers.get('x-forwarded-for') || 'unknown';
+  const ip = req.headers['x-forwarded-for'] || 'unknown';
   const now = Date.now();
-  const rateData = ipMap.get(ip) || { count: 0, lastTime: now };
+  const rateData = ipMap.get(ip as string) || { count: 0, lastTime: now };
 
   if (now - rateData.lastTime < 2000 && rateData.count > 0) {
-    return new Response(JSON.stringify({ error: "The free Google Gemini API isn't as reliable as Ankush is! It's currently taking a breather—please wait a moment." }), {
-      status: 429,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    return res.status(429).json({ error: "The free Google Gemini API isn't as reliable as Ankush is! It's currently taking a breather—please wait a moment." });
   }
 
   rateData.count += 1;
   rateData.lastTime = now;
-  ipMap.set(ip, rateData);
+  ipMap.set(ip as string, rateData);
 
   if (rateData.count > 15) {
-    return new Response(JSON.stringify({ error: "Even the smartest AIs have off days! We've reached the maximum number of messages for this session." }), {
-      status: 403,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    return res.status(403).json({ error: "Even the smartest AIs have off days! We've reached the maximum number of messages for this session." });
   }
 
   try {
-    const { message, history, achievements = [] } = await req.json();
+    const { message, history, achievements = [] } = req.body;
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
-      return new Response(JSON.stringify({ error: 'API Key missing' }), { status: 500 });
+      return res.status(500).json({ error: 'API Key missing' });
     }
 
     const allAchievementsList = Object.values(ACHIEVEMENTS).map(a => ({ id: a.id, hint: a.hint }));
@@ -111,14 +104,11 @@ export default async function handler(req: Request) {
 
     const responseText = result.response.text();
 
-    return new Response(JSON.stringify({ text: responseText || "I'm sorry, I couldn't process that." }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    return res.status(200).json({ text: responseText || "I'm sorry, I couldn't process that." });
   } catch (error) {
-    return new Response(JSON.stringify({ 
+    return res.status(500).json({ 
       error: "Unfortunately, the free Google Gemini API isn't as reliable as Ankush is! Even the smartest AIs have off days.",
       details: error instanceof Error ? error.message : String(error)
-    }), { status: 500 });
+    });
   }
 }
