@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ThemeType } from './types';
 import { RESUME_DATA } from './data/resume';
@@ -15,6 +15,9 @@ import { Camera, Gamepad2, Users, Briefcase, Mail, Github, Linkedin, Twitter, Ar
 import { applyThemeToRoot } from './utils/theme';
 import MatrixRain from './components/MatrixRain';
 import BasketballParquet from './components/BasketballParquet';
+
+/** Nav (h-20) + compact sticky career timeline + buffer; keep in sync with sidebar `md:top-*` */
+const CAREER_SCROLL_MARGIN_PX = 400;
 
 export default function App() {
   const [theme, setTheme] = useState<string>('monolith');
@@ -34,6 +37,22 @@ export default function App() {
   const [isGlitching, setIsGlitching] = useState(false);
   const timelineRef = React.useRef<HTMLDivElement>(null);
   const isDraggingRef = useRef(false);
+  const backdropPointerRef = useRef<{ x: number; y: number; active: boolean } | null>(null);
+  const testimonialStripRef = useRef<HTMLDivElement>(null);
+  const skipTestimonialScrollSyncRef = useRef(false);
+  const testimonialIndexFromStripRef = useRef(false);
+  const testimonialScrollRafRef = useRef<number | null>(null);
+  const testimonialIndexRef = useRef(testimonialIndex);
+
+  useEffect(() => {
+    testimonialIndexRef.current = testimonialIndex;
+  }, [testimonialIndex]);
+
+  useEffect(() => {
+    return () => {
+      if (testimonialScrollRafRef.current !== null) cancelAnimationFrame(testimonialScrollRafRef.current);
+    };
+  }, []);
 
   const { enabled, setEnabled, unlockedIds, unlock, latestAchievement, clearLatest } = useAchievements();
 
@@ -239,7 +258,7 @@ export default function App() {
     setActiveYear(RESUME_DATA.projects[(currentProjectIndex - 1 + RESUME_DATA.projects.length) % RESUME_DATA.projects.length].year);
   };
 
-  const nextProjectInModal = (e: React.MouseEvent) => {
+  const nextProjectInModal = (e: React.SyntheticEvent) => {
     e.stopPropagation();
     const nextIdx = (currentProjectIndex + 1) % RESUME_DATA.projects.length;
     setCurrentProjectIndex(nextIdx);
@@ -247,13 +266,64 @@ export default function App() {
     setActiveYear(RESUME_DATA.projects[nextIdx].year);
   };
 
-  const prevProjectInModal = (e: React.MouseEvent) => {
+  const prevProjectInModal = (e: React.SyntheticEvent) => {
     e.stopPropagation();
     const prevIdx = (currentProjectIndex - 1 + RESUME_DATA.projects.length) % RESUME_DATA.projects.length;
     setCurrentProjectIndex(prevIdx);
     setSelectedProject(RESUME_DATA.projects[prevIdx]);
     setActiveYear(RESUME_DATA.projects[prevIdx].year);
   };
+
+  const handleBackdropPointerDown = (e: React.PointerEvent) => {
+    if (e.target !== e.currentTarget) return;
+    backdropPointerRef.current = { x: e.clientX, y: e.clientY, active: true };
+  };
+
+  const handleBackdropPointerUp = (e: React.PointerEvent) => {
+    const start = backdropPointerRef.current;
+    backdropPointerRef.current = null;
+    if (!start?.active) return;
+    if (e.target !== e.currentTarget) return;
+    const d = Math.hypot(e.clientX - start.x, e.clientY - start.y);
+    if (d < 14) setSelectedProject(null);
+  };
+
+  const handleBackdropPointerCancel = () => {
+    backdropPointerRef.current = null;
+  };
+
+  const handleTestimonialStripScroll = () => {
+    if (skipTestimonialScrollSyncRef.current) return;
+    const el = testimonialStripRef.current;
+    if (!el || el.clientWidth === 0) return;
+    if (testimonialScrollRafRef.current !== null) cancelAnimationFrame(testimonialScrollRafRef.current);
+    testimonialScrollRafRef.current = requestAnimationFrame(() => {
+      testimonialScrollRafRef.current = null;
+      if (skipTestimonialScrollSyncRef.current) return;
+      const strip = testimonialStripRef.current;
+      if (!strip || strip.clientWidth === 0) return;
+      const idx = Math.round(strip.scrollLeft / strip.clientWidth);
+      const clamped = Math.max(0, Math.min(RESUME_DATA.testimonials.length - 1, idx));
+      if (clamped === testimonialIndexRef.current) return;
+      testimonialIndexFromStripRef.current = true;
+      setTestimonialIndex(clamped);
+      unlock('peer-reviewed');
+    });
+  };
+
+  useLayoutEffect(() => {
+    if (testimonialIndexFromStripRef.current) {
+      testimonialIndexFromStripRef.current = false;
+      return;
+    }
+    const el = testimonialStripRef.current;
+    if (!el || el.clientWidth === 0) return;
+    skipTestimonialScrollSyncRef.current = true;
+    el.scrollTo({ left: testimonialIndex * el.clientWidth, behavior: 'smooth' });
+    window.setTimeout(() => {
+      skipTestimonialScrollSyncRef.current = false;
+    }, 400);
+  }, [testimonialIndex]);
 
   const handleProjectSelect = (project: any) => {
     setSelectedProject(project);
@@ -382,11 +452,11 @@ export default function App() {
 
           {/* Action & Utility Island (Right) */}
           <div className="flex items-center justify-end gap-6 h-full">
-              {/* Unified Achievement HUD - Visible on 2xl */}
-              <div className="hidden 2xl:flex items-center pr-6 border-r border-outline-suggested/30">
+              {/* Unified Achievement HUD - Visible on lg+ (2xl-only hid it on typical laptop widths) */}
+              <div className="hidden lg:flex items-center pr-4 xl:pr-6 border-r border-outline-suggested/30">
                 <button 
                   onClick={() => setIsAchievementsModalOpen(true)}
-                  className="group/achieve relative flex items-center gap-4 px-4 py-1 hover:bg-teal/5 rounded-full transition-colors"
+                  className="group/achieve relative flex items-center gap-3 px-3 py-1 hover:bg-teal/5 rounded-full transition-colors xl:gap-4 xl:px-4"
                 >
                   <div className="relative w-10 h-10 flex items-center justify-center">
                     <svg className="absolute inset-0 w-full h-full -rotate-90">
@@ -409,7 +479,7 @@ export default function App() {
                     )}
                   </div>
                   <div className="flex flex-col text-left">
-                    <span className="text-[8px] font-black uppercase tracking-widest text-on-surface/30 group-hover/achieve:text-teal transition-colors">Achievements</span>
+                    <span className="hidden xl:block text-[8px] font-black uppercase tracking-widest text-on-surface/30 group-hover/achieve:text-teal transition-colors">Achievements</span>
                     <span className="text-[10px] font-black text-teal leading-none">{unlockedIds.length}/7</span>
                   </div>
                 </button>
@@ -605,7 +675,7 @@ export default function App() {
                             isDraggingRef.current = true;
                           }}
                           onDragEnd={(_, info) => {
-                            const swipeThreshold = 50;
+                            const swipeThreshold = 56;
                             if (info.offset.x > swipeThreshold) {
                               prevProject();
                               setIsProjectAutoPlayPaused(true);
@@ -613,14 +683,12 @@ export default function App() {
                               nextProject();
                               setIsProjectAutoPlayPaused(true);
                             }
-                            // Small delay to ensure onTap doesn't catch the tail end of a drag
                             setTimeout(() => {
                               isDraggingRef.current = false;
-                            }, 100);
+                            }, 200);
                           }}
                           onTap={() => {
                             if (isDraggingRef.current || selectedProject) return;
-                            
                             if (Math.abs(offset) > 0.1) {
                               setCurrentProjectIndex(idx);
                               setActiveYear(proj.year);
@@ -638,17 +706,7 @@ export default function App() {
                             filter: offset === 0 ? 'blur(0px)' : 'blur(6px)'
                           }}
                           transition={{ type: "spring", stiffness: 180, damping: 24 }}
-                          onTap={() => {
-                            if (Math.abs(offset) > 0.1) {
-                              // If it's a neighbor, go to it
-                              setCurrentProjectIndex(idx);
-                              setActiveYear(proj.year);
-                            } else {
-                              // If it's the active one, open modal
-                              handleProjectSelect(proj);
-                            }
-                          }}
-                          className={`absolute w-full max-w-[90vw] md:max-w-2xl lg:max-w-3xl aspect-[16/9] bg-surface-low border border-outline-suggested shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] overflow-hidden cursor-pointer group touch-pan-y`}
+                          className={`absolute w-full max-w-[90vw] md:max-w-2xl lg:max-w-3xl aspect-[16/9] bg-surface-low border border-outline-suggested shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] overflow-hidden cursor-pointer group touch-pan-x`}
                         >
                           <img
                             src={proj.image}
@@ -657,21 +715,26 @@ export default function App() {
                             referrerPolicy="no-referrer"
                           />
                           <div className={`absolute inset-0 bg-gradient-to-tr from-black via-black/60 to-transparent flex flex-col justify-end transition-opacity duration-500 ${offset === 0 ? 'opacity-100' : 'opacity-0'}`}>
-                            <div className="p-6 md:p-8 lg:p-12">
-                              <span className="text-[9px] md:text-xs uppercase font-black tracking-[0.4em] text-copper mb-2 md:mb-4 block drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">{proj.year} / {proj.category}</span>
-                              <h3 className="text-xl md:text-3xl lg:text-5xl font-black text-white mb-2 md:mb-4 tracking-tighter leading-none drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)]">{proj.title}</h3>
-                              <p className="text-xs md:text-base lg:text-lg text-white/80 max-w-2xl line-clamp-2 font-medium leading-relaxed drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">{proj.description}</p>
+                            <div className="min-w-0 p-6 md:p-8 lg:p-12">
+                              <div className="mb-2 flex min-w-0 items-start justify-between gap-3 md:mb-4">
+                                <span className="min-w-0 text-[9px] font-black uppercase tracking-[0.25em] text-copper drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] md:text-xs md:tracking-[0.4em]">
+                                  {proj.year} / {proj.category}
+                                </span>
+                                {offset === 0 && (
+                                  <div className="pointer-events-none shrink-0 rounded-full border border-white/25 bg-copper/65 px-3 py-2 text-charcoal shadow-[0_8px_24px_-6px_rgba(0,0,0,0.45)] backdrop-blur-md flex items-center gap-2 transition-all duration-300 group-hover:scale-105 group-hover:bg-copper/80 md:px-5 md:py-2.5 md:gap-3">
+                                    <span className="text-[9px] font-black uppercase tracking-[0.15em] md:text-[10px] md:tracking-[0.2em]">Dive Deeper</span>
+                                    <ArrowRight size={14} className="md:h-[18px] md:w-[18px]" />
+                                  </div>
+                                )}
+                              </div>
+                              <h3 className="text-xl font-black leading-tight tracking-tight text-white drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)] break-words md:mb-3 md:text-3xl md:tracking-tighter lg:mb-4 lg:text-5xl lg:leading-none">
+                                {proj.title}
+                              </h3>
+                              <p className="max-w-none text-xs font-medium leading-relaxed text-white/90 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] hyphens-auto break-words md:text-base lg:text-lg">
+                                {proj.description}
+                              </p>
                             </div>
                           </div>
-                          
-                          {offset === 0 && (
-                            <div className="absolute top-8 right-8">
-                              <div className="bg-copper text-charcoal px-6 py-3 rounded-full shadow-[0_10px_20px_-5px_rgba(184,115,51,0.5)] flex items-center gap-3 group-hover:scale-105 transition-all duration-300 border border-white/20">
-                                <span className="text-[10px] md:text-xs font-black uppercase tracking-[0.2em]">Dive Deeper</span>
-                                <ArrowRight size={18} />
-                              </div>
-                            </div>
-                          )}
                         </motion.div>
                       );
                     })}
@@ -727,9 +790,9 @@ export default function App() {
             <span className="vertical-label sticky top-32">{RESUME_DATA.siteMetadata.sections[2].label}</span>
           </div>
 
-          <div className="max-w-6xl mx-auto mb-32 hidden md:block sticky top-20 z-50 bg-surface-lowest pt-12 pb-8 -mx-4 px-4 border-b border-outline-suggested/30 transition-all duration-300 sticky-shield">
-            <div className="flex justify-between items-center mb-16 border-b border-outline-suggested pb-4">
-              <h2 className="text-4xl md:text-6xl font-black">Career Overview</h2>
+          <div className="max-w-7xl mx-auto mb-12 hidden md:block sticky top-20 z-50 bg-surface-lowest pt-6 pb-4 -mx-4 px-4 border-b border-outline-suggested/30 transition-all duration-300 sticky-shield">
+            <div className="flex justify-between items-center mb-6 border-b border-outline-suggested pb-3">
+              <h2 className="text-4xl md:text-5xl font-black">Career Overview</h2>
               <div className="flex gap-4">
                 <button onClick={() => scrollTimeline('left')} className="p-2 border border-outline-suggested hover:bg-copper hover:text-charcoal transition-colors" title="Scroll Left">
                   <ChevronLeft size={16} />
@@ -747,21 +810,21 @@ export default function App() {
                 </a>
               </div>
             </div>
-            <div ref={timelineRef} className="relative w-full overflow-x-auto no-scrollbar scroll-smooth flex pb-8 pt-12">
-              <div className="flex items-start min-w-max px-4 relative gap-16">
-                <div className="h-[2px] w-full bg-outline-suggested/60 absolute top-[68px] -z-10 left-0 right-0"></div>
+            <div ref={timelineRef} className="relative w-full overflow-x-auto no-scrollbar scroll-smooth flex pb-4 pt-4">
+              <div className="flex items-start min-w-max px-2 relative gap-10">
+                <div className="h-[2px] w-full bg-outline-suggested/60 absolute top-10 -z-10 left-0 right-0"></div>
                 {timelineGroups.map((group, gIdx) => (
-                  <div key={`tl-g-${gIdx}`} className="flex flex-col relative pt-8">
+                  <div key={`tl-g-${gIdx}`} className="flex flex-col relative pt-4">
                     {/* Spanning Indicator */}
                     <div className="absolute top-0 left-0 right-4 h-[3px] bg-copper/60"></div>
                     <div className="absolute top-0 left-0 w-[3px] h-3 bg-copper/60"></div>
                     <div className="absolute top-0 right-4 w-[3px] h-3 bg-copper/60"></div>
 
-                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface/80 absolute -top-10 left-0 max-w-[150px] leading-relaxed">{group.group}</span>
+                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface/80 absolute -top-8 left-0 max-w-[150px] leading-relaxed">{group.group}</span>
 
-                    <div className="flex gap-4 mt-2">
+                    <div className="flex gap-3 mt-1.5">
                       {group.experiences.filter((exp, index, self) => index === self.findIndex((t) => t.company === exp.company)).map((exp, idx) => (
-                        <a href={`#exp-${exp.company.replace(/\s+/g, '-')}-${exp.period.replace(/\s+/g, '')}`} data-company={exp.company} key={`tl-n-${idx}-${exp.company}`} className={`flex flex-col items-center relative group w-32 px-2 cursor-pointer transition-opacity duration-300 ${activeCompany === exp.company ? 'opacity-100' : 'opacity-60 hover:opacity-100'}`}>
+                        <a href={`#exp-${exp.company.replace(/\s+/g, '-')}-${exp.period.replace(/\s+/g, '')}`} data-company={exp.company} key={`tl-n-${idx}-${exp.company}`} className={`flex flex-col items-center relative group w-28 px-1 cursor-pointer transition-opacity duration-300 ${activeCompany === exp.company ? 'opacity-100' : 'opacity-60 hover:opacity-100'}`}>
                           <div className={`w-8 h-8 rounded-full border-2 transition-all duration-500 flex items-center justify-center relative ${activeCompany === exp.company ? 'border-copper bg-surface shadow-[0_0_20px_rgba(235,94,40,0.3)]' : 'border-outline-suggested/40 bg-surface-lowest group-hover:border-copper/40'}`}>
                             <div className={`w-3 h-3 rounded-full bg-on-surface/20 transition-all ${activeCompany === exp.company ? 'bg-copper' : ''}`}></div>
                             {activeCompany === exp.company && (
@@ -772,8 +835,8 @@ export default function App() {
                               />
                             )}
                           </div>
-                          <span className={`text-[10px] font-bold tracking-widest mt-4 ${activeCompany === exp.company ? 'text-copper' : 'text-teal'}`}>{getDisplayPeriod(group.experiences, exp.company)}</span>
-                          <span className={`text-[10px] font-semibold text-center mt-2 transition-colors line-clamp-2 uppercase tracking-wider ${activeCompany === exp.company ? 'text-on-surface' : 'group-hover:text-copper'}`}>{exp.company}</span>
+                          <span className={`text-[10px] font-bold tracking-widest mt-3 ${activeCompany === exp.company ? 'text-copper' : 'text-teal'}`}>{getDisplayPeriod(group.experiences, exp.company)}</span>
+                          <span className={`text-[10px] font-semibold text-center mt-1.5 transition-colors line-clamp-2 uppercase tracking-wider ${activeCompany === exp.company ? 'text-on-surface' : 'group-hover:text-copper'}`}>{exp.company}</span>
                         </a>
                       ))}
                     </div>
@@ -783,29 +846,29 @@ export default function App() {
             </div>
           </div>
 
-          <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-start gap-16">
-            <div className="w-full md:w-1/3 md:sticky md:top-64">
+          <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-10 md:gap-12">
+            <div className="w-full md:max-w-[280px] md:shrink-0 md:sticky md:top-52">
               {/* Mobile Section Header */}
               <div className="md:hidden mb-12">
                 <h2 className="text-4xl font-black mb-4">Career Overview</h2>
                 <div className="w-12 h-1 bg-copper"></div>
               </div>
 
-              <div id="left-sidebar-nav" className="max-h-[calc(100vh-16rem)] overflow-y-auto no-scrollbar pb-16">
+              <div id="left-sidebar-nav" className="max-h-[calc(100vh-13rem)] overflow-y-auto no-scrollbar pb-16">
                 <div className="relative pl-6 md:pl-0">
                   {/* Decorative Vertical Line for Mobile */}
                   <div className="absolute left-0 top-0 bottom-0 w-[1px] bg-outline-suggested md:hidden"></div>
                   <div className="absolute left-0 top-0 w-[1px] h-8 bg-copper md:hidden"></div>
                   
-                  <h3 className="text-xs font-black uppercase tracking-[0.25em] text-copper mb-4">Career Journey</h3>
-                  <p className="text-base md:text-sm text-on-surface/70 max-w-lg md:max-w-xs mb-12 leading-relaxed font-serif italic">
+                  <h3 className="text-xs font-black uppercase tracking-[0.25em] text-copper mb-3">Career Journey</h3>
+                  <p className="text-base md:text-sm text-on-surface/70 max-w-lg md:max-w-[260px] mb-6 leading-relaxed font-serif italic">
                     {RESUME_DATA.siteMetadata.sections.find(s => s.id === 'background')?.description}
                   </p>
                 </div>
 
-                <div className="hidden md:block space-y-8 border-l border-outline-suggested pl-8 mb-16">
+                <div className="hidden md:block space-y-5 border-l border-outline-suggested pl-6 mb-10">
                   {groupedExperiences.map(group => (
-                    <div key={`nav-group-${group.group}`} className="space-y-4">
+                    <div key={`nav-group-${group.group}`} className="space-y-3">
                       <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface/40">{group.group}</span>
                       {group.experiences.filter((exp, index, self) => index === self.findIndex((t) => t.company === exp.company)).map(exp => (
                         <div key={`exp-nav-${exp.company}`} data-nav-company={exp.company}>
@@ -813,7 +876,7 @@ export default function App() {
                             onClick={() => {
                               const el = document.getElementById(`exp-${exp.company.replace(/\s+/g, '-')}-${exp.period.replace(/\s+/g, '')}`);
                               if (el) {
-                                const y = el.getBoundingClientRect().top + window.scrollY - 550;
+                                const y = el.getBoundingClientRect().top + window.scrollY - CAREER_SCROLL_MARGIN_PX;
                                 window.scrollTo({ top: y, behavior: 'smooth' });
                               }
                             }}
@@ -835,7 +898,7 @@ export default function App() {
                             onClick={() => {
                               const el = document.getElementById(`exp-${exp.company.replace(/\s+/g, '-')}`);
                               if (el) {
-                                const y = el.getBoundingClientRect().top + window.scrollY - 550;
+                                const y = el.getBoundingClientRect().top + window.scrollY - CAREER_SCROLL_MARGIN_PX;
                                 window.scrollTo({ top: y, behavior: 'smooth' });
                               }
                             }}
@@ -865,10 +928,10 @@ export default function App() {
               </div>
             </div>
 
-            <div className="w-full md:w-2/3 space-y-32">
+            <div className="w-full md:flex-1 md:min-w-0 space-y-32">
               {groupedExperiences.map(group => (
                 <div key={`detail-group-${group.group}`} className="space-y-32">
-                  <div className="border-b border-outline-suggested pb-4 mb-16 scroll-mt-[550px]">
+                  <div className="border-b border-outline-suggested pb-4 mb-16" style={{ scrollMarginTop: CAREER_SCROLL_MARGIN_PX }}>
                     <h3 className="text-2xl font-black text-copper/80 tracking-widest uppercase">{group.group}</h3>
                   </div>
                   {group.experiences.map((exp, expIdx) => {
@@ -880,7 +943,8 @@ export default function App() {
                         id={`exp-${exp.company.replace(/\s+/g, '-')}-${exp.period.replace(/\s+/g, '')}`}
                         onViewportEnter={() => setActiveCompany(exp.company)}
                         viewport={{ once: false, amount: 0.1, margin: "-50% 0px -30% 0px" }}
-                        className={`relative scroll-mt-[550px] ${isRepeatCompany ? '-mt-24' : ''}`}
+                        className={`relative ${isRepeatCompany ? '-mt-24' : ''}`}
+                        style={{ scrollMarginTop: CAREER_SCROLL_MARGIN_PX }}
                       >
                         {!isRepeatCompany && (
                           <h3 className="text-3xl font-bold mb-2">
@@ -913,7 +977,7 @@ export default function App() {
                             <p className="text-sm italic text-on-surface/70 leading-[1.7] font-serif">{exp.motivation}</p>
                           </div>
                         )}
-                        <p className="text-lg text-on-surface/90 leading-[1.8] max-w-2xl font-light">{exp.description}</p>
+                        <p className="text-lg text-on-surface/90 leading-[1.8] max-w-3xl font-light">{exp.description}</p>
                       </motion.div>
                     );
                   })}
@@ -922,7 +986,7 @@ export default function App() {
 
               {educationExperiences.length > 0 && (
                 <div className="space-y-32">
-                  <div className="border-b border-outline-suggested pb-4 mb-16 scroll-mt-[550px]">
+                  <div className="border-b border-outline-suggested pb-4 mb-16" style={{ scrollMarginTop: CAREER_SCROLL_MARGIN_PX }}>
                     <h3 className="text-2xl font-black text-copper/80 tracking-widest uppercase">Education</h3>
                   </div>
                   {educationExperiences.map((exp) => (
@@ -931,7 +995,8 @@ export default function App() {
                       id={`exp-${exp.company.replace(/\s+/g, '-')}`}
                       onViewportEnter={() => setActiveCompany(exp.company)}
                       viewport={{ once: false, amount: 0.1, margin: "-50% 0px -30% 0px" }}
-                      className="relative scroll-mt-[550px]"
+                      className="relative"
+                      style={{ scrollMarginTop: CAREER_SCROLL_MARGIN_PX }}
                     >
                       <h3 className="text-3xl font-bold mb-2">
                       {(() => {
@@ -962,7 +1027,7 @@ export default function App() {
                           <p className="text-sm italic text-on-surface/70 leading-[1.7] font-serif">{exp.motivation}</p>
                         </div>
                       )}
-                      <p className="text-lg text-on-surface/90 leading-[1.8] max-w-2xl font-light">{exp.description}</p>
+                      <p className="text-lg text-on-surface/90 leading-[1.8] max-w-3xl font-light">{exp.description}</p>
                       </motion.div>
                     ))}
                   </div>
@@ -992,40 +1057,52 @@ export default function App() {
           </div>
 
           <div className="max-w-6xl mx-auto w-full">
-            <div className="flex justify-between items-end mb-16">
+            <div className="flex flex-col gap-6 sm:flex-row sm:justify-between sm:items-end mb-10 md:mb-16">
               <h2 className="text-4xl md:text-6xl font-black text-left">Peer Perspectives</h2>
-              <div className="flex gap-4">
-                <button onClick={prevTestimonial} className="p-4 bg-surface-low border border-outline-suggested hover:bg-copper hover:text-charcoal transition-colors">
+              <div className="flex gap-3 sm:gap-4 justify-end sm:justify-start">
+                <button
+                  type="button"
+                  onClick={prevTestimonial}
+                  className="p-3 sm:p-4 bg-surface-low border border-outline-suggested hover:bg-copper hover:text-charcoal transition-colors"
+                  aria-label="Previous testimonial"
+                >
                   <ChevronLeft size={24} />
                 </button>
-                <button onClick={nextTestimonial} className="p-4 bg-surface-low border border-outline-suggested hover:bg-copper hover:text-charcoal transition-colors">
+                <button
+                  type="button"
+                  onClick={nextTestimonial}
+                  className="p-3 sm:p-4 bg-surface-low border border-outline-suggested hover:bg-copper hover:text-charcoal transition-colors"
+                  aria-label="Next testimonial"
+                >
                   <ChevronRight size={24} />
                 </button>
               </div>
             </div>
 
-            <div className="relative h-[400px] md:h-[300px] w-full overflow-hidden">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={testimonialIndex}
-                  initial={{ opacity: 0, x: 50 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -50 }}
-                  transition={{ duration: 0.5, ease: "easeOut" }}
-                  className="absolute inset-0"
+            <div
+              ref={testimonialStripRef}
+              onScroll={handleTestimonialStripScroll}
+              className="flex h-[min(420px,70svh)] min-h-[18rem] w-full max-w-full overflow-x-auto overflow-y-hidden no-scrollbar scroll-smooth snap-x snap-mandatory touch-pan-x border border-outline-suggested bg-surface-low md:h-[min(340px,50svh)]"
+            >
+              {RESUME_DATA.testimonials.map((t, idx) => (
+                <div
+                  key={`${t.author}-${idx}`}
+                  className="flex min-w-0 w-full shrink-0 grow-0 basis-full snap-center snap-always"
                 >
-                  <div className="bg-surface-low border border-outline-suggested group p-8 md:p-12 flex flex-col justify-center h-full hover:bg-surface-high transition-colors w-full">
-                    <p className="text-lg md:text-2xl font-light italic text-on-surface/80 leading-relaxed mb-12 max-w-4xl">"{RESUME_DATA.testimonials[testimonialIndex].quote}"</p>
+                  <div className="group flex h-full min-h-0 w-full min-w-0 max-w-full flex-col justify-center overflow-y-auto overscroll-y-contain bg-surface-low p-6 transition-colors hover:bg-surface-high sm:p-8 md:p-12">
+                    <p className="mb-8 max-w-full text-base font-light italic leading-relaxed text-on-surface/80 hyphens-auto break-words [overflow-wrap:anywhere] md:mb-10 md:text-xl lg:mb-12 lg:text-2xl">
+                      &ldquo;{t.quote}&rdquo;
+                    </p>
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-[1px] bg-copper"></div>
+                      <div className="h-px w-12 bg-copper" />
                       <div>
-                        <h4 className="text-sm font-bold uppercase tracking-widest text-copper">{RESUME_DATA.testimonials[testimonialIndex].author}</h4>
-                        <p className="text-xs text-on-surface/40 tracking-widest mt-1 uppercase">{RESUME_DATA.testimonials[testimonialIndex].context}</p>
+                        <h4 className="text-sm font-bold uppercase tracking-widest text-copper">{t.author}</h4>
+                        <p className="mt-1 text-xs uppercase tracking-widest text-on-surface/40">{t.context}</p>
                       </div>
                     </div>
                   </div>
-                </motion.div>
-              </AnimatePresence>
+                </div>
+              ))}
             </div>
             {/* Dots */}
             <div className="flex gap-3 mt-8">
@@ -1043,18 +1120,23 @@ export default function App() {
 
 
         {/* Contact Section */}
-        <section id="contact" className="relative px-6 md:px-24 pt-32 mb-32 scroll-mt-32">
-          <div className="hidden md:flex absolute left-6 md:left-12 top-0 h-full items-start z-[55] pt-32">
+        <section
+          id="contact"
+          className="relative px-6 md:px-24 pt-32 lg:pt-24 mb-32 scroll-mt-32 [max-height:800px]:pt-14 [max-height:800px]:mb-24"
+        >
+          <div className="hidden md:flex absolute left-6 md:left-12 top-0 h-full items-start z-[55] pt-32 lg:pt-24 [max-height:800px]:pt-14">
             <span className="vertical-label sticky top-32">{RESUME_DATA.siteMetadata.sections[4].label}</span>
           </div>
           <div className="max-w-6xl mx-auto">
 
             {/* How I Engage */}
-            <div className="mb-16">
-              <div className="flex flex-col md:flex-row justify-between items-end mb-10 border-b border-outline-suggested pb-6">
+            <div className="mb-10 md:mb-12 [max-height:800px]:mb-6">
+              <div className="flex flex-col md:flex-row justify-between items-end mb-6 md:mb-8 border-b border-outline-suggested pb-4 md:pb-5 [max-height:800px]:mb-4 [max-height:800px]:pb-3">
                 <div>
-                  <h2 className="text-4xl md:text-6xl font-black">Want to get in touch?</h2>
-                  <p className="text-on-surface/50 mt-6 text-base md:text-lg max-w-xl leading-relaxed">I'm always open to conversations where I can create value. If any of these resonate, please feel free to reach out.</p>
+                  <h2 className="text-4xl md:text-5xl xl:text-6xl font-black">Want to get in touch?</h2>
+                  <p className="text-on-surface/50 mt-4 md:mt-5 text-base md:text-lg lg:leading-snug max-w-xl leading-snug md:leading-relaxed">
+                    I'm always open to conversations where I can create value. If any of these resonate, please feel free to reach out.
+                  </p>
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-outline-suggested border border-outline-suggested">
@@ -1068,11 +1150,15 @@ export default function App() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.07 }}
-                    className="group bg-surface p-8 flex flex-col gap-3 hover:bg-surface-low transition-colors cursor-pointer"
+                    className="group bg-surface p-5 md:p-6 [max-height:800px]:p-4 flex h-full min-h-0 flex-col gap-2 hover:bg-surface-low transition-colors cursor-pointer"
                   >
                     <span className="text-xs uppercase font-bold tracking-widest text-copper group-hover:text-teal transition-colors">{eng.label}</span>
-                    <p className="text-on-surface/60 text-sm leading-relaxed">{eng.description}</p>
-                    <span className="mt-auto text-[10px] uppercase tracking-widest text-on-surface/20 group-hover:text-copper transition-colors flex items-center gap-1">Get in touch <ArrowRight size={10} /></span>
+                    <p className="min-h-0 flex-1 text-on-surface/60 text-sm leading-snug line-clamp-2 [max-height:800px]:text-[13px]">
+                      {eng.description}
+                    </p>
+                    <span className="text-[10px] uppercase tracking-widest text-on-surface/20 group-hover:text-copper transition-colors flex shrink-0 items-center gap-1">
+                      Get in touch <ArrowRight size={10} />
+                    </span>
                   </motion.a>
                 ))}
               </div>
@@ -1128,92 +1214,102 @@ export default function App() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-surface/60 backdrop-blur-3xl p-6 md:p-12"
-            onClick={() => setSelectedProject(null)}
+            className="fixed inset-0 z-[110] flex items-center justify-center bg-surface/60 backdrop-blur-3xl px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))] md:px-12"
+            onPointerDown={handleBackdropPointerDown}
+            onPointerUp={handleBackdropPointerUp}
+            onPointerCancel={handleBackdropPointerCancel}
           >
             <motion.div
               initial={{ y: 50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 50, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-surface border border-outline-suggested w-full max-w-5xl h-[90vh] md:h-[80vh] overflow-y-auto flex flex-col relative"
+              className="bg-surface border border-outline-suggested w-full max-w-5xl max-h-[min(90dvh,920px)] md:max-h-[min(80dvh,900px)] flex flex-col min-h-0 relative shadow-2xl"
             >
-              {/* Modal Navigation Buttons */}
-              <div className="hidden lg:block">
+              <div className="pointer-events-none absolute inset-y-10 left-2 right-2 z-30 hidden lg:flex items-center justify-between">
                 <button
+                  type="button"
                   onClick={prevProjectInModal}
-                  className="fixed left-12 top-1/2 -translate-y-1/2 p-4 bg-charcoal/80 backdrop-blur-md text-copper hover:bg-copper hover:text-charcoal transition-all rounded-full shadow-2xl border border-copper/20 active:scale-95 group"
+                  className="pointer-events-auto p-4 bg-charcoal/80 backdrop-blur-md text-copper hover:bg-copper hover:text-charcoal transition-all rounded-full shadow-2xl border border-copper/20 active:scale-95 group"
                 >
                   <ChevronLeft size={32} className="group-hover:-translate-x-1 transition-transform" />
                 </button>
                 <button
+                  type="button"
                   onClick={nextProjectInModal}
-                  className="fixed right-12 top-1/2 -translate-y-1/2 p-4 bg-charcoal/80 backdrop-blur-md text-copper hover:bg-copper hover:text-charcoal transition-all rounded-full shadow-2xl border border-copper/20 active:scale-95 group"
+                  className="pointer-events-auto p-4 bg-charcoal/80 backdrop-blur-md text-copper hover:bg-copper hover:text-charcoal transition-all rounded-full shadow-2xl border border-copper/20 active:scale-95 group"
                 >
                   <ChevronRight size={32} className="group-hover:translate-x-1 transition-transform" />
                 </button>
               </div>
 
-              {/* Mobile Navigation Buttons */}
-              <div className="flex lg:hidden absolute bottom-6 right-6 gap-3 z-50">
-                <button
-                  onClick={prevProjectInModal}
-                  className="p-3 bg-charcoal text-copper rounded-full border border-copper/20"
-                >
-                  <ChevronLeft size={20} />
-                </button>
-                <button
-                  onClick={nextProjectInModal}
-                  className="p-3 bg-charcoal text-copper rounded-full border border-copper/20"
-                >
-                  <ChevronRight size={20} />
-                </button>
-              </div>
-
               <button
+                type="button"
                 onClick={() => setSelectedProject(null)}
-                className="absolute top-6 right-6 p-2 bg-charcoal text-copper hover:bg-copper hover:text-charcoal transition-colors z-10 rounded-full"
+                className="absolute z-40 p-2 bg-charcoal text-copper hover:bg-copper hover:text-charcoal transition-colors rounded-full top-[max(0.75rem,env(safe-area-inset-top))] right-[max(0.75rem,env(safe-area-inset-right))]"
               >
                 <X size={24} />
               </button>
 
-              <div className="w-full h-64 md:h-96 shrink-0 relative">
-                <img src={selectedProject.image} alt={selectedProject.title} className="w-full h-full object-cover" />
+              <div className="w-full h-48 sm:h-56 md:h-64 lg:h-96 shrink-0 relative">
+                <img src={selectedProject.image} alt={selectedProject.title} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                 <div className="absolute inset-0 bg-gradient-to-t from-surface to-transparent" />
               </div>
 
-              <div className="p-8 md:p-16 -mt-32 relative z-10">
-                <span className="text-xs uppercase font-bold tracking-widest text-teal mb-4 block bg-surface/80 w-max px-3 py-1 backdrop-blur-md">{selectedProject.category}</span>
-                <h2 className="text-4xl md:text-6xl font-black mb-6">{selectedProject.title}</h2>
-                <div className="w-12 h-1 bg-copper mb-8"></div>
-                <div className="prose prose-invert max-w-3xl">
-                  <p className="text-xl md:text-2xl font-light text-on-surface/95 leading-[1.6] mb-8">{selectedProject.description}</p>
+              <div className="flex-1 min-h-0 overflow-y-auto overscroll-y-contain">
+                <div className="relative z-10 -mt-20 min-w-0 px-6 pb-28 pt-4 sm:-mt-24 sm:pb-28 md:-mt-32 md:px-16 md:pb-32 lg:pb-24">
+                  <span className="text-xs uppercase font-bold tracking-widest text-teal mb-4 block bg-surface/80 w-max px-3 py-1 backdrop-blur-md">{selectedProject.category}</span>
+                  <h2 className="break-words text-3xl font-black hyphens-auto md:text-6xl mb-6">{selectedProject.title}</h2>
+                  <div className="w-12 h-1 bg-copper mb-8"></div>
+                  <div className="prose prose-invert max-w-3xl min-w-0 hyphens-auto break-words [overflow-wrap:anywhere] lg:max-w-[calc(100%-5rem)]">
+                    <p className="text-lg md:text-2xl font-light text-on-surface/95 leading-[1.6] mb-8">{selectedProject.description}</p>
 
-                  <p className="text-lg text-on-surface/90 leading-[1.8] font-serif whitespace-pre-line mb-8 mt-8">
-                    {selectedProject.deepDive || "Deep dive content coming soon."}
-                  </p>
+                    <p className="text-base md:text-lg text-on-surface/90 leading-[1.8] font-serif whitespace-pre-line mb-8 mt-8">
+                      {selectedProject.deepDive || "Deep dive content coming soon."}
+                    </p>
 
-                  {selectedProject.screenshots && selectedProject.screenshots.length > 0 && (
-                    <div className="mt-12 space-y-12">
-                      {selectedProject.screenshots.map((shot: any, idx: number) => (
-                        <div key={idx} className="space-y-4">
-                          <div className="border border-outline-suggested p-2 bg-surface-lowest">
-                            <img src={shot.url} alt={shot.caption} className="w-full h-auto" referrerPolicy="no-referrer" />
+                    {selectedProject.screenshots && selectedProject.screenshots.length > 0 && (
+                      <div className="mt-12 space-y-12">
+                        {selectedProject.screenshots.map((shot: any, idx: number) => (
+                          <div key={idx} className="space-y-4">
+                            <div className="border border-outline-suggested p-2 bg-surface-lowest max-w-full overflow-x-auto">
+                              <img src={shot.url} alt={shot.caption} className="w-full h-auto max-w-full min-w-0" referrerPolicy="no-referrer" />
+                            </div>
+                            <p className="text-xs uppercase tracking-widest text-teal font-bold">{shot.caption}</p>
                           </div>
-                          <p className="text-xs uppercase tracking-widest text-teal font-bold">{shot.caption}</p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                        ))}
+                      </div>
+                    )}
 
-                  {selectedProject.articleLink && (
-                    <div className="mt-12">
-                      <a href={selectedProject.articleLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-3 bg-copper text-charcoal font-bold uppercase tracking-widest text-sm hover:bg-copper-deep transition-colors">
-                        {selectedProject.articleCtaText || "Read Full Article"} <ArrowRight size={16} />
-                      </a>
-                    </div>
-                  )}
+                    {selectedProject.articleLink && (
+                      <div className="mt-12">
+                        <a href={selectedProject.articleLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-3 bg-copper text-charcoal font-bold uppercase tracking-widest text-sm hover:bg-copper-deep transition-colors">
+                          {selectedProject.articleCtaText || "Read Full Article"} <ArrowRight size={16} />
+                        </a>
+                      </div>
+                    )}
+                  </div>
                 </div>
+              </div>
+
+              <div
+                className="lg:hidden shrink-0 flex items-center justify-center gap-6 border-t border-outline-suggested bg-surface px-4 pt-3 z-40"
+                style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}
+              >
+                <button
+                  type="button"
+                  onClick={prevProjectInModal}
+                  className="p-3 bg-charcoal text-copper rounded-full border border-copper/20 active:scale-95"
+                >
+                  <ChevronLeft size={22} />
+                </button>
+                <button
+                  type="button"
+                  onClick={nextProjectInModal}
+                  className="p-3 bg-charcoal text-copper rounded-full border border-copper/20 active:scale-95"
+                >
+                  <ChevronRight size={22} />
+                </button>
               </div>
             </motion.div>
           </motion.div>
