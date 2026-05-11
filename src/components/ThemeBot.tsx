@@ -154,7 +154,7 @@ export default function ThemeBot({ onThemeChange, onInteract, unlockedIds = [] }
 
   // Fixed: flex-col items-end ensures the toggle button stays anchored to the right when the chat window opens/closes
   return (
-    <div className="fixed bottom-4 right-4 md:bottom-8 md:right-8 z-[100] flex flex-col items-end">
+    <div className="fixed bottom-4 right-4 md:bottom-8 md:right-8 z-[90] flex flex-col items-end">
       <SmartNav isVisible={!isOpen} />
       <AnimatePresence>
         {isOpen && (
