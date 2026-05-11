@@ -330,15 +330,18 @@ export default function App() {
     if (project) unlock('deep-diver');
   };
 
-  // Modal scroll lock
+  // Modal scroll lock (block horizontal page scroll while modal content may overflow)
   useEffect(() => {
     if (selectedProject) {
       document.body.style.overflow = 'hidden';
+      document.body.style.overflowX = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
+      document.body.style.overflowX = 'unset';
     }
     return () => {
       document.body.style.overflow = 'unset';
+      document.body.style.overflowX = 'unset';
     };
   }, [selectedProject]);
 
@@ -699,14 +702,14 @@ export default function App() {
                           initial={{ opacity: 0, scale: 0.6, x: offset * 400 }}
                           animate={{ 
                             opacity: offset === 0 ? 1 : Math.abs(offset) === 1 ? 0.3 : 0,
-                            scale: offset === 0 ? 1.1 : 0.65,
+                            scale: offset === 0 ? (typeof window !== 'undefined' && window.innerWidth < 640 ? 1.05 : 1.08) : 0.65,
                             x: offset * (window.innerWidth < 768 ? 280 : window.innerWidth < 1280 ? 340 : 420),
                             rotateY: offset * -20,
                             zIndex: 20 - Math.abs(offset),
                             filter: offset === 0 ? 'blur(0px)' : 'blur(6px)'
                           }}
                           transition={{ type: "spring", stiffness: 180, damping: 24 }}
-                          className={`absolute w-full max-w-[90vw] md:max-w-2xl lg:max-w-3xl aspect-[16/9] bg-surface-low border border-outline-suggested shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] overflow-hidden cursor-pointer group touch-pan-x`}
+                          className={`absolute w-full max-w-[90vw] md:max-w-2xl lg:max-w-3xl aspect-[5/6] sm:aspect-[16/9] bg-surface-low border border-outline-suggested shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] overflow-hidden cursor-pointer group touch-pan-x`}
                         >
                           <img
                             src={proj.image}
@@ -714,11 +717,19 @@ export default function App() {
                             className={`w-full h-full object-cover transition-all duration-1000 ${offset === 0 ? 'scale-150 brightness-[0.85]' : 'scale-100 brightness-[0.3]'}`}
                             referrerPolicy="no-referrer"
                           />
-                          <div className={`absolute inset-0 bg-gradient-to-tr from-black via-black/60 to-transparent flex flex-col justify-end transition-opacity duration-500 ${offset === 0 ? 'opacity-100' : 'opacity-0'}`}>
-                            <div className="min-w-0 p-6 md:p-8 lg:p-12">
+                          <div className={`absolute inset-0 flex min-h-0 flex-col justify-end bg-gradient-to-tr from-black via-black/60 to-transparent transition-opacity duration-500 ${offset === 0 ? 'opacity-100' : 'opacity-0'}`}>
+                            <div className="min-h-0 min-w-0 max-h-[55%] overflow-y-auto overscroll-y-contain touch-pan-y p-6 sm:max-h-[50%] md:max-h-none md:p-8 lg:p-12 [scrollbar-width:thin]">
                               <div className="mb-2 flex min-w-0 items-start justify-between gap-3 md:mb-4">
-                                <span className="min-w-0 text-[9px] font-black uppercase tracking-[0.25em] text-copper drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] md:text-xs md:tracking-[0.4em]">
-                                  {proj.year} / {proj.category}
+                                <span className="flex min-w-0 flex-1 flex-wrap items-baseline gap-x-2 gap-y-1 pr-1 text-[9px] font-black uppercase drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] md:gap-x-2.5 md:text-xs">
+                                  <span className="shrink-0 whitespace-nowrap text-white/95 tabular-nums tracking-[0.12em]">
+                                    {proj.year}
+                                  </span>
+                                  <span className="text-white/35" aria-hidden>
+                                    /
+                                  </span>
+                                  <span className="min-w-0 text-copper tracking-[0.18em] md:tracking-[0.28em]">
+                                    {proj.category}
+                                  </span>
                                 </span>
                                 {offset === 0 && (
                                   <div className="pointer-events-none shrink-0 rounded-full border border-white/25 bg-copper/65 px-3 py-2 text-charcoal shadow-[0_8px_24px_-6px_rgba(0,0,0,0.45)] backdrop-blur-md flex items-center gap-2 transition-all duration-300 group-hover:scale-105 group-hover:bg-copper/80 md:px-5 md:py-2.5 md:gap-3">
@@ -742,40 +753,43 @@ export default function App() {
                 </div>
 
                 {/* Carousel Controls */}
-                <div className="absolute -bottom-24 md:-bottom-16 w-full max-w-[90vw] md:max-w-2xl lg:max-w-3xl flex flex-col md:flex-row justify-center items-center gap-6 z-30">
-                  <div className="flex gap-4 md:gap-8 items-center">
+                <div className="absolute -bottom-28 sm:-bottom-24 md:-bottom-16 w-full max-w-[min(90vw,24rem)] sm:max-w-[90vw] md:max-w-2xl lg:max-w-3xl flex flex-col md:flex-row justify-center items-center gap-4 md:gap-6 z-30">
+                  <div className="flex w-full max-w-full shrink-0 items-center justify-center gap-2 sm:gap-4 md:gap-8">
                     <button 
                       onClick={prevProject}
-                      className="p-3 md:p-4 rounded-full border border-outline-suggested hover:bg-copper hover:text-charcoal transition-all group"
+                      type="button"
+                      className="shrink-0 rounded-full border border-outline-suggested p-2 sm:p-3 md:p-4 transition-all hover:bg-copper hover:text-charcoal group"
                     >
-                      <ChevronLeft size={20} className="md:w-6 md:h-6 group-hover:-translate-x-1 transition-transform" />
+                      <ChevronLeft size={18} className="sm:w-5 sm:h-5 md:h-6 md:w-6 group-hover:-translate-x-1 transition-transform" />
                     </button>
 
-                    <div className="flex gap-2 mx-2 md:mx-4">
+                    <div className="mx-1 flex shrink-0 items-center justify-center gap-1.5 sm:mx-2 sm:gap-2 md:mx-4">
                       {RESUME_DATA.projects.map((_, i) => (
                         <div 
                           key={`dot-${i}`}
-                          className={`h-1 transition-all duration-500 ${currentProjectIndex === i ? 'w-6 md:w-8 bg-copper' : 'w-1.5 md:w-2 bg-on-surface/20'}`}
+                          className={`h-1 transition-all duration-500 ${currentProjectIndex === i ? 'w-5 sm:w-6 md:w-8 bg-copper' : 'w-1.5 md:w-2 bg-on-surface/20'}`}
                         />
                       ))}
                     </div>
 
                     <button 
                       onClick={nextProject}
-                      className="p-3 md:p-4 rounded-full border border-outline-suggested hover:bg-copper hover:text-charcoal transition-all group"
+                      type="button"
+                      className="shrink-0 rounded-full border border-outline-suggested p-2 sm:p-3 md:p-4 transition-all hover:bg-copper hover:text-charcoal group"
                     >
-                      <ChevronRight size={20} className="md:w-6 md:h-6 group-hover:translate-x-1 transition-transform" />
+                      <ChevronRight size={18} className="sm:w-5 sm:h-5 md:h-6 md:w-6 group-hover:translate-x-1 transition-transform" />
                     </button>
                   </div>
 
                   {/* Pause button integrated into the group on mobile, absolute on desktop */}
-                  <div className="md:absolute md:right-0">
+                  <div className="md:absolute md:right-0 shrink-0">
                     <button 
+                      type="button"
                       onClick={() => setIsProjectAutoPlayPaused(!isProjectAutoPlayPaused)}
-                      className={`p-3 md:p-4 rounded-full border transition-all ${isProjectAutoPlayPaused ? 'bg-copper text-charcoal border-copper shadow-lg scale-105' : 'border-outline-suggested hover:bg-copper/10 text-on-surface'}`}
+                      className={`rounded-full border p-2.5 transition-all sm:p-3 md:p-4 ${isProjectAutoPlayPaused ? 'bg-copper text-charcoal border-copper shadow-lg scale-105' : 'border-outline-suggested hover:bg-copper/10 text-on-surface'}`}
                       title={isProjectAutoPlayPaused ? "Resume Auto-play" : "Pause Auto-play"}
                     >
-                      {isProjectAutoPlayPaused ? <Play size={20} className="md:w-6 md:h-6" /> : <Pause size={20} className="md:w-6 md:h-6" fill="currentColor" />}
+                      {isProjectAutoPlayPaused ? <Play size={18} className="sm:h-5 sm:w-5 md:h-6 md:w-6" /> : <Pause size={18} className="sm:h-5 sm:w-5 md:h-6 md:w-6" fill="currentColor" />}
                     </button>
                   </div>
                 </div>
@@ -1214,7 +1228,7 @@ export default function App() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[110] flex items-center justify-center bg-surface/60 backdrop-blur-3xl px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))] md:px-12"
+            className="fixed inset-0 z-[110] flex min-h-0 items-start justify-center overflow-x-hidden overflow-y-auto bg-surface/60 backdrop-blur-3xl px-4 pt-[max(1.5rem,env(safe-area-inset-top))] pb-[max(1.5rem,env(safe-area-inset-bottom))] md:px-12"
             onPointerDown={handleBackdropPointerDown}
             onPointerUp={handleBackdropPointerUp}
             onPointerCancel={handleBackdropPointerCancel}
@@ -1224,7 +1238,7 @@ export default function App() {
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 50, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-surface border border-outline-suggested w-full max-w-5xl max-h-[min(90dvh,920px)] md:max-h-[min(80dvh,900px)] flex flex-col min-h-0 relative shadow-2xl"
+              className="my-6 w-full min-w-0 max-w-5xl shrink-0 flex max-h-[min(90dvh,920px)] flex-col overflow-x-hidden bg-surface min-h-0 border border-outline-suggested relative shadow-2xl md:max-h-[min(80dvh,900px)]"
             >
               <div className="pointer-events-none absolute inset-y-10 left-2 right-2 z-30 hidden lg:flex items-center justify-between">
                 <button
@@ -1252,16 +1266,16 @@ export default function App() {
               </button>
 
               <div className="w-full h-48 sm:h-56 md:h-64 lg:h-96 shrink-0 relative">
-                <img src={selectedProject.image} alt={selectedProject.title} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                <img src={selectedProject.image} alt={selectedProject.title} className="h-full w-full object-cover object-top" referrerPolicy="no-referrer" />
                 <div className="absolute inset-0 bg-gradient-to-t from-surface to-transparent" />
               </div>
 
-              <div className="flex-1 min-h-0 overflow-y-auto overscroll-y-contain">
-                <div className="relative z-10 -mt-20 min-w-0 px-6 pb-28 pt-4 sm:-mt-24 sm:pb-28 md:-mt-32 md:px-16 md:pb-32 lg:pb-24">
-                  <span className="text-xs uppercase font-bold tracking-widest text-teal mb-4 block bg-surface/80 w-max px-3 py-1 backdrop-blur-md">{selectedProject.category}</span>
-                  <h2 className="break-words text-3xl font-black hyphens-auto md:text-6xl mb-6">{selectedProject.title}</h2>
-                  <div className="w-12 h-1 bg-copper mb-8"></div>
-                  <div className="prose prose-invert max-w-3xl min-w-0 hyphens-auto break-words [overflow-wrap:anywhere] lg:max-w-[calc(100%-5rem)]">
+              <div className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain pt-20 sm:pt-24 md:pt-32">
+                <div className="relative z-10 -mt-20 min-w-0 max-w-full overflow-x-hidden px-6 pb-28 pt-4 sm:-mt-24 sm:pb-28 md:-mt-32 md:px-16 md:pb-32 lg:pb-24">
+                  <span className="mb-4 block w-max max-w-full hyphens-auto break-words rounded px-3 py-1 text-xs font-bold uppercase tracking-widest text-teal backdrop-blur-md bg-surface/80">{selectedProject.category}</span>
+                  <h2 className="mb-6 max-w-full hyphens-auto break-words text-3xl font-black md:text-6xl">{selectedProject.title}</h2>
+                  <div className="mb-8 h-1 w-12 bg-copper"></div>
+                  <div className="prose prose-invert w-full max-w-3xl min-w-0 hyphens-auto break-words [overflow-wrap:anywhere] lg:max-w-[calc(100%-5rem)]">
                     <p className="text-lg md:text-2xl font-light text-on-surface/95 leading-[1.6] mb-8">{selectedProject.description}</p>
 
                     <p className="text-base md:text-lg text-on-surface/90 leading-[1.8] font-serif whitespace-pre-line mb-8 mt-8">
@@ -1283,7 +1297,7 @@ export default function App() {
 
                     {selectedProject.articleLink && (
                       <div className="mt-12">
-                        <a href={selectedProject.articleLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-3 bg-copper text-charcoal font-bold uppercase tracking-widest text-sm hover:bg-copper-deep transition-colors">
+                        <a href={selectedProject.articleLink} target="_blank" rel="noopener noreferrer" className="inline-flex max-w-full min-w-0 items-center gap-2 break-all px-6 py-3 bg-copper text-charcoal font-bold uppercase tracking-widest text-sm hover:bg-copper-deep transition-colors">
                           {selectedProject.articleCtaText || "Read Full Article"} <ArrowRight size={16} />
                         </a>
                       </div>

@@ -24,7 +24,7 @@ export const AchievementsModal: React.FC<AchievementsModalProps> = ({ isOpen, on
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[200] flex items-center justify-center bg-surface/60 backdrop-blur-3xl p-6 md:p-12"
+          className="fixed inset-0 z-[200] flex items-center justify-center overflow-x-hidden bg-surface/60 backdrop-blur-3xl p-6 md:p-12"
           onClick={onClose}
         >
           <motion.div 
@@ -68,7 +68,7 @@ export const AchievementsModal: React.FC<AchievementsModalProps> = ({ isOpen, on
               </p>
             </div>
 
-            <div className="min-h-0 flex-1 overflow-y-auto overscroll-y-contain [scrollbar-gutter:stable] px-6 py-4 md:px-8 md:py-5">
+            <div className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain [scrollbar-gutter:stable] px-6 py-4 md:px-8 md:py-5">
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
               {allAchievements.map((achievement) => {
                 const isUnlocked = unlockedIds.includes(achievement.id);
