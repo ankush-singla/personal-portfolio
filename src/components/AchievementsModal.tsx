@@ -32,41 +32,44 @@ export const AchievementsModal: React.FC<AchievementsModalProps> = ({ isOpen, on
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 50, opacity: 0 }}
             onClick={(e) => e.stopPropagation()}
-            className="bg-surface border border-outline-suggested w-full max-w-4xl max-h-[85vh] overflow-y-auto p-6 md:p-8 relative shadow-2xl"
+            className="bg-surface border border-outline-suggested relative flex w-full max-w-4xl max-h-[min(85dvh,880px)] min-h-0 flex-col overflow-hidden shadow-2xl"
           >
             <button 
               onClick={onClose}
-              className="absolute top-4 right-4 p-2 bg-charcoal text-copper hover:bg-copper hover:text-charcoal transition-all z-20 rounded-full border border-copper/20"
+              className="absolute top-4 right-4 z-30 rounded-full border border-copper/20 bg-charcoal p-2 text-copper transition-colors hover:bg-copper hover:text-charcoal md:top-6 md:right-6"
+              type="button"
             >
               <X size={20} />
             </button>
 
-            <div className="mb-6 pr-12">
-              <span className="text-[10px] uppercase font-bold tracking-widest text-teal mb-2 block">Personal Records</span>
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
-                  <div>
-                    <h2 className="text-3xl md:text-4xl font-black mb-1">Achievements</h2>
-                    <div className="w-10 h-1 bg-copper"></div>
+            <div className="shrink-0 border-b border-outline-suggested/40 px-6 pb-5 pt-6 pr-14 md:px-8 md:pb-6 md:pt-8 md:pr-16">
+              <span className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-teal">Personal Records</span>
+              <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div className="flex min-w-0 flex-wrap items-center gap-3 md:gap-4">
+                  <div className="min-w-0">
+                    <h2 className="mb-1 text-3xl font-black md:text-4xl">Achievements</h2>
+                    <div className="h-1 w-10 bg-copper" />
                   </div>
                   
                   <button 
+                    type="button"
                     onClick={() => onToggleEnabled(!enabled)}
-                    className={`flex items-center gap-2 px-3 md:px-4 py-1 md:py-1.5 border rounded-full transition-all hover:scale-[1.02] active:scale-[0.98] ${enabled ? 'border-teal bg-teal/5 text-teal' : 'border-outline-suggested text-on-surface/40'}`}
+                    className={`flex shrink-0 items-center gap-2 rounded-full border px-3 py-1 transition-all hover:scale-[1.02] active:scale-[0.98] md:px-4 md:py-1.5 ${enabled ? 'border-teal bg-teal/5 text-teal' : 'border-outline-suggested text-on-surface/40'}`}
                   >
-                    <div className={`w-1 h-1 md:w-1.5 md:h-1.5 rounded-full ${enabled ? 'bg-teal animate-pulse' : 'bg-on-surface/20'}`} />
-                    <span className="text-[8px] md:text-[9px] font-black uppercase tracking-widest">
+                    <div className={`h-1 w-1 rounded-full md:h-1.5 md:w-1.5 ${enabled ? 'animate-pulse bg-teal' : 'bg-on-surface/20'}`} />
+                    <span className="text-[8px] font-black uppercase tracking-widest md:text-[9px]">
                       {enabled ? 'Gamification ON' : 'OFF'}
                     </span>
                   </button>
                 </div>
               </div>
-              <p className="text-on-surface/60 mt-4 text-sm max-w-xl">
+              <p className="mt-4 max-w-xl text-sm text-on-surface/60">
                 You have unlocked {unlockedIds.length} out of {allAchievements.length} available achievements. Keep exploring the site to find more hidden secrets.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="min-h-0 flex-1 overflow-y-auto overscroll-y-contain [scrollbar-gutter:stable] px-6 py-4 md:px-8 md:py-5">
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
               {allAchievements.map((achievement) => {
                 const isUnlocked = unlockedIds.includes(achievement.id);
 
@@ -120,7 +123,7 @@ export const AchievementsModal: React.FC<AchievementsModalProps> = ({ isOpen, on
                 </div>
               </div>
             ) : (
-              <div className="mt-8 p-6 border border-copper bg-surface-lowest text-center relative overflow-hidden">
+              <div className="relative mt-8 overflow-hidden border border-copper bg-surface-lowest p-6 text-center">
                 {/* Glitch Effect Background */}
                 <div className="absolute inset-0 opacity-10 pointer-events-none">
                   <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] animate-pulse" />
@@ -147,6 +150,7 @@ export const AchievementsModal: React.FC<AchievementsModalProps> = ({ isOpen, on
                 </div>
               </div>
             )}
+            </div>
           </motion.div>
         </motion.div>
       )}

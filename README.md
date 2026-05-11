@@ -58,9 +58,10 @@ If you are an AI assistant (like Antigravity or Cursor) making changes to this c
 2.  **Environment Variables:** Always check for `GEMINI_API_KEY` in the local `.env` and remind the user to set it in Vercel for production.
 3.  **Achievement Logic:** Achievement definitions are located in `src/hooks/useAchievements.ts`. If adding new achievements, ensure the hints are updated in the chatbot prompt context via `prompts.ts`.
 4.  **Career Overview Stickiness (Desktop):** 
-    *   The "Career Journey" sidebar (left side) and the horizontal timeline navigation MUST be `sticky` on desktop while the user scrolls through the entire `career-overview` section.
-    *   **Sidebar:** Use `md:sticky md:top-64` (or similar) to ensure it stays in view without overlapping the top navigation.
-    *   **Timeline:** Use `sticky top-20` and ensure the `sticky-shield` class is preserved for smooth visual transitions.
+    *   The "Career Journey" sidebar (left side) and the horizontal timeline navigation MUST be `sticky` on desktop while the user scrolls through the entire `#background` section.
+    *   **Sidebar:** Uses `md:sticky md:top-52` so it clears the compact sticky timeline; if you change timeline height or padding, adjust `top-*` so the rail does not sit under the timeline.
+    *   **Timeline:** Uses `sticky top-20` with `sticky-shield` for transitions under the fixed header.
+    *   **Scroll alignment:** `CAREER_SCROLL_MARGIN_PX` in `src/App.tsx` must stay in sync with the combined height of the header (`h-20`) plus the sticky timeline block (used for `scrollMarginTop` and sidebar `scrollTo` offsets).
 5.  **Experience Linking Logic:** 
     *   Interactivity in the `Career Overview` section follows a strict hierarchy:
         1.  **Deep Dive:** Matches `experience.company` with `project.company` or `project.title`. (Highest priority; triggers a modal).
