@@ -33,6 +33,22 @@ export interface WritingEntry {
 
 export const WRITING: WritingEntry[] = [
   {
+    slug: 'an-old-note-to-my-former-team',
+    title: 'An Old Note to My Former Team',
+    date: '2021-01-01',
+    readingTime: '4 min read',
+    excerpt:
+      "A letter to my global product team on our company's Day of Reflection in the summer of 2020 — on change, gratitude, and choosing to make a moment as real as you want it to be.",
+    tags: ['Leadership', 'Team Culture', 'Reflection'],
+    type: 'post',
+    syndicatedTo: [
+      {
+        label: 'Medium',
+        url: 'https://medium.com/@singlaankush/an-old-note-to-my-former-team-c3ed46a2fcf2',
+      },
+    ],
+  },
+  {
     slug: 'super-bowl-coin-toss-business-strategy',
     title: 'What a Super Bowl Coin Toss Teaches About Business Strategy',
     date: '2024-02-13',
