@@ -582,7 +582,7 @@ export default function App() {
                 viewport={{ once: true }}
                 className="inline-block px-3 py-1 bg-copper/10 border border-copper/20 mb-6 md:hidden"
               >
-                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-copper">Executive Portfolio</span>
+                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-copper">{RESUME_DATA.name}</span>
               </motion.div>
               <motion.h1
                 initial={{ y: 50, opacity: 0 }}
@@ -805,7 +805,7 @@ export default function App() {
             <span className="vertical-label sticky top-32">{RESUME_DATA.siteMetadata.sections[2].label}</span>
           </div>
 
-          <div className="max-w-7xl mx-auto mb-12 hidden md:block sticky top-20 z-50 bg-surface-lowest pt-6 pb-4 -mx-4 px-4 border-b border-outline-suggested/30 transition-all duration-300 sticky-shield">
+          <div className="max-w-6xl mx-auto mb-12 hidden md:block sticky top-20 z-50 bg-surface-lowest pt-6 pb-4 -mx-4 px-4 border-b border-outline-suggested/30 transition-all duration-300 sticky-shield">
             <div className="flex justify-between items-center mb-6 border-b border-outline-suggested pb-3">
               <h2 className="text-4xl md:text-5xl font-black">Career Overview</h2>
               <div className="flex gap-4">
@@ -826,7 +826,7 @@ export default function App() {
               </div>
             </div>
             <div ref={timelineRef} className="relative w-full overflow-x-auto no-scrollbar scroll-smooth flex pb-4 pt-10">
-              <div className="flex items-start min-w-max px-2 relative gap-10">
+              <div className="flex items-start min-w-full px-2 relative gap-10">
                 <div className="h-[2px] w-full bg-outline-suggested/60 absolute top-10 -z-10 left-0 right-0"></div>
                 {timelineGroups.map((group, gIdx) => (
                   <div key={`tl-g-${gIdx}`} className="flex flex-col relative pt-4">
@@ -861,7 +861,7 @@ export default function App() {
             </div>
           </div>
 
-          <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-10 md:gap-12">
+          <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-start gap-10 md:gap-12">
             <div className="w-full md:max-w-[280px] md:shrink-0 md:sticky md:top-52">
               {/* Mobile Section Header */}
               <div className="md:hidden mb-12">
