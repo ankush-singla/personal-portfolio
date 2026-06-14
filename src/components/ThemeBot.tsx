@@ -39,6 +39,10 @@ function ThemeBotInner({ onThemeChange, onInteract, onVoiceInteract, unlockedIds
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const traceIdRef = useRef(crypto.randomUUID());
+  const voiceConvoIdRef = useRef<string>('');
+  const voiceConvoStartRef = useRef<number>(0);
+  const lastUserMessageRef = useRef<string>('');
+  const lastUserMessageTimeRef = useRef<number>(0);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -176,8 +180,73 @@ function ThemeBotInner({ onThemeChange, onInteract, onVoiceInteract, unlockedIds
       await endSession();
     } else if (status === 'disconnected') {
       try {
+        let userId: string | undefined = undefined;
+        try {
+          userId = posthog.get_distinct_id();
+        } catch (phErr) {
+          console.warn("PostHog distinct ID not available:", phErr);
+        }
+
         await startSession({
-          agentId: 'agent_2901kv3gvjbcfe1vc9s6z00hkzfv'
+          agentId: 'agent_2901kv3gvjbcfe1vc9s6z00hkzfv',
+          userId,
+          onConnect: ({ conversationId }) => {
+            voiceConvoIdRef.current = conversationId;
+            voiceConvoStartRef.current = Date.now();
+            lastUserMessageRef.current = '';
+            lastUserMessageTimeRef.current = 0;
+            posthog.capture('voice_chat_connected', {
+              elevenlabs_conversation_id: conversationId,
+              userId: userId
+            });
+          },
+          onMessage: ({ role, message }) => {
+            if (role === 'user') {
+              lastUserMessageRef.current = message;
+              lastUserMessageTimeRef.current = Date.now();
+            } else if (role === 'agent') {
+              const latencyMs = lastUserMessageTimeRef.current > 0
+                ? Date.now() - lastUserMessageTimeRef.current
+                : 0;
+
+              posthog.capture('$ai_generation', {
+                $ai_model: 'elevenlabs-convai-agent',
+                $ai_provider: 'elevenlabs',
+                $ai_input: [{ role: 'user', content: lastUserMessageRef.current || '(initial connection/greeting)' }],
+                $ai_output_choices: [{ role: 'assistant', content: message }],
+                $ai_latency: latencyMs / 1000,
+                $ai_is_success: true,
+                $ai_trace_id: voiceConvoIdRef.current,
+                environment: import.meta.env?.MODE || 'production'
+              });
+
+              // Reset turn trackers
+              lastUserMessageRef.current = '';
+              lastUserMessageTimeRef.current = 0;
+            }
+          },
+          onDisconnect: (details) => {
+            const durationSec = voiceConvoStartRef.current > 0 
+              ? Math.round((Date.now() - voiceConvoStartRef.current) / 1000)
+              : 0;
+            
+            posthog.capture('voice_chat_disconnected', {
+              elevenlabs_conversation_id: voiceConvoIdRef.current,
+              reason: details.reason,
+              duration_seconds: durationSec
+            });
+            
+            voiceConvoIdRef.current = '';
+            voiceConvoStartRef.current = 0;
+            lastUserMessageRef.current = '';
+            lastUserMessageTimeRef.current = 0;
+          },
+          onError: (message) => {
+            posthog.capture('voice_chat_error', {
+              elevenlabs_conversation_id: voiceConvoIdRef.current,
+              error: message
+            });
+          }
         });
       } catch (err) {
         console.error('Failed to start ElevenLabs session:', err);
