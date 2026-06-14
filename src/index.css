@@ -121,7 +121,11 @@
     color: var(--color-copper);
 }
 .post-prose blockquote {
-    @apply border-l-2 border-copper/50 pl-5 italic text-on-surface/60 text-base;
+    @apply border-l-2 border-copper/50 pl-6 md:pl-8 italic text-on-surface/75;
+    margin-left: 0;
+}
+.post-prose blockquote > * + * {
+    margin-top: 1.25rem;
 }
 .post-prose hr {
     @apply border-outline-suggested my-12;
