@@ -33,6 +33,22 @@ export interface WritingEntry {
 
 export const WRITING: WritingEntry[] = [
   {
+    slug: 'super-bowl-coin-toss-business-strategy',
+    title: 'What a Super Bowl Coin Toss Teaches About Business Strategy',
+    date: '2024-02-13',
+    readingTime: '3 min read',
+    excerpt:
+      "The 49ers won the overtime coin toss and lost the game — and the second-guessing that followed is a perfect mirror for how we judge business decisions without knowing the nuance. On strategy, execution, and the 'why.'",
+    tags: ['Strategy', 'Sports', 'Leadership'],
+    type: 'post',
+    syndicatedTo: [
+      {
+        label: 'LinkedIn',
+        url: 'https://www.linkedin.com/posts/singlaankush_justice-for-kyle-shanahan-barnwells-guide-activity-7165394099443863553-7pP8',
+      },
+    ],
+  },
+  {
     slug: 'fanduel-ace-ai-forbes',
     title: 'FanDuel Launches First AI Sports Betting Chat Experience',
     date: '2025-03-11',
