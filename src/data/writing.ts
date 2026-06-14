@@ -50,7 +50,7 @@ export const WRITING: WritingEntry[] = [
   },
   {
     slug: 'super-bowl-coin-toss-business-strategy',
-    title: 'What a Super Bowl Coin Toss Teaches About Business Strategy',
+    title: 'Super Bowl Coin Tosses, Game Theory, and Business',
     date: '2024-02-13',
     readingTime: '3 min read',
     excerpt:
@@ -63,19 +63,6 @@ export const WRITING: WritingEntry[] = [
         url: 'https://www.linkedin.com/posts/singlaankush_justice-for-kyle-shanahan-barnwells-guide-activity-7165394099443863553-7pP8',
       },
     ],
-  },
-  {
-    slug: 'fanduel-ace-ai-forbes',
-    title: 'FanDuel Launches First AI Sports Betting Chat Experience',
-    date: '2025-03-11',
-    readingTime: 'Forbes',
-    excerpt:
-      'Forbes covers the launch of Ace — the first conversational AI assistant for sports bettors, which I led from concept at FanDuel.',
-    tags: ['Press', 'GenAI', 'FanDuel'],
-    type: 'external',
-    externalSource: 'Forbes',
-    externalUrl:
-      'https://www.forbes.com/sites/mattrybaltowski/2025/03/11/fanduel-launches-first-ai-sports-betting-chat-experience/',
   },
 ];
 

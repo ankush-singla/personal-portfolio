@@ -54,9 +54,8 @@ export default function WritingIndex() {
           >
             <h1 className="text-5xl md:text-7xl font-black tracking-tighter mb-6">Writing</h1>
             <p className="text-base md:text-lg font-light text-on-surface/70 max-w-2xl leading-relaxed">
-              Notes on AI products, 0-to-1 building, and leading through a landscape that
-              changes week to week. Originals live here; some pieces link out to where they
-              were first published.
+              Notes on building products, leading teams, and the occasional lesson from
+              sports. Originals live here, with links to anywhere they're also published.
             </p>
           </motion.div>
 
