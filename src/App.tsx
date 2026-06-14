@@ -452,6 +452,12 @@ export default function App() {
                 )}
               </a>
             ))}
+            <a
+              href="/writing"
+              className="group relative text-[11px] font-black uppercase tracking-[0.25em] pl-[0.25em] transition-all hover:-translate-y-0.5 text-on-surface/40 hover:text-on-surface"
+            >
+              Writing
+            </a>
           </nav>
 
           {/* Action & Utility Island (Right) */}
@@ -531,6 +537,14 @@ export default function App() {
                       <ChevronRight size={18} className={`transition-transform ${activeSection === item.id ? 'text-copper translate-x-1' : 'text-on-surface/20'}`} />
                     </a>
                   ))}
+                  <a
+                    href="/writing"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="group flex justify-between items-center py-5 border-b border-outline-suggested/30 text-sm font-black uppercase tracking-[0.2em] text-on-surface/60 hover:text-on-surface transition-colors"
+                  >
+                    Writing
+                    <ChevronRight size={18} className="text-on-surface/20" />
+                  </a>
                 </div>
 
                 {/* Mobile Achievement Stats */}

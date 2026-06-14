@@ -93,6 +93,47 @@
     scrollbar-width: none;
 }
 
+/* Writing / blog post prose */
+.post-prose > * + * {
+    margin-top: 1.5rem;
+}
+.post-prose h2 {
+    @apply text-2xl md:text-3xl font-black tracking-tight text-on-surface mt-12 mb-2;
+}
+.post-prose h3 {
+    @apply text-xl font-bold tracking-tight text-on-surface mt-8;
+}
+.post-prose p {
+    @apply text-on-surface/85;
+}
+.post-prose a {
+    @apply text-copper underline underline-offset-4 decoration-copper/40 hover:decoration-copper transition-colors;
+}
+.post-prose strong {
+    @apply font-bold text-on-surface;
+}
+.post-prose ul, .post-prose ol {
+    @apply pl-6 space-y-2;
+}
+.post-prose ul { @apply list-disc; }
+.post-prose ol { @apply list-decimal; }
+.post-prose li::marker {
+    color: var(--color-copper);
+}
+.post-prose blockquote {
+    @apply border-l-2 border-copper/50 pl-6 md:pl-8 italic text-on-surface/75;
+    margin-left: 0;
+}
+.post-prose blockquote > * + * {
+    margin-top: 1.25rem;
+}
+.post-prose hr {
+    @apply border-outline-suggested my-12;
+}
+.post-prose code {
+    @apply bg-surface-high px-1.5 py-0.5 rounded text-copper font-mono text-[0.85em];
+}
+
 /* Chatbot Response Formatting */
 .chat-markdown p:not(:last-child) {
     margin-bottom: 0.75rem;
