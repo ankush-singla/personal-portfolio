@@ -33,21 +33,6 @@ export interface WritingEntry {
 
 export const WRITING: WritingEntry[] = [
   {
-    slug: 'building-my-portfolio-as-an-ai-agent',
-    title: 'I Built My Portfolio as an AI Agent',
-    date: '2026-06-14',
-    readingTime: '4 min read',
-    excerpt:
-      'Why an AI product leader should stay hands-on — and a walk through how this site was built across Stitch, AI Studio, and Antigravity, with a Gemini agent, MCP tooling, and LLM observability baked in.',
-    tags: ['AI', 'Product', 'Build Notes'],
-    type: 'post',
-    draft: true,
-    syndicatedTo: [
-      { label: 'dev.to', url: 'https://dev.to/' },
-      { label: 'LinkedIn', url: 'https://www.linkedin.com/in/singlaankush' },
-    ],
-  },
-  {
     slug: 'fanduel-ace-ai-forbes',
     title: 'FanDuel Launches First AI Sports Betting Chat Experience',
     date: '2025-03-11',
