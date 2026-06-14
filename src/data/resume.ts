@@ -3,13 +3,13 @@ import { Experience, Project, Testimonial, OtherRole } from '../types';
 export const RESUME_DATA = {
   name: "Ankush Singla",
   role: "Product Executive & AI Strategist",
-  bio: "I lead teams that build new products. My focus is on turning emerging technologies—today, Generative AI and agents—into tangible tools that actually work for people. I don’t just bridge the gap between strategy and execution; I build the strategy and then I lead the work to deliver it.\n\nSuccess for me is always measured by three things: making a real impact on business metrics, building something worth presenting to a Board, and creating work that earns its way into Forbes or a partner 10-K.\n\nI’ve spent my career navigating the messy \"0 to 1\" phase and the discipline of scaling from 10 to 100 in companies of all sizes. Right now, I’m building AI products at FanDuel, where I’m focused on how agentic systems will change the way we interact with technology.",
+  bio: "I lead teams that build commercially viable products using emerging tech. Today, my focus is on turning multi-modal generative AI, agentic platforms, and AI-driven business transformation into tangible tools that actually work. I don't just build the strategy and lead high-autonomy teams—I get my hands dirty, prototyping and building directly with the tech to understand its practical capabilities and operational friction.\n\nSuccess for me is always measured by three things: making a real impact on business metrics (driving top-line revenue and margin expansion), building something worth presenting to a Board, and creating work that earns its way into Forbes or a partner 10-K.\n\nI’ve spent my career navigating the messy \"0-to-1\" phase and the discipline of \"1-to-100\" scaling. Right now, I’m leading AI product and transformation at FanDuel, focusing on how agentic systems will redefine consumer experiences and transform our internal workflows.",
   experience: [
     {
       company: "FanDuel",
-      role: "Director, Technology Innovation and Transformation",
+      role: "Director, AI Product & Transformation (recruited as first emerging tech hire)",
       period: "2024 - Present",
-      description: "Pioneered 'Ace', the industry's first customer-facing generative AI product, improving share-of-wallet and time spent in app. Defined and operationalized FanDuel's generative AI strategy, resulting in 95% of employees adopting GenAI tools to reinvent internal operational efficiency, including a custom agentic AI platform and co-innovation with partners like Google and Amazon.",
+      description: "Pioneered AceAI, the industry’s first customer-facing GenAI bet-builder, driving 2x–3x higher conversion rates, and built the DuelStudio video marketing tool from concept to MVP in two weeks, slashing asset production costs 10x. Operationalized FanDuel’s AI strategy by launching an enterprise MCP-based agentic platform—driving 95% employee adoption and outpacing major AI labs on feature releases—while leading forward-looking R&D and enabling development teams to double online casino games managed in-market without increasing headcount.",
       link: "http://www.fanduel.com",
       group: "Product Leadership",
       motivation: "Sports, competition, and predicting the future have always been personal — I've been a fan long before I ever thought about building products. FanDuel was a rare chance to combine everything: sports, math, consumer behavior, and the opportunity to literally build what comes next."
@@ -35,7 +35,7 @@ export const RESUME_DATA = {
       company: "DefenseStorm",
       role: "Product Lead, AI & ML",
       period: "2020 - 2022",
-      description: "Started and grew the company's AI initiative from zero, managing data science and ML engineering teams. Defined the strategy and roadmap to increase gross margins by 50% and establish a common machine learning framework, leading to the acquisition of the company's largest customer.",
+      description: "Acted as AI GM with full P&L responsibility, scaling a 0-to-1 data science and ML engineering function. Defined the roadmap to expand gross margins by 50% long-term, secured the company’s largest enterprise client, and advised fintech investors on ML investment criteria and explainable AI.",
       link: "http://www.defensestorm.com",
       group: "Product Leadership",
       motivation: "I previously built products differentiated by AI; this was the role that convinced me AI was my lane. Starting a practice from scratch — no team, no roadmap, no precedent — in a regulated industry with real consequences is exactly the kind of constraint that sharpens your thinking."
@@ -44,7 +44,7 @@ export const RESUME_DATA = {
       company: "Acoustic (formerly IBM Watson Marketing)",
       role: "Head of Product Management, Content",
       period: "2019 - 2020",
-      description: "Built and led a global team of 5 PMs to develop a new hybrid CMS. Drove product strategy, revamped business models, and updated positioning and pricing to enable a projected 10x global revenue growth over 2 years following the divestiture from IBM.",
+      description: "Owned revenue and managed a global team of 5 PMs for our core CMS product following the divestiture from IBM. Overhauled the product’s GTM, pricing, and positioning to drive 10x global revenue growth while partnering with industry analysts to influence market rankings.",
       link: "https://acoustic.com",
       group: "Product Leadership",
       motivation: "The IBM divestiture was a rare chance to act like a startup inside a product that already had thousands of enterprise customers. Rebuilding the strategy, team, and business model from scratch — without the IBM brand as a crutch — was genuinely exciting."
@@ -53,7 +53,7 @@ export const RESUME_DATA = {
       company: "IBM, Watson Marketing",
       role: "Principal Product Manager",
       period: "2018 - 2019",
-      description: "Led the modernization of a core outbound marketing platform generating $300M in ARR across 5 agile development teams. Improved customer sentiment by over 30% by evangelizing customer advocacy across the company and uncovering trends in user feedback.",
+      description: "Led 5 agile development teams to radically modernize a core outbound marketing platform generating $300M in ARR. Improved user sentiment by over 30% through customer advocacy initiatives, presenting best practices directly to IBM’s CMO.",
       link: "https://www.ibm.com/watson",
       group: "Early Product Career",
       motivation: "Modernizing a $300M platform, and the processes used to get us to the next stage, is a specific kind of pressure. It taught me that scale changes everything — what works at a startup will break at IBM — and that customer obsession has to be structural, not just a stated value."

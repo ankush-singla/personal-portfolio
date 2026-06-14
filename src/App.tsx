@@ -824,7 +824,7 @@ export default function App() {
                 </a>
               </div>
             </div>
-            <div ref={timelineRef} className="relative w-full overflow-x-auto no-scrollbar scroll-smooth flex pb-4 pt-4">
+            <div ref={timelineRef} className="relative w-full overflow-x-auto no-scrollbar scroll-smooth flex pb-4 pt-10">
               <div className="flex items-start min-w-max px-2 relative gap-10">
                 <div className="h-[2px] w-full bg-outline-suggested/60 absolute top-10 -z-10 left-0 right-0"></div>
                 {timelineGroups.map((group, gIdx) => (
