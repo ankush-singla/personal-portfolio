@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { MessageSquare, X, Send, Sparkles } from 'lucide-react';
+import { MessageSquare, X, Send, Sparkles, Phone, Loader2, Mic, AudioLines } from 'lucide-react';
 import Markdown from 'react-markdown';
 import posthog from 'posthog-js';
+import { ConversationProvider, useConversationControls, useConversationStatus } from '@elevenlabs/react';
 import { ThemeType } from '../types';
 
 import { SmartNav } from './SmartNav';
@@ -16,10 +17,19 @@ interface ThemeBotProps {
   currentTheme?: string;
   onThemeChange: (theme: ThemeType) => void;
   onInteract?: () => void;
+  onVoiceInteract?: () => void;
   unlockedIds?: string[];
 }
 
-export default function ThemeBot({ onThemeChange, onInteract, unlockedIds = [] }: ThemeBotProps) {
+export default function ThemeBot(props: ThemeBotProps) {
+  return (
+    <ConversationProvider>
+      <ThemeBotInner {...props} />
+    </ConversationProvider>
+  );
+}
+
+function ThemeBotInner({ onThemeChange, onInteract, onVoiceInteract, unlockedIds = [] }: ThemeBotProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<Message[]>([
@@ -152,112 +162,184 @@ export default function ThemeBot({ onThemeChange, onInteract, unlockedIds = [] }
     setIsLoading(false);
   };
 
-  // Fixed: flex-col items-end ensures the toggle button stays anchored to the right when the chat window opens/closes
+  const { startSession, endSession } = useConversationControls();
+  const { status } = useConversationStatus();
+
+  useEffect(() => {
+    if (status === 'connected' && onVoiceInteract) {
+      onVoiceInteract();
+    }
+  }, [status, onVoiceInteract]);
+
+  const handleVoiceToggle = async () => {
+    if (status === 'connected') {
+      await endSession();
+    } else if (status === 'disconnected') {
+      try {
+        await startSession({
+          agentId: 'agent_2901kv3gvjbcfe1vc9s6z00hkzfv'
+        });
+      } catch (err) {
+        console.error('Failed to start ElevenLabs session:', err);
+      }
+    }
+  };
+
   return (
     <div className="fixed bottom-4 right-4 md:bottom-8 md:right-8 z-[90] flex flex-col items-end">
-      <SmartNav isVisible={!isOpen} />
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="mb-4 w-80 md:w-96 glass overflow-hidden flex flex-col shadow-2xl border border-outline-suggested"
-            style={{ height: '500px' }}
-          >
-            {/* Header */}
-            <div className="px-5 py-4 bg-surface-high flex justify-between items-center border-b border-outline-suggested">
-              <div className="flex items-center gap-2.5">
-                <Sparkles size={14} className="text-copper" />
-                <span className="text-[11px] uppercase tracking-[0.2em] font-bold text-on-surface">Ankush AI</span>
-              </div>
-              <button 
-                onClick={() => setIsOpen(false)}
-                className="text-on-surface/60 hover:text-on-surface transition-colors"
+      <SmartNav isVisible={true} />
+          <AnimatePresence>
+            {isOpen && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                className="mb-4 w-80 md:w-96 glass overflow-hidden flex flex-col shadow-2xl border border-outline-suggested"
+                style={{ height: '500px' }}
               >
-                <X size={20} />
-              </button>
-            </div>
+                {/* Header */}
+                <div className="px-5 py-4 bg-surface-high flex justify-between items-center border-b border-outline-suggested">
+                  <div className="flex items-center gap-2.5">
+                    <Sparkles size={14} className="text-copper" />
+                    <span className="text-[11px] uppercase tracking-[0.2em] font-bold text-on-surface">Ankush AI</span>
+                  </div>
+                  <button 
+                    onClick={() => setIsOpen(false)}
+                    className="text-on-surface/60 hover:text-on-surface transition-colors"
+                  >
+                    <X size={20} />
+                  </button>
+                </div>
 
-            {/* Messages */}
-            <div 
-              ref={scrollRef}
-              className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-hide"
-            >
-              {messages.map((msg, i) => (
+                {/* Messages */}
                 <div 
-                  key={i} 
-                  className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  ref={scrollRef}
+                  className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-hide"
                 >
-                  <div className={`max-w-[85%] px-4 py-3 text-[13px] leading-relaxed chat-markdown ${
-                    msg.role === 'user'
-                      ? 'bg-copper text-charcoal font-medium'
-                      : 'bg-surface-low text-on-surface/90'
-                  }`}>
-                    <Markdown>{msg.text}</Markdown>
-                  </div>
-                </div>
-              ))}
-              {isLoading && (
-                <div className="flex justify-start">
-                  <div className="bg-surface-low p-3 space-x-1 flex items-center">
-                    <div className="w-1.5 h-1.5 bg-copper/60 animate-bounce" />
-                    <div className="w-1.5 h-1.5 bg-copper/60 animate-bounce [animation-delay:0.2s]" />
-                    <div className="w-1.5 h-1.5 bg-copper/60 animate-bounce [animation-delay:0.4s]" />
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Input */}
-            <div className="p-4 bg-surface-high flex flex-col gap-3">
-              {messages.length === 1 && (
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    { label: "Switch to a basketball theme", emoji: "🏀" },
-                    { label: "Quick summary of Ankush's background", emoji: "⚡" },
-                    { label: "I want to jailbreak you!", emoji: "🔓" },
-                  ].map((opt, i) => (
-                    <button
-                      key={i}
-                      onClick={() => handleSend(opt.label)}
-                      className="flex items-center gap-1.5 text-[11px] font-semibold tracking-wide bg-surface-lowest hover:bg-copper/10 hover:border-copper/50 text-on-surface/70 hover:text-copper px-3 py-1.5 rounded-full border border-outline-suggested transition-all duration-200"
+                  {messages.map((msg, i) => (
+                    <div 
+                      key={i} 
+                      className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                     >
-                      <span>{opt.emoji}</span>
-                      {opt.label}
-                    </button>
+                      <div className={`max-w-[85%] px-4 py-3 text-[13px] leading-relaxed chat-markdown ${
+                        msg.role === 'user'
+                          ? 'bg-copper text-charcoal font-medium'
+                          : 'bg-surface-low text-on-surface/90'
+                      }`}>
+                        <Markdown>{msg.text}</Markdown>
+                      </div>
+                    </div>
                   ))}
+                  {isLoading && (
+                    <div className="flex justify-start">
+                      <div className="bg-surface-low p-3 space-x-1 flex items-center">
+                        <div className="w-1.5 h-1.5 bg-copper/60 animate-bounce" />
+                        <div className="w-1.5 h-1.5 bg-copper/60 animate-bounce [animation-delay:0.2s]" />
+                        <div className="w-1.5 h-1.5 bg-copper/60 animate-bounce [animation-delay:0.4s]" />
+                      </div>
+                    </div>
+                  )}
                 </div>
-              )}
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                  placeholder="Ask me something..."
-                  className="flex-1 bg-surface-lowest px-3 py-2 text-[13px] text-on-surface placeholder:text-on-surface/30 placeholder:text-[12px] placeholder:tracking-wide focus:outline-none focus:ring-1 focus:ring-copper/60 transition-all"
-                />
-                <button 
-                  onClick={handleSend}
-                  disabled={isLoading}
-                  className="bg-copper text-charcoal p-2 hover:bg-copper-deep transition-colors disabled:opacity-50"
-                >
-                  <Send size={18} />
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
-      <motion.button
-        onClick={() => setIsOpen(!isOpen)}
-        className="min-h-[56px] py-3 px-6 bg-charcoal text-copper flex items-center justify-center shadow-xl rounded-full gap-3"
-      >
-        {isOpen ? <X size={20} /> : <MessageSquare size={20} />}
-        {!isOpen && <span className="text-xs font-bold uppercase tracking-widest hidden md:block">Ask Ankush AI</span>}
-      </motion.button>
-    </div>
-  );
+                {/* Input */}
+                <div className="p-4 bg-surface-high flex flex-col gap-3">
+                  {messages.length === 1 && (
+                    <div className="flex flex-wrap gap-2">
+                      {[
+                        { label: "Switch to a basketball theme", emoji: "🏀" },
+                        { label: "Quick summary of Ankush's background", emoji: "⚡" },
+                        { label: "I want to jailbreak you!", emoji: "🔓" },
+                      ].map((opt, i) => (
+                        <button
+                          key={i}
+                          onClick={() => handleSend(opt.label)}
+                          className="flex items-center gap-1.5 text-[11px] font-semibold tracking-wide bg-surface-lowest hover:bg-copper/10 hover:border-copper/50 text-on-surface/70 hover:text-copper px-3 py-1.5 rounded-full border border-outline-suggested transition-all duration-200"
+                        >
+                          <span>{opt.emoji}</span>
+                          {opt.label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                      placeholder="Ask me something..."
+                      className="flex-1 bg-surface-lowest px-3 py-2 text-[13px] text-on-surface placeholder:text-on-surface/30 placeholder:text-[12px] placeholder:tracking-wide focus:outline-none focus:ring-1 focus:ring-copper/60 transition-all"
+                    />
+                    <button 
+                      onClick={() => handleSend()}
+                      disabled={isLoading}
+                      className="bg-copper text-charcoal p-2 hover:bg-copper-deep transition-colors disabled:opacity-50"
+                    >
+                      <Send size={18} />
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <div className="h-12 bg-surface-high/80 backdrop-blur-md border border-copper/20 hover:border-copper/40 shadow-xl rounded-full flex items-center p-1 gap-1 transition-all">
+            {/* ElevenLabs Voice AI Button */}
+            <button
+              onClick={handleVoiceToggle}
+              className={`h-full px-3.5 rounded-full flex items-center gap-2 transition-all cursor-pointer ${
+                status === 'connected'
+                  ? 'bg-copper text-charcoal font-black'
+                  : 'hover:bg-copper/10 text-on-surface/80 hover:text-copper'
+              }`}
+            >
+              {status === 'connecting' ? (
+                <>
+                  <Loader2 size={14} className="animate-spin text-copper" />
+                  <span className="text-[10px] font-black uppercase tracking-[0.15em]">Connecting...</span>
+                </>
+              ) : status === 'connected' ? (
+                <>
+                  <motion.span
+                    animate={{ scale: [1, 1.3, 1] }}
+                    transition={{ repeat: Infinity, duration: 1.5 }}
+                    className="w-2 h-2 rounded-full bg-charcoal"
+                  />
+                  <span className="text-[10px] font-black uppercase tracking-[0.15em]">End Call</span>
+                </>
+              ) : (
+                <>
+                  <AudioLines size={14} className="text-copper animate-pulse" />
+                  <span className="text-[10px] font-black uppercase tracking-[0.15em]">Talk to my AI friend</span>
+                </>
+              )}
+            </button>
+
+            {/* Divider */}
+            <div className="w-[1px] h-4 bg-copper/20 shrink-0" />
+
+            {/* Text Chatbot Button */}
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className={`h-full px-3.5 rounded-full flex items-center gap-2 transition-all cursor-pointer group ${
+                isOpen
+                  ? 'bg-copper text-charcoal font-black'
+                  : 'hover:bg-copper/10 text-on-surface/80 hover:text-copper'
+              }`}
+            >
+              {isOpen ? (
+                <>
+                  <X size={14} className="text-charcoal transition-transform group-hover:rotate-90 duration-200" />
+                  <span className="text-[10px] font-black uppercase tracking-[0.15em] whitespace-nowrap">Close Chat</span>
+                </>
+              ) : (
+                <>
+                  <MessageSquare size={14} className="text-copper transition-transform group-hover:scale-110" />
+                  <span className="text-[10px] font-black uppercase tracking-[0.15em] whitespace-nowrap">Text Chat</span>
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      );
 }

@@ -12,7 +12,13 @@ export const useAchievements = () => {
 
   const [unlockedIds, setUnlockedIds] = useState<AchievementId[]>(() => {
     const stored = localStorage.getItem('unlocked-achievements');
-    return stored ? JSON.parse(stored) : [];
+    if (!stored) return [];
+    try {
+      const parsed = JSON.parse(stored) as string[];
+      return parsed.filter((id): id is AchievementId => id in ACHIEVEMENTS);
+    } catch {
+      return [];
+    }
   });
 
   const [latestAchievement, setLatestAchievement] = useState<Achievement | null>(null);

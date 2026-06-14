@@ -1,4 +1,4 @@
-export type AchievementId = 'getting-to-know-ankush' | 'deep-diver' | 'data-miner' | 'ai-prodigy' | 'peer-reviewed' | 'time-traveler' | 'the-networker';
+export type AchievementId = 'getting-to-know-ankush' | 'deep-diver' | 'data-miner' | 'ai-prodigy' | 'peer-reviewed' | 'time-traveler' | 'the-networker' | 'vocal-resonance';
 
 export interface Achievement {
   id: AchievementId;
@@ -57,5 +57,12 @@ export const ACHIEVEMENTS: Record<AchievementId, Achievement> = {
     description: 'Clicked a contact or social link.', 
     icon: '🌐',
     hint: 'The digital web extends beyond these borders. Find the threads that lead out.'
+  },
+  'vocal-resonance': { 
+    id: 'vocal-resonance', 
+    title: 'Vocal Resonance', 
+    description: 'Engaged in a voice chat with the AI friend.', 
+    icon: '🎙️',
+    hint: 'The machine does not just think, it speaks. Have you called out to the phantom in the wires?'
   }
 };

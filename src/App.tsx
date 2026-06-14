@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ThemeType } from './types';
 import { RESUME_DATA } from './data/resume';
 import ThemeBot from './components/ThemeBot';
-import { useAchievements } from './hooks/useAchievements';
+import { useAchievements, ACHIEVEMENTS } from './hooks/useAchievements';
 import { AchievementToast } from './components/AchievementToast';
 import { AchievementsModal } from './components/AchievementsModal';
 import { Camera, Gamepad2, Users, Briefcase, Mail, Github, Linkedin, Twitter, ArrowRight, X, ChevronLeft, ChevronRight, Menu, Play, Pause, Trophy, ExternalLink } from 'lucide-react';
@@ -55,6 +55,7 @@ export default function App() {
   }, []);
 
   const { enabled, setEnabled, unlockedIds, unlock, latestAchievement, clearLatest } = useAchievements();
+  const totalAchievements = Object.keys(ACHIEVEMENTS).length;
 
   const getDisplayPeriod = (experiences: typeof RESUME_DATA.experience, company: string) => {
     const exps = experiences.filter(e => e.company === company);
@@ -420,7 +421,7 @@ export default function App() {
               AS
               <motion.span 
                 animate={{ opacity: [1, 0, 1] }}
-                transition={{ duration: 1, repeat: Infinity, ease: "steps(1)" }}
+                transition={{ duration: 1, repeat: Infinity, ease: "steps(1)" as any }}
                 className="text-copper ml-1"
               >
                 _
@@ -468,7 +469,7 @@ export default function App() {
                         cx="20" cy="20" r="18" 
                         className="stroke-teal fill-none stroke-2"
                         initial={{ pathLength: 0 }}
-                        animate={{ pathLength: unlockedIds.length / 7 }}
+                        animate={{ pathLength: unlockedIds.length / totalAchievements }}
                         transition={{ duration: 1.5, ease: "easeOut" }}
                       />
                     </svg>
@@ -483,7 +484,7 @@ export default function App() {
                   </div>
                   <div className="flex flex-col text-left">
                     <span className="hidden xl:block text-[8px] font-black uppercase tracking-widest text-on-surface/30 group-hover/achieve:text-teal transition-colors">Achievements</span>
-                    <span className="text-[10px] font-black text-teal leading-none">{unlockedIds.length}/7</span>
+                    <span className="text-[10px] font-black text-teal leading-none">{unlockedIds.length}/{totalAchievements}</span>
                   </div>
                 </button>
               </div>
@@ -546,12 +547,12 @@ export default function App() {
                         <Trophy size={18} className="text-teal" />
                         <span className="text-xs font-black uppercase tracking-widest text-on-surface">Achievements</span>
                       </div>
-                      <span className="text-sm font-black text-teal">{unlockedIds.length}/7</span>
+                      <span className="text-sm font-black text-teal">{unlockedIds.length}/{totalAchievements}</span>
                     </div>
                     <div className="w-full h-1.5 bg-outline-suggested/30 rounded-full overflow-hidden">
                       <motion.div 
                         initial={{ width: 0 }}
-                        animate={{ width: `${(unlockedIds.length / 7) * 100}%` }}
+                        animate={{ width: `${(unlockedIds.length / totalAchievements) * 100}%` }}
                         className="h-full bg-teal shadow-[0_0_10px_rgba(20,184,166,0.4)]"
                       />
                     </div>
@@ -874,7 +875,7 @@ export default function App() {
                   <div className="absolute left-0 top-0 bottom-0 w-[1px] bg-outline-suggested md:hidden"></div>
                   <div className="absolute left-0 top-0 w-[1px] h-8 bg-copper md:hidden"></div>
                   
-                  <h3 className="text-xs font-black uppercase tracking-[0.25em] text-copper mb-3">Career Journey</h3>
+                  <h3 className="text-xs font-sans font-bold uppercase tracking-[0.25em] text-copper mb-3">Career Journey</h3>
                   <p className="text-base md:text-sm text-on-surface/70 max-w-lg md:max-w-[260px] mb-6 leading-relaxed font-serif italic">
                     {RESUME_DATA.siteMetadata.sections.find(s => s.id === 'background')?.description}
                   </p>
@@ -883,7 +884,7 @@ export default function App() {
                 <div className="hidden md:block space-y-5 border-l border-outline-suggested pl-6 mb-10">
                   {groupedExperiences.map(group => (
                     <div key={`nav-group-${group.group}`} className="space-y-3">
-                      <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface/40">{group.group}</span>
+                      <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-on-surface/40">{group.group}</span>
                       {group.experiences.filter((exp, index, self) => index === self.findIndex((t) => t.company === exp.company)).map(exp => (
                         <div key={`exp-nav-${exp.company}`} data-nav-company={exp.company}>
                           <button
@@ -896,7 +897,7 @@ export default function App() {
                             }}
                             className="block group text-left w-full"
                           >
-                            <span className={`text-sm font-bold tracking-[0.15em] block transition-colors ${activeCompany === exp.company ? 'text-copper scale-105 origin-left' : 'text-teal group-hover:text-copper'}`}>{exp.company}</span>
+                            <span className={`text-sm font-semibold block transition-colors ${activeCompany === exp.company ? 'text-copper scale-105 origin-left' : 'text-teal group-hover:text-copper'}`}>{exp.company}</span>
                             <span className={`text-xs font-semibold transition-opacity ${activeCompany === exp.company ? 'opacity-100' : 'opacity-40 group-hover:opacity-100'}`}>{getDisplayPeriod(group.experiences, exp.company)}</span>
                           </button>
                         </div>
@@ -905,7 +906,7 @@ export default function App() {
                   ))}
                   {educationExperiences.length > 0 && (
                     <div className="space-y-4">
-                      <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface/40">Education</span>
+                      <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-on-surface/40">Education</span>
                       {educationExperiences.map(exp => (
                         <div key={`exp-nav-${exp.company}`} data-nav-company={exp.company}>
                           <button
@@ -918,7 +919,7 @@ export default function App() {
                             }}
                             className="block group text-left w-full"
                           >
-                            <span className={`text-sm font-bold tracking-[0.15em] block transition-colors ${activeCompany === exp.company ? 'text-copper scale-105 origin-left' : 'text-teal group-hover:text-copper'}`}>{exp.company}</span>
+                            <span className={`text-sm font-semibold block transition-colors ${activeCompany === exp.company ? 'text-copper scale-105 origin-left' : 'text-teal group-hover:text-copper'}`}>{exp.company}</span>
                             <span className={`text-xs font-semibold transition-opacity ${activeCompany === exp.company ? 'opacity-100' : 'opacity-40 group-hover:opacity-100'}`}>{exp.period}</span>
                           </button>
                         </div>
@@ -1218,6 +1219,7 @@ export default function App() {
           setTheme(t);
         }} 
         onInteract={() => unlock('ai-prodigy')}
+        onVoiceInteract={() => unlock('vocal-resonance')}
         unlockedIds={unlockedIds}
       />
 

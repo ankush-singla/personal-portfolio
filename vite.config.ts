@@ -48,20 +48,19 @@ export default defineConfig(({mode}) => {
                     lockedAchievements.map(a => a.hint)
                   );
 
-                  const genAI = new GoogleGenAI(apiKey);
-                  const model = genAI.getGenerativeModel({ 
+                  const ai = new GoogleGenAI({ apiKey });
+                  const response = await ai.models.generateContent({
                     model: "gemini-3-flash-preview",
-                    systemInstruction: SYSTEM_INSTRUCTION + achievementContext
-                  });
-
-                  const result = await model.generateContent({
                     contents: [
                       ...(history || []),
                       { role: 'user', parts: [{ text: message }] }
-                    ]
+                    ],
+                    config: {
+                      systemInstruction: SYSTEM_INSTRUCTION + achievementContext,
+                    }
                   });
 
-                  const responseText = result.response.text();
+                  const responseText = response.text || "";
 
                   res.setHeader('Content-Type', 'application/json');
                   res.end(JSON.stringify({ text: responseText || "I'm sorry, I couldn't process that." }));

@@ -61,12 +61,12 @@ export const SmartNav: React.FC<SmartNavProps> = ({ isVisible }) => {
           initial={{ opacity: 0, y: 10, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 10, scale: 0.95 }}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           onClick={scrollToNext}
-          className="mb-3 px-5 py-2.5 bg-surface-high/80 backdrop-blur-md border border-copper/20 text-on-surface shadow-lg rounded-full flex items-center gap-3 group transition-all hover:border-copper/50"
+          className="mb-3 h-12 px-4 bg-surface-high/80 backdrop-blur-md border border-copper/20 hover:border-copper/40 shadow-xl rounded-full flex items-center gap-3 group transition-all cursor-pointer"
         >
-          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface/60 group-hover:text-copper transition-colors">
+          <span className="text-[10px] font-black uppercase tracking-[0.15em] text-on-surface/80 group-hover:text-copper transition-colors">
             {isLastSection ? 'Back to Top' : `Next: ${nextSection?.title}`}
           </span>
           <div className="w-5 h-5 rounded-full bg-copper/10 flex items-center justify-center text-copper group-hover:bg-copper group-hover:text-charcoal transition-all">
