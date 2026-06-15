@@ -4,6 +4,7 @@ import { motion } from 'motion/react';
 import { ArrowLeft, ArrowRight, ExternalLink } from 'lucide-react';
 import { getVisibleEntries } from '../data/writing';
 import { applyThemeToRoot } from '../utils/theme';
+import { useApp } from '../context/AppContext';
 
 const formatDate = (iso: string) =>
   new Date(iso + 'T00:00:00').toLocaleDateString('en-US', {
@@ -14,12 +15,13 @@ const formatDate = (iso: string) =>
 
 export default function WritingIndex() {
   const entries = getVisibleEntries();
+  const { theme } = useApp();
 
   useEffect(() => {
-    applyThemeToRoot(document.documentElement, 'monolith');
+    applyThemeToRoot(document.documentElement, theme);
     document.title = 'Writing — Ankush Singla';
     window.scrollTo(0, 0);
-  }, []);
+  }, [theme]);
 
   return (
     <div className="min-h-screen bg-surface text-on-surface relative overflow-x-clip selection:bg-copper selection:text-charcoal">
@@ -28,16 +30,16 @@ export default function WritingIndex() {
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-surface/80 backdrop-blur-md border-b border-outline-suggested">
         <div className="max-w-[1800px] mx-auto px-6 h-20 flex items-center justify-between">
-          <a href="/" className="text-2xl font-black tracking-tighter hover:text-copper transition-colors flex items-center">
+          <Link to="/" className="text-2xl font-black tracking-tighter hover:text-copper transition-colors flex items-center">
             AS<span className="text-copper ml-1">_</span>
-          </a>
-          <a
-            href="/"
+          </Link>
+          <Link
+            to="/"
             className="group inline-flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.25em] text-on-surface/50 hover:text-copper transition-colors"
           >
             <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
             Back to site
-          </a>
+          </Link>
         </div>
       </header>
 
