@@ -111,7 +111,8 @@ export default function BuildPage() {
             <p className="mt-6 max-w-2xl border-l-2 border-copper/40 pl-4 text-sm font-sans text-on-surface/55 leading-relaxed">
               Worth saying plainly: this page was drafted by an AI agent &mdash; pointed at my own commit
               history and told to write in my voice &mdash; then reviewed, edited, and signed off by me.
-              Human in the loop, as it should be: a page about building with AI, built with AI.
+              The AI wrote the first draft; a human stayed in the loop for the judgment &mdash; which feels
+              like the only honest way to write a page about building with AI.
             </p>
           </motion.header>
 
