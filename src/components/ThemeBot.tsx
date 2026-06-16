@@ -15,9 +15,11 @@ interface Message {
 }
 
 // Shown (in the agent's own voice) when a voice call ends unexpectedly — almost
-// always the ElevenLabs quota running out mid-conversation.
+// always the ElevenLabs quota running out mid-conversation. Note that the text
+// chat is a separate model that didn't "hear" the voice call, so we set that
+// expectation rather than pretending the conversation carried over.
 const VOICE_DROP_NOTICE =
-  "🎙️ My voice just cut out mid-thought — most likely I've burned through my voice-AI quota for now (the perils of a free-tier portfolio). Text chat runs on a separate budget, though, so ask me anything right here and I'll keep going.";
+  "🎙️ My voice just cut out — looks like I've maxed out my voice-AI quota for now (free-tier portfolio life). Quick heads-up: this text chat is a *different* model, so it didn't catch what we were just saying out loud — sorry for the reset. Give me the short version and I'll pick right back up.";
 
 interface ThemeBotProps {
   currentTheme?: string;
