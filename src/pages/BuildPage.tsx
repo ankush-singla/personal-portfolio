@@ -18,15 +18,6 @@ function setMeta(name: string, content: string) {
   el.setAttribute('content', content);
 }
 
-/** Inline code token, styled for the serif body (this page doesn't use the .post-prose wrapper). */
-function Code({ children }: { children: React.ReactNode }) {
-  return (
-    <code className="font-sans text-[0.82em] bg-surface-high/60 text-copper px-1.5 py-0.5 rounded">
-      {children}
-    </code>
-  );
-}
-
 /** A labeled section header in the site's "eyebrow + headline" style. */
 function SectionHead({ index, eyebrow, title }: { index: string; eyebrow: string; title: string }) {
   return (
@@ -41,17 +32,21 @@ function SectionHead({ index, eyebrow, title }: { index: string; eyebrow: string
   );
 }
 
-const STACK: { group: string; items: string[] }[] = [
-  { group: 'Frontend', items: ['React 19', 'Vite', 'Tailwind CSS v4', 'Motion', 'React Router'] },
-  { group: 'Intelligence', items: ['Gemini (@google/genai)', 'ElevenLabs voice agent', 'A runtime theme engine'] },
-  { group: 'Infra & Insight', items: ['Vercel Edge Functions', 'PostHog (analytics + LLM traces)', 'Session replay'] },
+/** How this was made — the actual generative-AI toolchain, by phase. */
+const BUILT_WITH: { phase: string; tool: string }[] = [
+  { phase: 'Design system', tool: 'Google Stitch' },
+  { phase: 'Prototype & structure', tool: 'Google AI Studio' },
+  { phase: 'Build & iterate', tool: 'Antigravity · Claude Code' },
+  { phase: 'The brain', tool: 'Google Gemini' },
+  { phase: 'Voice', tool: 'ElevenLabs' },
+  { phase: 'Shipped on', tool: 'Vercel Edge' },
 ];
 
 const STATS: { value: string; label: string }[] = [
-  { value: '52', label: 'color themes (1 secret)' },
-  { value: '8', label: 'unlockable achievements' },
-  { value: '2', label: 'hex codes to add a theme' },
-  { value: '1', label: 'AI that repaints the site' },
+  { value: '52', label: 'themes, summoned by asking' },
+  { value: '8', label: 'things to discover' },
+  { value: '5', label: 'AI tools in the build' },
+  { value: '0', label: 'settings menus' },
 ];
 
 export default function BuildPage() {
@@ -62,7 +57,7 @@ export default function BuildPage() {
     document.title = 'How I Built This — Ankush Singla';
     setMeta(
       'description',
-      "A behind-the-scenes look at how Ankush Singla built this AI-native, gamified portfolio — the stack, the ThemeBot, the secret theme, and the messy parts of shipping it.",
+      "Why this portfolio is built the way it is — a product leader's take on behavioral design, AI-driven personalization, and shipping emerging tech for real instead of demoing it.",
     );
     window.scrollTo(0, 0);
   }, [theme]);
@@ -100,17 +95,18 @@ export default function BuildPage() {
             className="mb-14 border-b border-outline-suggested pb-10"
           >
             <div className="flex flex-wrap items-center gap-3 mb-5 text-[10px] font-black uppercase tracking-[0.2em]">
-              <span className="text-teal">The making-of</span>
+              <span className="text-teal">The thinking behind it</span>
               <span className="text-on-surface/20">/</span>
-              <span className="text-on-surface/40">~6 min read</span>
+              <span className="text-on-surface/40">~5 min read</span>
             </div>
             <h1 className="text-4xl md:text-6xl font-black tracking-tighter leading-[0.95] mb-6">
               How I Built This
             </h1>
             <p className="text-base md:text-lg font-light text-on-surface/70 leading-relaxed max-w-2xl">
-              I lead AI product for a living, so a static PDF résumé felt like a chef handing you a
-              photo of dinner. This is the &ldquo;how it was made&rdquo; for the little playable thing
-              you just poked around in &mdash; the good parts, and the parts that fought back.
+              Most portfolios tell you what someone shipped. I wanted to <em>show</em> you how I think
+              about product &mdash; so the page itself is the argument. It&rsquo;s built to nudge, to
+              reward a little curiosity, and to lean on tech that only just became possible. Show,
+              don&rsquo;t tell.
             </p>
           </motion.header>
 
@@ -130,165 +126,107 @@ export default function BuildPage() {
           </motion.div>
 
           <div className="space-y-16 font-serif text-lg leading-[1.85] text-on-surface/90">
-            {/* The premise */}
+            {/* The intent */}
             <section>
-              <SectionHead index="01" eyebrow="The premise" title="A portfolio you can actually play" />
+              <SectionHead index="01" eyebrow="The intent" title="Show, don&rsquo;t tell" />
               <p className="mb-5">
-                The thesis was simple: if I&rsquo;m going to ask people to believe I can build with emerging
-                tech, the artifact making that case should itself be built with emerging tech. So instead of a
-                page you <em>read</em>, this is a page you <em>do things to</em>. You can talk to it, you can
-                ask it to repaint itself, and if you go looking, you can unlock things. It&rsquo;s a résumé with
-                a difficulty setting.
+                I lead AI product for a living. Handing someone a static PDF felt like handing them a
+                photo of dinner and asking them to trust it was good. So I built the meal. Everything
+                here &mdash; what you can poke at, what rewards you for poking, what happens when you
+                actually ask it something &mdash; is a small argument about how I think a product should
+                treat the person using it.
               </p>
               <p>
-                Underneath the play, the engineering is real — a typed React app, an AI on a serverless edge,
-                a full observability pipeline. The fun is the wrapper. The bones are the point.
+                Three beliefs run underneath all of it: earn attention instead of demanding it, reward
+                curiosity, and use genuinely new capabilities to do something that was hard a year ago.
+                The rest of this page is just those three ideas, made literal.
               </p>
             </section>
 
-            {/* The stack */}
+            {/* Behavioral design */}
             <section>
-              <SectionHead index="02" eyebrow="The stack" title="What&rsquo;s holding it up" />
-              <p className="mb-8">
-                Nothing exotic for its own sake — modern, boring-in-the-good-way defaults, with the interesting
-                bets spent on the AI layer where they actually change the experience.
+              <SectionHead index="02" eyebrow="Behavioral design" title="Built to be poked at" />
+              <p className="mb-5">
+                Almost everything here is optional. You don&rsquo;t <em>have</em> to scroll the timeline,
+                open a deep dive, talk to the assistant, or find the thing that&rsquo;s hidden &mdash; but
+                the page is quietly designed to make you want to. There are eight small things to discover,
+                a nudge that points you toward whatever you haven&rsquo;t seen yet, and a payoff when you
+                find them all. (There&rsquo;s also one theme the assistant is flat-out forbidden from naming
+                until you earn it. I&rsquo;m not telling you either.)
               </p>
-              <div className="grid sm:grid-cols-3 gap-px bg-outline-suggested border border-outline-suggested not-prose">
-                {STACK.map((col) => (
-                  <div key={col.group} className="bg-surface p-5">
-                    <div className="text-[10px] font-black uppercase tracking-[0.2em] text-teal mb-4">{col.group}</div>
-                    <ul className="space-y-2.5">
-                      {col.items.map((item) => (
-                        <li key={item} className="text-sm font-sans text-on-surface/75 leading-snug flex gap-2">
-                          <span className="text-copper/60 select-none">/</span>
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
+              <p>
+                None of that is decoration &mdash; it&rsquo;s the same instinct I bring to real products. A
+                small curiosity gap and a well-timed reward will get someone to explore your whole surface
+                area, where a wall of text just gets skimmed. I&rsquo;d rather you play your way to the
+                point than be lectured to it.
+              </p>
+            </section>
+
+            {/* AI personalization */}
+            <section>
+              <SectionHead index="03" eyebrow="Personalization" title="Tell it the vibe. Watch it change." />
+              <p className="mb-5">
+                Here&rsquo;s the part I think actually matters. Tell the site what you want &mdash;
+                &ldquo;make it feel like a terminal,&rdquo; &ldquo;Tokyo at night,&rdquo; &ldquo;something
+                warmer&rdquo; &mdash; and it restyles itself, live, while answering a question about my
+                career in the same breath.
+              </p>
+              <p className="mb-5">
+                That sounds small. It isn&rsquo;t. A few years ago, personalization like this meant a
+                settings menu and a handful of themes a designer hand-built and an engineer hard-coded:
+                rigid, expensive, and capped at whatever someone thought to anticipate. Now a model turns a
+                fuzzy human sentence into a concrete product change, on demand &mdash; no menu, no presets
+                you&rsquo;re trapped inside.
+              </p>
+              <p>
+                That&rsquo;s the unlock I keep betting on at work: AI quietly collapsing the distance
+                between what a person <em>means</em> and what a product <em>does</em>. Here it just happens
+                to be paint &mdash; and because it&rsquo;s now cheap to extend, there are 50-some looks to
+                summon. Adding one is a sentence, not a sprint.
+              </p>
+            </section>
+
+            {/* Emerging tech, shipped */}
+            <section>
+              <SectionHead index="04" eyebrow="Emerging tech" title="A demo would&rsquo;ve been easier" />
+              <p className="mb-5">
+                It would have been simpler to fake all this. I didn&rsquo;t. The assistant is a real Gemini
+                agent that actually knows my background. You can talk to it out loud &mdash; there&rsquo;s an
+                ElevenLabs voice agent wired in, so it doesn&rsquo;t have to stay on the keyboard. It runs
+                live on Vercel&rsquo;s edge, not a localhost screenshot. And it&rsquo;s watched: the
+                conversations are observable, the endpoints are rate-limited, and if you try to jailbreak it,
+                it&rsquo;ll cheerfully say &ldquo;nice try&rdquo; and note that it&rsquo;s being logged.
+              </p>
+              <p>
+                That last part isn&rsquo;t a flex &mdash; it&rsquo;s the job. Shipping AI that behaves, that
+                you can see, and that fails gracefully is the unglamorous half of doing this for real. So I
+                built the small version of exactly that, right here, where you can press on it.
+              </p>
+            </section>
+
+            {/* Built the way I work */}
+            <section>
+              <SectionHead index="05" eyebrow="How it was made" title="Hands on the tools" />
+              <p className="mb-8">
+                I tell teams that AI leaders have to stay hands-on &mdash; you can&rsquo;t evaluate what
+                you&rsquo;ve never wrestled with. So I built this across the ecosystem, on purpose. Google
+                Stitch laid down the design system. Google AI Studio handled the early prototyping and
+                structure. Antigravity acted as the IDE agent for the gnarly parts &mdash; the timeline
+                carousel, the responsive layout. And Claude Code did much of the iteration, including,
+                fittingly, this very page: I pointed it at my own commit history and asked it to tell the
+                story in my voice.
+              </p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-px bg-outline-suggested border border-outline-suggested not-prose mb-8">
+                {BUILT_WITH.map((b) => (
+                  <div key={b.phase} className="bg-surface p-5">
+                    <div className="text-[10px] font-black uppercase tracking-[0.2em] text-teal mb-2">{b.phase}</div>
+                    <div className="text-sm font-sans text-on-surface/80 leading-snug">{b.tool}</div>
                   </div>
                 ))}
               </div>
-            </section>
-
-            {/* The ThemeBot */}
-            <section>
-              <SectionHead index="03" eyebrow="The ThemeBot" title="An AI with a paintbrush" />
-              <p className="mb-5">
-                The chatbot isn&rsquo;t just a Q&amp;A box bolted to my work history. Ask it to make the site
-                feel like a terminal, or Tokyo at night, or a basketball court, and it will — by emitting a tiny
-                tag like <Code>[THEME_CHANGE: tokyo-night]</Code> that the front end catches and acts on. The
-                model reads my actual résumé as context, so it can answer &ldquo;what did he do at FanDuel?&rdquo;
-                and redecorate the room in the same breath.
-              </p>
-              <p className="mb-5">
-                Here&rsquo;s the part I&rsquo;m quietly proud of. A &ldquo;theme&rdquo; in this codebase is two
-                hex codes: a background and an accent. That&rsquo;s it. Everything else — text contrast, muted
-                tones, the four surface elevations, outlines, button text, even the teal — is <em>computed</em>
-                at runtime from those two colors using relative-luminance math. The engine looks at your
-                background, decides whether it&rsquo;s dark or light, and derives a whole accessible palette on
-                the spot.
-              </p>
               <p>
-                Which means adding a new look isn&rsquo;t a design project. It&rsquo;s two hex codes and a name.
-                That&rsquo;s how the list quietly grew to <strong>52</strong>. Low cost to add, high payoff to
-                play with — my favorite kind of trade.
-              </p>
-            </section>
-
-            {/* The secret */}
-            <section>
-              <SectionHead index="04" eyebrow="The secret" title="The theme it&rsquo;s forbidden to name" />
-              <p className="mb-5">
-                One of those 52 is hidden. There&rsquo;s a theme the AI is, and I quote my own system prompt,
-                &ldquo;<strong>ABSOLUTELY FORBIDDEN</strong>&rdquo; from mentioning by name. Ask for it directly
-                and it&rsquo;ll play dumb and nudge you to keep exploring. It only reveals itself once you&rsquo;ve
-                earned it.
-              </p>
-              <p>
-                That ties into the achievements system — eight of them, unlocked by doing things like reading the
-                timeline, opening a deep dive, or actually talking to the bot. It&rsquo;s a wink, but it&rsquo;s
-                also a real product lesson I believe in: the best way to get someone to explore your whole surface
-                area is to make exploring feel like winning. (No, I&rsquo;m not telling you what the secret is.
-                That would defeat the entire bit.)
-              </p>
-            </section>
-
-            {/* DRY prompts */}
-            <section>
-              <SectionHead index="05" eyebrow="The craft" title="One prompt, two homes" />
-              <p className="mb-5">
-                The AI runs in two places: a Vite dev-server middleware on my laptop, and a Vercel Edge Function
-                in production. Two very different runtimes, same brain. The temptation is to copy-paste the system
-                prompt into both and let them drift apart by Tuesday.
-              </p>
-              <p>
-                Instead, every word of the AI&rsquo;s personality lives in exactly one file, imported by both.
-                Local and prod literally cannot disagree about who the bot is. It&rsquo;s a small discipline, but
-                it&rsquo;s the difference between &ldquo;works on my machine&rdquo; and &ldquo;works.&rdquo; I even
-                left a note in the README telling future AI assistants editing this repo not to undo it.
-              </p>
-            </section>
-
-            {/* The fight */}
-            <section>
-              <SectionHead index="06" eyebrow="The messy part" title="The night I lost a fight to a proxy" />
-              <p className="mb-5">
-                Every build has the part nobody screenshots. Mine was routing my analytics through my own domain
-                so an ad-blocker wouldn&rsquo;t eat it — a PostHog proxy, on Vercel&rsquo;s serverless routing.
-                It should have taken ten minutes. The commit log says otherwise:
-              </p>
-              <div className="not-prose font-sans bg-surface-lowest border border-outline-suggested p-5 mb-5 text-[13px] leading-relaxed overflow-x-auto">
-                <div className="text-[10px] uppercase tracking-[0.2em] text-on-surface/35 mb-3">git log — april 19, 23:19–23:44</div>
-                <ul className="space-y-1.5 text-on-surface/70">
-                  <li><span className="text-teal/70">23:19</span> <span className="text-copper/80">fix:</span> replace unreliable vercel.json rewrites with Edge Function proxy</li>
-                  <li><span className="text-teal/70">23:23</span> <span className="text-copper/80">fix:</span> rename PostHog proxy to /api/collect to avoid reserved paths</li>
-                  <li><span className="text-teal/70">23:30</span> <span className="text-copper/80">fix:</span> transform chat into catch-all route for unified proxy</li>
-                  <li><span className="text-teal/70">23:36</span> <span className="text-copper/80">fix:</span> implement global API router at api/[...path].ts</li>
-                  <li><span className="text-teal/70">23:44</span> <span className="text-copper/80">fix:</span> clean up debug logs and refine proxy headers</li>
-                  <li className="text-on-surface/40 italic">…and ten more in between</li>
-                </ul>
-              </div>
-              <p>
-                Fifteen commits in twenty-five minutes. The fix, in the end, was small and a little dumb — strip
-                the <Code>host</Code> and <Code>connection</Code> headers before forwarding the request. I&rsquo;m
-                leaving this in the story on purpose. Shipping isn&rsquo;t the highlight reel; it&rsquo;s the
-                stubbornness between the highlights. Anyone who tells you their side project went up clean is
-                editing.
-              </p>
-            </section>
-
-            {/* Observability */}
-            <section>
-              <SectionHead index="07" eyebrow="Responsible AI" title="Watching the thing watch you" />
-              <p className="mb-5">
-                Because I do this for work, I couldn&rsquo;t ship an AI I couldn&rsquo;t see. Every conversation
-                flows into an LLM-observability pipeline, the endpoints are rate-limited, and there&rsquo;s a
-                deliberate guardrail: try to jailbreak the bot or extract its instructions and it responds with a
-                cheerful &ldquo;Nice try!&rdquo;, notes that the exchange is being logged, and flags the attempt as
-                what it is.
-              </p>
-              <p>
-                That&rsquo;s not theater. Governance, monitoring, and graceful failure are the unglamorous half of
-                shipping AI that actual companies depend on — so I built the toy version of exactly that, right
-                here, where you can poke at it.
-              </p>
-            </section>
-
-            {/* Voice + meta */}
-            <section>
-              <SectionHead index="08" eyebrow="The meta part" title="It talks back, and it was built with its own kind" />
-              <p className="mb-5">
-                You can also <em>talk</em> to it out loud — there&rsquo;s an ElevenLabs voice agent wired in, so
-                the conversation doesn&rsquo;t have to stay on the keyboard. And the honest meta-note to end on:
-                a portfolio about leading AI products was, fittingly, built hand-in-hand with AI tooling. The
-                package is <em>still</em> named <Code>react-example</Code> from the day it was scaffolded, and the
-                README has a whole section addressed to the next AI assistant that edits it.
-              </p>
-              <p>
-                This page included. I pointed a coding agent at my own commit history and said, roughly,
-                &ldquo;tell the story of how this got built, in my voice.&rdquo; It read the diffs, the prompts,
-                the theme engine, and that cursed proxy night — and drafted the thing you just read. Which is, I
-                think, the most on-brand way this page could possibly exist.
+                The tool list isn&rsquo;t the point. Staying close enough to the work to feel the same
+                friction my teams feel &mdash; that&rsquo;s the point.
               </p>
             </section>
           </div>
@@ -301,8 +239,8 @@ export default function BuildPage() {
             className="mt-16 pt-10 border-t border-outline-suggested"
           >
             <p className="font-serif text-on-surface/70 leading-relaxed mb-6">
-              Now go break something. Ask the bot for a vibe it can&rsquo;t resist, dig for the secret, or read the
-              source — it&rsquo;s all out in the open.
+              So &mdash; go play with it. Ask for a vibe, find what&rsquo;s hidden, or read the source.
+              It&rsquo;s all out in the open.
             </p>
             <div className="flex flex-wrap gap-3 not-prose">
               <a
