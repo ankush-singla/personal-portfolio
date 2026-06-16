@@ -108,6 +108,11 @@ export default function BuildPage() {
               reward a little curiosity, and to lean on tech that only just became possible. Show,
               don&rsquo;t tell.
             </p>
+            <p className="mt-6 max-w-2xl border-l-2 border-copper/40 pl-4 text-sm font-sans text-on-surface/55 leading-relaxed">
+              On the nose, and on purpose: this page was drafted by an AI agent &mdash; pointed at my own
+              commit history and told to write in my voice &mdash; then verified, edited, and signed off by
+              me. A page about building with AI, built with AI.
+            </p>
           </motion.header>
 
           {/* Stats strip */}
@@ -130,11 +135,11 @@ export default function BuildPage() {
             <section>
               <SectionHead index="01" eyebrow="The intent" title="Show, don&rsquo;t tell" />
               <p className="mb-5">
-                I lead AI product for a living. Handing someone a static PDF felt like handing them a
-                photo of dinner and asking them to trust it was good. So I built the meal. Everything
-                here &mdash; what you can poke at, what rewards you for poking, what happens when you
-                actually ask it something &mdash; is a small argument about how I think a product should
-                treat the person using it.
+                I lead AI product for a living. A résumé is a scouting report &mdash; a tidy list of
+                measurables that asks you to project how someone actually plays. I&rsquo;d rather just show
+                you the tape. So everything here &mdash; what you can poke at, what rewards you for poking,
+                what happens when you actually ask it something &mdash; is a small argument about how I
+                think a product should treat the person using it.
               </p>
               <p>
                 Three beliefs run underneath all of it: earn attention instead of demanding it, reward
@@ -220,9 +225,8 @@ export default function BuildPage() {
                 you&rsquo;ve never wrestled with. So I built this across the ecosystem, on purpose. Google
                 Stitch laid down the design system. Google AI Studio handled the early prototyping and
                 structure. Antigravity acted as the IDE agent for the gnarly parts &mdash; the timeline
-                carousel, the responsive layout. And Claude Code did much of the iteration, including,
-                fittingly, this very page: I pointed it at my own commit history and asked it to tell the
-                story in my voice.
+                carousel, the responsive layout. And Claude Code did much of the iteration and the writing,
+                including the page you&rsquo;re reading.
               </p>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-px bg-outline-suggested border border-outline-suggested not-prose mb-8">
                 {BUILT_WITH.map((b) => (
