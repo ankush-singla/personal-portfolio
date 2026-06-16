@@ -20,9 +20,11 @@ export interface WritingEntry {
   excerpt: string;
   readingTime?: string;
   tags?: string[];
-  type: 'post' | 'external';
+  type: 'post' | 'external' | 'page';
   /** Required when type === 'external' */
   externalUrl?: string;
+  /** Required when type === 'page' — an internal route on this site, e.g. '/build' */
+  pageUrl?: string;
   /** Where an external piece was published, e.g. "Forbes", "LinkedIn" */
   externalSource?: string;
   /** Optional: where this on-site post is also syndicated */
@@ -32,6 +34,17 @@ export interface WritingEntry {
 }
 
 export const WRITING: WritingEntry[] = [
+  {
+    slug: 'how-i-built-this',
+    title: 'How I Built This',
+    date: '2026-04-20',
+    readingTime: '5 min read',
+    excerpt:
+      "A behind-the-scenes look at this site — the product thinking behind the playable bits, the generative-AI toolchain, and what it means to ship emerging tech for real instead of demoing it.",
+    tags: ['Product', 'AI', 'Engineering'],
+    type: 'page',
+    pageUrl: '/build',
+  },
   {
     slug: 'an-old-note-to-my-former-team',
     title: 'An Old Note to My Former Team',

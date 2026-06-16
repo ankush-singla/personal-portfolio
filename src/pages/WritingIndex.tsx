@@ -17,13 +17,18 @@ const formatDate = (iso: string) =>
 
 export default function WritingIndex() {
   const entries = getVisibleEntries();
-  const { theme } = useApp();
+  const { theme, unlock } = useApp();
 
   useEffect(() => {
     applyThemeToRoot(document.documentElement, theme);
     document.title = 'Writing — Ankush Singla';
     window.scrollTo(0, 0);
   }, [theme]);
+
+  // Landing on the writing hub unlocks "The Reader".
+  useEffect(() => {
+    unlock('the-reader');
+  }, [unlock]);
 
   return (
     <div className="min-h-screen bg-surface text-on-surface relative overflow-x-clip selection:bg-copper selection:text-charcoal">
@@ -52,11 +57,16 @@ export default function WritingIndex() {
           <div className="divide-y divide-outline-suggested border-y border-outline-suggested">
             {entries.map((entry, i) => {
               const isExternal = entry.type === 'external';
+              const isPage = entry.type === 'page';
               const Wrapper = ({ children }: { children: React.ReactNode }) =>
                 isExternal ? (
                   <a href={entry.externalUrl} target="_blank" rel="noopener noreferrer" className="block group">
                     {children}
                   </a>
+                ) : isPage ? (
+                  <Link to={entry.pageUrl!} className="block group">
+                    {children}
+                  </Link>
                 ) : (
                   <Link to={`/writing/${entry.slug}`} className="block group">
                     {children}
@@ -85,6 +95,11 @@ export default function WritingIndex() {
                             {entry.externalSource || 'External'} <ExternalLink size={9} />
                           </span>
                         )}
+                        {isPage && (
+                          <span className="ml-auto inline-flex items-center gap-1.5 border border-copper/40 text-copper px-2.5 py-1 rounded-full">
+                            Behind the scenes
+                          </span>
+                        )}
                       </div>
                       <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-3 group-hover:text-copper transition-colors">
                         {entry.title}
@@ -93,7 +108,7 @@ export default function WritingIndex() {
                         {entry.excerpt}
                       </p>
                       <span className="inline-flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.2em] text-copper opacity-70 group-hover:opacity-100 transition-opacity">
-                        {isExternal ? 'Read on ' + (entry.externalSource || 'site') : 'Read post'}
+                        {isExternal ? 'Read on ' + (entry.externalSource || 'site') : isPage ? "See how it's built" : 'Read post'}
                         <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
                       </span>
                     </article>

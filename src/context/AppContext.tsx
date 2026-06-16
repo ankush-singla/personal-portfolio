@@ -10,6 +10,8 @@ interface AppContextType {
   setPrevTheme: (t: string) => void;
   isChatOpen: boolean;
   setIsChatOpen: (open: boolean) => void;
+  isMobileMenuOpen: boolean;
+  setIsMobileMenuOpen: (open: boolean) => void;
   isAchievementsModalOpen: boolean;
   setIsAchievementsModalOpen: (open: boolean) => void;
   // Achievements
@@ -31,6 +33,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     return localStorage.getItem('site-prev-theme') || 'monolith';
   });
   const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [isAchievementsModalOpen, setIsAchievementsModalOpen] = useState<boolean>(false);
 
   const achievements = useAchievements();
@@ -56,6 +59,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         setPrevTheme,
         isChatOpen,
         setIsChatOpen,
+        isMobileMenuOpen,
+        setIsMobileMenuOpen,
         isAchievementsModalOpen,
         setIsAchievementsModalOpen,
         ...achievements,

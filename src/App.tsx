@@ -91,16 +91,6 @@ export default function App() {
   };
 
   useEffect(() => {
-    const handleGlobalScroll = () => {
-      if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 50) {
-        unlock('data-miner');
-      }
-    };
-    window.addEventListener('scroll', handleGlobalScroll);
-    return () => window.removeEventListener('scroll', handleGlobalScroll);
-  }, [unlock]);
-
-  useEffect(() => {
     // Unlock the welcome achievement shortly after load
     const timer = setTimeout(() => {
       unlock('getting-to-know-ankush');
@@ -112,7 +102,6 @@ export default function App() {
     if (timelineRef.current) {
       const scrollAmount = 400;
       timelineRef.current.scrollBy({ left: direction === 'left' ? -scrollAmount : scrollAmount, behavior: 'smooth' });
-      unlock('time-traveler');
     }
   };
 
@@ -142,7 +131,7 @@ export default function App() {
   }, [activeCompany]);
 
   useEffect(() => {
-    if (unlockedIds.length === 7 && !hasFiredConfetti) {
+    if (unlockedIds.length >= Object.keys(ACHIEVEMENTS).length && !hasFiredConfetti) {
       fireConfetti();
       setHasFiredConfetti(true);
       localStorage.setItem('has-fired-confetti', 'true');
@@ -991,7 +980,6 @@ export default function App() {
                   <Linkedin size={16} /> LinkedIn
                 </a>
                 <div className="flex items-center gap-6 mt-4 md:mt-0">
-                  <a href="https://www.instagram.com/ankkkkkkk" onClick={() => unlock('the-networker')} target="_blank" rel="noopener noreferrer" className="hover:text-copper transition-colors"><Camera size={22} /></a>
                   {RESUME_DATA.contact.github && (
                     <a href={RESUME_DATA.contact.github} onClick={() => unlock('the-networker')} target="_blank" rel="noopener noreferrer" className="hover:text-copper transition-colors"><Github size={22} /></a>
                   )}

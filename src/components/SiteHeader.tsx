@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Trophy, Menu, X, ChevronRight, BookOpen, Code2 } from 'lucide-react';
 import { RESUME_DATA } from '../data/resume';
 import { ACHIEVEMENTS } from '../data/achievements';
@@ -19,8 +19,15 @@ export default function SiteHeader({ activeSection }: { activeSection?: string }
     unlockedIds,
     enabled,
     setIsAchievementsModalOpen,
+    isMobileMenuOpen,
+    setIsMobileMenuOpen,
   } = useApp();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { pathname } = useLocation();
+
+  // Close the (globally-tracked) mobile menu whenever the route changes.
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [pathname, setIsMobileMenuOpen]);
 
   const totalAchievements = Object.keys(ACHIEVEMENTS).length;
   const activeIndicator = (

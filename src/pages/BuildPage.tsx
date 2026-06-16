@@ -52,7 +52,12 @@ const STATS: { value: string; label: string }[] = [
 ];
 
 export default function BuildPage() {
-  const { theme } = useApp();
+  const { theme, unlock } = useApp();
+
+  // Visiting the build page unlocks "Behind the Build".
+  useEffect(() => {
+    unlock('behind-the-build');
+  }, [unlock]);
 
   useEffect(() => {
     applyThemeToRoot(document.documentElement, theme);

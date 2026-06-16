@@ -5,6 +5,7 @@ import Markdown from 'react-markdown';
 import posthog from 'posthog-js';
 import { ConversationProvider, useConversationControls, useConversationStatus } from '@elevenlabs/react';
 import { ThemeType } from '../types';
+import { useApp } from '../context/AppContext';
 
 import { SmartNav } from './SmartNav';
 
@@ -30,6 +31,7 @@ export default function ThemeBot(props: ThemeBotProps) {
 }
 
 function ThemeBotInner({ onThemeChange, onInteract, onVoiceInteract, unlockedIds = [] }: ThemeBotProps) {
+  const { isMobileMenuOpen } = useApp();
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<Message[]>([
@@ -255,7 +257,7 @@ function ThemeBotInner({ onThemeChange, onInteract, onVoiceInteract, unlockedIds
   };
 
   return (
-    <div className="fixed bottom-4 right-4 md:bottom-8 md:right-8 z-[90] flex flex-col items-end">
+    <div className={`fixed bottom-4 right-4 md:bottom-8 md:right-8 z-[90] flex flex-col items-end ${isMobileMenuOpen ? 'hidden' : ''}`}>
       <SmartNav isVisible={true} />
           <AnimatePresence>
             {isOpen && (
@@ -352,7 +354,7 @@ function ThemeBotInner({ onThemeChange, onInteract, onVoiceInteract, unlockedIds
             )}
           </AnimatePresence>
 
-          <div className="h-12 bg-surface-high/80 backdrop-blur-md border border-copper/20 hover:border-copper/40 shadow-xl rounded-full flex items-center p-1 gap-1 transition-all">
+          <div className="h-12 bg-surface-highest/90 backdrop-blur-md border border-copper/30 hover:border-copper/50 shadow-xl rounded-full flex items-center p-1 gap-1 transition-all">
             {/* ElevenLabs Voice AI Button */}
             <button
               onClick={handleVoiceToggle}

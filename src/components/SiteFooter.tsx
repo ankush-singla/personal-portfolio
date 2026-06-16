@@ -1,36 +1,69 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Linkedin, Github, FileText, Mail } from 'lucide-react';
 import { RESUME_DATA } from '../data/resume';
+import { useApp } from '../context/AppContext';
 
-const LINKS = [
-  { to: '/', label: 'Home' },
-  { to: '/writing', label: 'Writing' },
-  { to: '/build', label: 'The Build' },
-];
+const btnBase =
+  'inline-flex items-center gap-2 px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.15em] transition-colors';
+const btnOutline = `${btnBase} border border-outline-suggested text-on-surface hover:bg-copper hover:text-charcoal hover:border-copper`;
+const btnPrimary = `${btnBase} bg-copper text-charcoal border border-copper hover:bg-copper-deep`;
 
 /**
- * Shared site footer for the sub-pages (writing index, posts, build page).
- * Mirrors the homepage's footer line — copyright + vibe — and adds quick
- * navigation, hiding the link to whichever page you're currently on.
+ * Shared site footer for every route — a row of prominent action buttons
+ * (contact form, résumé, socials) plus the copyright/vibe line. Padded at the
+ * bottom so the floating ThemeBot controls don't overlap it. Each button counts
+ * toward the Networker achievement.
  */
 export default function SiteFooter() {
-  const { pathname } = useLocation();
+  const { unlock } = useApp();
   const { footer } = RESUME_DATA.siteMetadata;
+  const { contactForm, resume, linkedin, github } = RESUME_DATA.contact;
 
   return (
     <footer className="border-t border-outline-suggested px-6 md:px-24 pt-10 pb-40">
-      <div className="max-w-[1800px] mx-auto flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-        <nav className="flex flex-wrap gap-x-6 gap-y-2">
-          {LINKS.filter(l => l.to !== pathname).map(l => (
-            <Link
-              key={l.to}
-              to={l.to}
-              className="text-[10px] uppercase tracking-[0.2em] text-on-surface/40 hover:text-copper transition-colors"
+      <div className="max-w-[1800px] mx-auto flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex flex-wrap items-center gap-3">
+          <a
+            href={contactForm}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => unlock('the-networker')}
+            className={btnPrimary}
+          >
+            <Mail size={14} /> Get in Touch
+          </a>
+          {resume && (
+            <a
+              href={resume}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => unlock('the-networker')}
+              className={btnOutline}
             >
-              {l.label}
-            </Link>
-          ))}
-        </nav>
-        <div className="sm:text-right">
+              <FileText size={14} /> Résumé
+            </a>
+          )}
+          <a
+            href={linkedin}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => unlock('the-networker')}
+            className={btnOutline}
+          >
+            <Linkedin size={14} /> LinkedIn
+          </a>
+          {github && (
+            <a
+              href={github}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => unlock('the-networker')}
+              className={btnOutline}
+            >
+              <Github size={14} /> GitHub
+            </a>
+          )}
+        </div>
+        <div className="lg:text-right">
           <p className="text-[10px] uppercase tracking-[0.2em] opacity-40 mb-1">{footer.copyright}</p>
           <p className="text-[10px] uppercase tracking-[0.2em] text-teal">{footer.vibe}</p>
         </div>

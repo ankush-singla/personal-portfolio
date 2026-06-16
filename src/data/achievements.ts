@@ -1,4 +1,4 @@
-export type AchievementId = 'getting-to-know-ankush' | 'deep-diver' | 'data-miner' | 'ai-prodigy' | 'peer-reviewed' | 'time-traveler' | 'the-networker' | 'vocal-resonance';
+export type AchievementId = 'getting-to-know-ankush' | 'deep-diver' | 'the-reader' | 'ai-prodigy' | 'peer-reviewed' | 'behind-the-build' | 'the-networker' | 'vocal-resonance';
 
 export interface Achievement {
   id: AchievementId;
@@ -23,12 +23,12 @@ export const ACHIEVEMENTS: Record<AchievementId, Achievement> = {
     icon: '🏆',
     hint: 'Surface-level views only tell half the story. Seek the architecture beneath.'
   },
-  'data-miner': { 
-    id: 'data-miner', 
-    title: 'Data Miner', 
-    description: 'Scrolled to the absolute bottom of the page.', 
-    icon: '📜',
-    hint: 'The foundation is where the truth is buried. Can you find the absolute floor?'
+  'the-reader': {
+    id: 'the-reader',
+    title: 'The Reader',
+    description: 'Explored the writing collection.',
+    icon: '📖',
+    hint: 'Roles fade; the thinking is written down somewhere. Go find the words.'
   },
   'ai-prodigy': { 
     id: 'ai-prodigy', 
@@ -44,12 +44,12 @@ export const ACHIEVEMENTS: Record<AchievementId, Achievement> = {
     icon: '🤝',
     hint: 'To know the architect, listen to the echoes of those who worked beside him.'
   },
-  'time-traveler': { 
-    id: 'time-traveler', 
-    title: 'Time Traveler', 
-    description: 'Navigated the chronological timeline.', 
-    icon: '⏳',
-    hint: 'Linear progression is an illusion. Trace the steps of the decades.'
+  'behind-the-build': {
+    id: 'behind-the-build',
+    title: 'Behind the Build',
+    description: 'Peeked behind the curtain at how this site was made.',
+    icon: '🛠️',
+    hint: 'Every build has a story. Seek out the making-of.'
   },
   'the-networker': { 
     id: 'the-networker', 

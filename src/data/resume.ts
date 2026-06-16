@@ -316,6 +316,8 @@ export const RESUME_DATA = {
     contactForm: "https://forms.gle/soQmsLvjnWWaPJZD9",
     linkedin: "https://www.linkedin.com/in/singlaankush",
     github: "https://github.com/ankush-singla",
+    // Résumé link (Google Drive PDF, or a file in /public). Empty hides the button.
+    resume: "https://drive.google.com/file/d/1QyOY7lGusu8oKFzxmvbQnVJgzYXN09jH/view?usp=sharing",
     engagements: [
       { label: "Advising", description: "Business and product planning for early-stage startups" },
       { label: "Teaching", description: "Workshops or mentorship for product, engineering, or innovation teams" },

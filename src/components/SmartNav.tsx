@@ -76,7 +76,7 @@ export const SmartNav: React.FC<SmartNavProps> = ({ isVisible }) => {
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={handleClick}
-          className="mb-3 h-12 px-4 bg-surface-high/80 backdrop-blur-md border border-copper/20 hover:border-copper/40 shadow-xl rounded-full flex items-center gap-3 group transition-all cursor-pointer"
+          className="mb-3 h-12 px-4 bg-surface-highest/90 backdrop-blur-md border border-copper/30 hover:border-copper/50 shadow-xl rounded-full flex items-center gap-3 group transition-all cursor-pointer"
         >
           <span className="text-[10px] font-black uppercase tracking-[0.15em] text-on-surface/80 group-hover:text-copper transition-colors">
             {label}
