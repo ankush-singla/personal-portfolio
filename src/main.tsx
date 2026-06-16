@@ -28,6 +28,14 @@ if (phKey) {
   });
 }
 
+// Take scroll into our own hands. With the browser's default 'auto' restoration,
+// hitting Back to return home re-applies the saved scroll position (e.g. the
+// Career Overview / Samsung area) *after* our scroll-to-top runs, so it wins and
+// you land mid-page. 'manual' lets each route's own scroll logic decide instead.
+if ('scrollRestoration' in history) {
+  history.scrollRestoration = 'manual';
+}
+
 // Static prerendered content (injected at build time for crawlers / readers like
 // ElevenLabs that don't run JS) lives in #prerender-seo. Once the real app is
 // taking over, drop it so human visitors never see the duplicate.
