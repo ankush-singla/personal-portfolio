@@ -14,6 +14,11 @@ interface Message {
   text: string;
 }
 
+// Shown (in the agent's own voice) when a voice call ends unexpectedly — almost
+// always the ElevenLabs quota running out mid-conversation.
+const VOICE_DROP_NOTICE =
+  "🎙️ My voice just cut out mid-thought — most likely I've burned through my voice-AI quota for now (the perils of a free-tier portfolio). Text chat runs on a separate budget, though, so ask me anything right here and I'll keep going.";
+
 interface ThemeBotProps {
   currentTheme?: string;
   onThemeChange: (theme: ThemeType) => void;
@@ -45,6 +50,9 @@ function ThemeBotInner({ onThemeChange, onInteract, onVoiceInteract, unlockedIds
   const voiceConvoStartRef = useRef<number>(0);
   const lastUserMessageRef = useRef<string>('');
   const lastUserMessageTimeRef = useRef<number>(0);
+  // True only when the human clicks "End Call"; lets us tell a deliberate
+  // hang-up apart from the session dying on its own (quota/server error/drop).
+  const voiceEndedByUserRef = useRef<boolean>(false);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -177,8 +185,22 @@ function ThemeBotInner({ onThemeChange, onInteract, onVoiceInteract, unlockedIds
     }
   }, [status, onVoiceInteract]);
 
+  // When the voice session ends on its own (quota exhausted, server error,
+  // dropped connection) rather than by a deliberate hang-up, the agent stays in
+  // character: it owns the failure and hands the user to the text chat, which
+  // runs on a separate (Gemini) budget.
+  const handleUnexpectedVoiceDrop = () => {
+    setIsOpen(true);
+    setMessages(prev =>
+      prev[prev.length - 1]?.text === VOICE_DROP_NOTICE
+        ? prev
+        : [...prev, { role: 'model', text: VOICE_DROP_NOTICE }]
+    );
+  };
+
   const handleVoiceToggle = async () => {
     if (status === 'connected') {
+      voiceEndedByUserRef.current = true;
       await endSession();
     } else if (status === 'disconnected') {
       try {
@@ -195,6 +217,7 @@ function ThemeBotInner({ onThemeChange, onInteract, onVoiceInteract, unlockedIds
           onConnect: ({ conversationId }) => {
             voiceConvoIdRef.current = conversationId;
             voiceConvoStartRef.current = Date.now();
+            voiceEndedByUserRef.current = false;
             lastUserMessageRef.current = '';
             lastUserMessageTimeRef.current = 0;
             posthog.capture('voice_chat_connected', {
@@ -228,16 +251,25 @@ function ThemeBotInner({ onThemeChange, onInteract, onVoiceInteract, unlockedIds
             }
           },
           onDisconnect: (details) => {
-            const durationSec = voiceConvoStartRef.current > 0 
+            const durationSec = voiceConvoStartRef.current > 0
               ? Math.round((Date.now() - voiceConvoStartRef.current) / 1000)
               : 0;
-            
+            const endedByUser = voiceEndedByUserRef.current;
+
             posthog.capture('voice_chat_disconnected', {
               elevenlabs_conversation_id: voiceConvoIdRef.current,
               reason: details.reason,
-              duration_seconds: durationSec
+              duration_seconds: durationSec,
+              ended_by_user: endedByUser
             });
-            
+
+            // The user didn't hang up, so the session died on us (most commonly
+            // the ElevenLabs quota). Own it in-character and pivot to text.
+            if (!endedByUser) {
+              handleUnexpectedVoiceDrop();
+            }
+
+            voiceEndedByUserRef.current = false;
             voiceConvoIdRef.current = '';
             voiceConvoStartRef.current = 0;
             lastUserMessageRef.current = '';
