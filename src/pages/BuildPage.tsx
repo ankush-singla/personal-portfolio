@@ -46,7 +46,7 @@ const STATS: { value: string; label: string }[] = [
   { value: '52', label: 'themes, summoned by asking' },
   { value: '8', label: 'things to discover' },
   { value: '5', label: 'AI tools in the build' },
-  { value: '0', label: 'settings menus' },
+  { value: '1', label: 'hidden theme to earn' },
 ];
 
 export default function BuildPage() {
@@ -104,14 +104,14 @@ export default function BuildPage() {
             </h1>
             <p className="text-base md:text-lg font-light text-on-surface/70 leading-relaxed max-w-2xl">
               Most portfolios tell you what someone shipped. I wanted to <em>show</em> you how I think
-              about product &mdash; so the page itself is the argument. It&rsquo;s built to nudge, to
-              reward a little curiosity, and to lean on tech that only just became possible. Show,
-              don&rsquo;t tell.
+              about product &mdash; so I built the page to do it instead of describe it. It nudges, it
+              rewards a little curiosity, and it leans on tech that&rsquo;s suddenly within reach for
+              anyone &mdash; coder or not &mdash; to actually build with. Show, don&rsquo;t tell.
             </p>
             <p className="mt-6 max-w-2xl border-l-2 border-copper/40 pl-4 text-sm font-sans text-on-surface/55 leading-relaxed">
-              On the nose, and on purpose: this page was drafted by an AI agent &mdash; pointed at my own
-              commit history and told to write in my voice &mdash; then verified, edited, and signed off by
-              me. A page about building with AI, built with AI.
+              Worth saying plainly: this page was drafted by an AI agent &mdash; pointed at my own commit
+              history and told to write in my voice &mdash; then reviewed, edited, and signed off by me.
+              Human in the loop, as it should be: a page about building with AI, built with AI.
             </p>
           </motion.header>
 
@@ -135,11 +135,11 @@ export default function BuildPage() {
             <section>
               <SectionHead index="01" eyebrow="The intent" title="Show, don&rsquo;t tell" />
               <p className="mb-5">
-                I lead AI product for a living. A résumé is a scouting report &mdash; a tidy list of
-                measurables that asks you to project how someone actually plays. I&rsquo;d rather just show
-                you the tape. So everything here &mdash; what you can poke at, what rewards you for poking,
-                what happens when you actually ask it something &mdash; is a small argument about how I
-                think a product should treat the person using it.
+                I lead AI product for a living. A résumé is a brochure &mdash; a tidy list of highlights
+                that asks you to imagine the rest. I&rsquo;d rather just show you the product. So everything
+                here &mdash; what you can poke at, what rewards you for poking, what happens when you
+                actually ask it something &mdash; reflects how I think a product should treat the person
+                using it.
               </p>
               <p>
                 Three beliefs run underneath all of it: earn attention instead of demanding it, reward
@@ -249,23 +249,22 @@ export default function BuildPage() {
                 Strip away the themes and the easter eggs and this site is a small bet, made concrete. I
                 think the distance between what a person <em>means</em> and what a product <em>does</em> is
                 collapsing fast &mdash; that the next generation of products will feel less like tools you
-                operate and more like systems you talk to, that meet you where you are. A portfolio is a
-                low-stakes place to prove that to myself. The high-stakes version is the work.
+                operate and more like systems you talk to, that meet you where you are. This site is a
+                simple version of what those products can do &mdash; built to showcase what&rsquo;s now
+                possible, and to test it for myself.
               </p>
               <p className="mb-5">
-                It&rsquo;s also not finished, and it never will be. There are corners I&rsquo;d rebuild if I
-                started today, a few things held together with more conviction than code, and a backlog in
-                my head longer than the one in the repo. I tinker with it the way other people garden.
-                That&rsquo;s the honest state of anything I find interesting: a little rough, always
-                mid-thought, better than it was last week.
+                It&rsquo;s also never really &ldquo;done.&rdquo; It&rsquo;s less a finished product than a
+                workshop I keep wandering back into &mdash; I keep adding to it and sharpening it as the
+                tools get better. That&rsquo;s the part I enjoy most: building something good, then making
+                it better.
               </p>
               <p>
-                But that&rsquo;s the whole reason to show you the tape instead of the scouting report. The
-                instincts here &mdash; earn attention instead of demanding it, kill friction, ship emerging
-                tech for real and watch it like a hawk, stay close enough to the work to feel where it hurts
-                &mdash; don&rsquo;t only scale to a website. They&rsquo;re how I approach a product, and a
-                team. If that&rsquo;s how you&rsquo;d want someone thinking about yours, you know where the
-                &ldquo;get in touch&rdquo; button is.
+                But that&rsquo;s really why I&rsquo;d rather show you the product than the brochure. How I
+                built this &mdash; caring about the person on the other side, cutting the annoying parts, and
+                reaching for new tech only where it genuinely makes things better &mdash; is how I think
+                about any product, and any team I lead. If that&rsquo;s the kind of thinking you want in
+                your corner, let&rsquo;s talk.
               </p>
             </section>
           </div>
