@@ -1152,7 +1152,7 @@ export default function App() {
             <div className="flex justify-between items-end gap-4 pt-6 pb-32 md:pb-0">
               <Link
                 to="/build"
-                className="group inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-on-surface/40 hover:text-copper transition-colors"
+                className="group inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap text-[10px] uppercase tracking-[0.2em] text-on-surface/40 hover:text-copper transition-colors"
               >
                 How I built this
                 <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
