@@ -93,6 +93,8 @@ export default function BuildPage() {
               <span className="text-teal">The thinking behind it</span>
               <span className="text-on-surface/20">/</span>
               <span className="text-on-surface/40">~5 min read</span>
+              <span className="text-on-surface/20">/</span>
+              <span className="text-copper/80">Co-authored with AI</span>
             </div>
             <h1 className="text-4xl md:text-6xl font-black tracking-tighter leading-[0.95] mb-6">
               How I Built This

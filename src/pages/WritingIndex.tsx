@@ -92,6 +92,12 @@ export default function WritingIndex() {
                             <span className="text-on-surface/40">{entry.readingTime}</span>
                           </>
                         )}
+                        {entry.coAuthoredWithAI && (
+                          <>
+                            <span className="text-on-surface/20">/</span>
+                            <span className="text-copper/80">Co-authored with AI</span>
+                          </>
+                        )}
                         {isExternal && (
                           <span className="ml-auto inline-flex items-center gap-1.5 border border-teal/40 text-teal px-2.5 py-1 rounded-full">
                             {entry.externalSource || 'External'} <ExternalLink size={9} />

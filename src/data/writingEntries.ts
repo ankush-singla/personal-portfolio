@@ -35,14 +35,17 @@ export interface WritingEntry {
   syndicatedTo?: { label: string; url: string }[];
   /** Mark true to hide from the public list (still routable if you share the link) */
   draft?: boolean;
+  /** Show a "Co-authored with AI" note alongside the title */
+  coAuthoredWithAI?: boolean;
 }
 
 export const WRITING: WritingEntry[] = [
   {
     slug: 'how-i-built-this',
     title: 'How I Built This',
-    date: '2026-04-20',
+    date: '2026-06-15',
     readingTime: '5 min read',
+    coAuthoredWithAI: true,
     excerpt:
       "A behind-the-scenes look at this site — the product thinking behind the playable bits, the generative-AI toolchain, and what it means to ship emerging tech for real instead of demoing it.",
     tags: ['Product', 'AI', 'Engineering'],
