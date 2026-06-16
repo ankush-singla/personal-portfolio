@@ -241,6 +241,33 @@ export default function BuildPage() {
                 friction my teams feel &mdash; that&rsquo;s the point.
               </p>
             </section>
+
+            {/* The point / the bigger bet */}
+            <section>
+              <SectionHead index="06" eyebrow="The point" title="Why any of this matters" />
+              <p className="mb-5">
+                Strip away the themes and the easter eggs and this site is a small bet, made concrete. I
+                think the distance between what a person <em>means</em> and what a product <em>does</em> is
+                collapsing fast &mdash; that the next generation of products will feel less like tools you
+                operate and more like systems you talk to, that meet you where you are. A portfolio is a
+                low-stakes place to prove that to myself. The high-stakes version is the work.
+              </p>
+              <p className="mb-5">
+                It&rsquo;s also not finished, and it never will be. There are corners I&rsquo;d rebuild if I
+                started today, a few things held together with more conviction than code, and a backlog in
+                my head longer than the one in the repo. I tinker with it the way other people garden.
+                That&rsquo;s the honest state of anything I find interesting: a little rough, always
+                mid-thought, better than it was last week.
+              </p>
+              <p>
+                But that&rsquo;s the whole reason to show you the tape instead of the scouting report. The
+                instincts here &mdash; earn attention instead of demanding it, kill friction, ship emerging
+                tech for real and watch it like a hawk, stay close enough to the work to feel where it hurts
+                &mdash; don&rsquo;t only scale to a website. They&rsquo;re how I approach a product, and a
+                team. If that&rsquo;s how you&rsquo;d want someone thinking about yours, you know where the
+                &ldquo;get in touch&rdquo; button is.
+              </p>
+            </section>
           </div>
 
           {/* CTA footer */}
