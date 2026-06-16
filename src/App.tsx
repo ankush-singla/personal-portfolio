@@ -73,8 +73,14 @@ export default function App() {
 
   // Section nav links from other routes arrive as `/#section`; scroll to the
   // target once this page mounts (and reset the work carousel for #work).
+  // Plain navigation home (no hash, e.g. the "AS" brand link) should always
+  // land at the top — otherwise the scroll position carried over from a
+  // writing/build page leaves you mid-page near Career Overview.
   useEffect(() => {
-    if (!location.hash) return;
+    if (!location.hash) {
+      window.scrollTo(0, 0);
+      return;
+    }
     const id = location.hash.slice(1);
     if (id === 'work') {
       setCurrentProjectIndex(1);

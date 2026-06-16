@@ -6,6 +6,7 @@ import { applyThemeToRoot } from '../utils/theme';
 import { useApp } from '../context/AppContext';
 import SiteHeader from '../components/SiteHeader';
 import SiteFooter from '../components/SiteFooter';
+import MatrixRain from '../components/MatrixRain';
 
 const REPO_URL = 'https://github.com/ankush-singla/personal-portfolio';
 
@@ -70,8 +71,9 @@ export default function BuildPage() {
   }, [theme]);
 
   return (
-    <div className="min-h-screen bg-surface text-on-surface relative overflow-x-clip selection:bg-copper selection:text-charcoal">
+    <div className={`min-h-screen bg-surface text-on-surface relative overflow-x-clip selection:bg-copper selection:text-charcoal ${theme === 'matrix' ? 'matrix-mode' : ''}`}>
       <div className="noise-overlay" />
+      {theme === 'matrix' && <MatrixRain />}
 
       <SiteHeader activeSection="build" />
 

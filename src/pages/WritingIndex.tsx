@@ -7,6 +7,7 @@ import { applyThemeToRoot } from '../utils/theme';
 import { useApp } from '../context/AppContext';
 import SiteHeader from '../components/SiteHeader';
 import SiteFooter from '../components/SiteFooter';
+import MatrixRain from '../components/MatrixRain';
 
 const formatDate = (iso: string) =>
   new Date(iso + 'T00:00:00').toLocaleDateString('en-US', {
@@ -31,8 +32,9 @@ export default function WritingIndex() {
   }, [unlock]);
 
   return (
-    <div className="min-h-screen bg-surface text-on-surface relative overflow-x-clip selection:bg-copper selection:text-charcoal">
+    <div className={`min-h-screen bg-surface text-on-surface relative overflow-x-clip selection:bg-copper selection:text-charcoal ${theme === 'matrix' ? 'matrix-mode' : ''}`}>
       <div className="noise-overlay" />
+      {theme === 'matrix' && <MatrixRain />}
 
       <SiteHeader activeSection="writing" />
 
