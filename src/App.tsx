@@ -5,7 +5,7 @@ import { ThemeType } from './types';
 import { RESUME_DATA } from './data/resume';
 import { useApp } from './context/AppContext';
 import { ACHIEVEMENTS } from './data/achievements';
-import { Camera, Gamepad2, Users, Briefcase, Mail, Github, Linkedin, Twitter, ArrowRight, X, ChevronLeft, ChevronRight, Play, Pause, ExternalLink } from 'lucide-react';
+import { Gamepad2, Users, Briefcase, Mail, Twitter, ArrowRight, X, ChevronLeft, ChevronRight, Play, Pause, ExternalLink } from 'lucide-react';
 import { applyThemeToRoot } from './utils/theme';
 import { fireConfetti } from './utils/confetti';
 import MatrixRain from './components/MatrixRain';
@@ -64,6 +64,12 @@ export default function App() {
 
   const totalAchievements = Object.keys(ACHIEVEMENTS).length;
   const location = useLocation();
+
+  // Restore the homepage title — post/build/writing pages overwrite document.title,
+  // and returning here via SPA navigation must reset it.
+  useEffect(() => {
+    document.title = 'Ankush Singla — AI Product Executive & Strategist';
+  }, []);
 
   // Section nav links from other routes arrive as `/#section`; scroll to the
   // target once this page mounts (and reset the work carousel for #work).
@@ -976,14 +982,6 @@ export default function App() {
               </div>
               <div className="flex flex-wrap gap-4 items-center justify-start w-full md:w-auto">
                 <a href={RESUME_DATA.contact.contactForm} onClick={() => unlock('the-networker')} target="_blank" rel="noopener noreferrer" className="monolith-btn-primary w-full md:w-auto">Get in Touch</a>
-                <a href={RESUME_DATA.contact.linkedin} onClick={() => unlock('the-networker')} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-3 px-6 py-4 border border-outline-suggested text-on-surface font-bold uppercase tracking-widest text-sm hover:bg-copper hover:text-charcoal hover:border-copper transition-colors w-full md:w-auto">
-                  <Linkedin size={16} /> LinkedIn
-                </a>
-                <div className="flex items-center gap-6 mt-4 md:mt-0">
-                  {RESUME_DATA.contact.github && (
-                    <a href={RESUME_DATA.contact.github} onClick={() => unlock('the-networker')} target="_blank" rel="noopener noreferrer" className="hover:text-copper transition-colors"><Github size={22} /></a>
-                  )}
-                </div>
               </div>
             </div>
 
