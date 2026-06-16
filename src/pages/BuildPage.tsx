@@ -147,18 +147,26 @@ export default function BuildPage() {
             <section>
               <SectionHead index="02" eyebrow="Behavioral design" title="Built to be poked at" />
               <p className="mb-5">
-                Almost everything here is optional. You don&rsquo;t <em>have</em> to scroll the timeline,
-                open a deep dive, talk to the assistant, or find the thing that&rsquo;s hidden &mdash; but
-                the page is quietly designed to make you want to. There are eight small things to discover,
-                a nudge that points you toward whatever you haven&rsquo;t seen yet, and a payoff when you
-                find them all. (There&rsquo;s also one theme the assistant is flat-out forbidden from naming
-                until you earn it. I&rsquo;m not telling you either.)
+                Start with an honest problem: I&rsquo;ve got a long career, and almost nobody wants to
+                scroll through all of it. So a lot of the fussing went into making sure they don&rsquo;t
+                have to. The career timeline is sticky and jumpable &mdash; you can land on any role without
+                dragging past the rest &mdash; and a small pill follows you up the page, always offering the
+                next stop instead of making you hunt for it. (That&rsquo;s the &ldquo;Next: &hellip;&rdquo;
+                button down in the corner.) Getting the sticky timeline, the sliding indicators, and the
+                mobile reordering to behave took an embarrassing number of commits. Worth it: the page is
+                long, but moving through it never feels like a chore.
+              </p>
+              <p className="mb-5">
+                The other half is making the optional stuff tempting. You don&rsquo;t <em>have</em> to open
+                a deep dive, talk to the assistant, or find the thing that&rsquo;s hidden &mdash; but there
+                are eight small things to discover, and a payoff when you find them all. (There&rsquo;s also
+                one theme the assistant is forbidden from naming until you earn it. Still not telling.)
               </p>
               <p>
-                None of that is decoration &mdash; it&rsquo;s the same instinct I bring to real products. A
-                small curiosity gap and a well-timed reward will get someone to explore your whole surface
-                area, where a wall of text just gets skimmed. I&rsquo;d rather you play your way to the
-                point than be lectured to it.
+                None of it is decoration &mdash; it&rsquo;s the same instinct I bring to real products.
+                People won&rsquo;t wade through everything you put in front of them, so you cut the friction
+                of moving forward and add a little reward for curiosity. Do both and they&rsquo;ll see far
+                more of what you made than a wall of text would ever get them to.
               </p>
             </section>
 
