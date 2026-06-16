@@ -1,9 +1,11 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { ArrowLeft, ArrowRight, Github } from 'lucide-react';
+import { ArrowRight, Github } from 'lucide-react';
 import { applyThemeToRoot } from '../utils/theme';
 import { useApp } from '../context/AppContext';
+import SiteHeader from '../components/SiteHeader';
+import SiteFooter from '../components/SiteFooter';
 
 const REPO_URL = 'https://github.com/ankush-singla/personal-portfolio';
 
@@ -66,21 +68,7 @@ export default function BuildPage() {
     <div className="min-h-screen bg-surface text-on-surface relative overflow-x-clip selection:bg-copper selection:text-charcoal">
       <div className="noise-overlay" />
 
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-surface/80 backdrop-blur-md border-b border-outline-suggested">
-        <div className="max-w-[1800px] mx-auto px-6 h-20 flex items-center justify-between">
-          <Link to="/" className="text-2xl font-black tracking-tighter hover:text-copper transition-colors flex items-center">
-            AS<span className="text-copper ml-1">_</span>
-          </Link>
-          <Link
-            to="/"
-            className="group inline-flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.25em] text-on-surface/50 hover:text-copper transition-colors"
-          >
-            <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
-            Back to site
-          </Link>
-        </div>
-      </header>
+      <SiteHeader activeSection="build" />
 
       <main className="pt-40 md:pt-48 px-6 md:px-24 pb-32">
         <div className="hidden md:flex absolute left-6 md:left-12 top-0 h-full items-start z-[55] pt-48">
@@ -309,6 +297,8 @@ export default function BuildPage() {
           </motion.footer>
         </article>
       </main>
+
+      <SiteFooter />
     </div>
   );
 }

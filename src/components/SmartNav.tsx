@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useLocation } from 'react-router-dom';
 import { ChevronDown, ArrowUp } from 'lucide-react';
 import { RESUME_DATA } from '../data/resume';
 
@@ -8,12 +9,14 @@ interface SmartNavProps {
 }
 
 export const SmartNav: React.FC<SmartNavProps> = ({ isVisible }) => {
+  const { pathname } = useLocation();
+  const isHome = pathname === '/';
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
   const sections = RESUME_DATA.siteMetadata.sections;
 
   const updateCurrentSection = useCallback(() => {
     const sectionElements = sections.map(s => document.getElementById(s.id));
-    
+
     let currentIdx = 0;
     const scrollPosition = window.scrollY + window.innerHeight / 3;
 
@@ -27,9 +30,11 @@ export const SmartNav: React.FC<SmartNavProps> = ({ isVisible }) => {
   }, [sections]);
 
   useEffect(() => {
+    // Section tracking only applies on the homepage, where the sections live.
+    if (!isHome) return;
     window.addEventListener('scroll', updateCurrentSection);
     return () => window.removeEventListener('scroll', updateCurrentSection);
-  }, [updateCurrentSection]);
+  }, [updateCurrentSection, isHome]);
 
   const scrollToNext = () => {
     const isLast = currentSectionIndex === sections.length - 1;
@@ -51,8 +56,15 @@ export const SmartNav: React.FC<SmartNavProps> = ({ isVisible }) => {
     }
   };
 
+  const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+
   const isLastSection = currentSectionIndex === sections.length - 1;
   const nextSection = isLastSection ? null : sections[currentSectionIndex + 1];
+
+  // On sub-pages there are no sections to page through, so just offer "Back to Top".
+  const showBackToTop = !isHome || isLastSection;
+  const label = showBackToTop ? 'Back to Top' : `Next: ${nextSection?.title}`;
+  const handleClick = isHome ? scrollToNext : scrollToTop;
 
   return (
     <AnimatePresence>
@@ -63,14 +75,14 @@ export const SmartNav: React.FC<SmartNavProps> = ({ isVisible }) => {
           exit={{ opacity: 0, y: 10, scale: 0.95 }}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          onClick={scrollToNext}
+          onClick={handleClick}
           className="mb-3 h-12 px-4 bg-surface-high/80 backdrop-blur-md border border-copper/20 hover:border-copper/40 shadow-xl rounded-full flex items-center gap-3 group transition-all cursor-pointer"
         >
           <span className="text-[10px] font-black uppercase tracking-[0.15em] text-on-surface/80 group-hover:text-copper transition-colors">
-            {isLastSection ? 'Back to Top' : `Next: ${nextSection?.title}`}
+            {label}
           </span>
           <div className="w-5 h-5 rounded-full bg-copper/10 flex items-center justify-center text-copper group-hover:bg-copper group-hover:text-charcoal transition-all">
-            {isLastSection ? <ArrowUp size={12} /> : <ChevronDown size={12} />}
+            {showBackToTop ? <ArrowUp size={12} /> : <ChevronDown size={12} />}
           </div>
         </motion.button>
       )}
