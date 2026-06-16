@@ -28,6 +28,11 @@ if (phKey) {
   });
 }
 
+// Static prerendered content (injected at build time for crawlers / readers like
+// ElevenLabs that don't run JS) lives in #prerender-seo. Once the real app is
+// taking over, drop it so human visitors never see the duplicate.
+document.getElementById('prerender-seo')?.remove();
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
