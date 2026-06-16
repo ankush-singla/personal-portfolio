@@ -5,6 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import { ArrowLeft, ExternalLink } from 'lucide-react';
 import { getEntry, getPostBody } from '../data/writing';
 import { applyThemeToRoot } from '../utils/theme';
+import { useApp } from '../context/AppContext';
 
 const formatDate = (iso: string) =>
   new Date(iso + 'T00:00:00').toLocaleDateString('en-US', {
@@ -28,19 +29,25 @@ export default function PostPage() {
   const { slug } = useParams<{ slug: string }>();
   const entry = slug ? getEntry(slug) : undefined;
   const body = slug ? getPostBody(slug) : null;
+  const { theme } = useApp();
 
   useEffect(() => {
-    applyThemeToRoot(document.documentElement, 'monolith');
+    applyThemeToRoot(document.documentElement, theme);
     window.scrollTo(0, 0);
     if (entry) {
       document.title = `${entry.title} — Ankush Singla`;
       setMeta('description', entry.excerpt);
     }
+  }, [entry, theme]);
+
+  // Handle external redirect side-effects in useEffect
+  useEffect(() => {
+    if (entry && entry.type === 'external' && entry.externalUrl) {
+      window.location.href = entry.externalUrl;
+    }
   }, [entry]);
 
-  // External entries don't have an on-site page; bounce to the source.
-  if (entry && entry.type === 'external' && entry.externalUrl) {
-    window.location.href = entry.externalUrl;
+  if (entry && entry.type === 'external') {
     return null;
   }
 
@@ -54,9 +61,9 @@ export default function PostPage() {
 
       <header className="fixed top-0 left-0 right-0 z-50 bg-surface/80 backdrop-blur-md border-b border-outline-suggested">
         <div className="max-w-[1800px] mx-auto px-6 h-20 flex items-center justify-between">
-          <a href="/" className="text-2xl font-black tracking-tighter hover:text-copper transition-colors flex items-center">
+          <Link to="/" className="text-2xl font-black tracking-tighter hover:text-copper transition-colors flex items-center">
             AS<span className="text-copper ml-1">_</span>
-          </a>
+          </Link>
           <Link
             to="/writing"
             className="group inline-flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.25em] text-on-surface/50 hover:text-copper transition-colors"

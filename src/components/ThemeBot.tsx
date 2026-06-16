@@ -379,7 +379,7 @@ function ThemeBotInner({ onThemeChange, onInteract, onVoiceInteract, unlockedIds
               ) : (
                 <>
                   <AudioLines size={14} className="text-copper animate-pulse" />
-                  <span className="text-[10px] font-black uppercase tracking-[0.15em]">Talk to my AI friend</span>
+                  <span className="text-[10px] font-black uppercase tracking-[0.15em]">Talk to my AI agent</span>
                 </>
               )}
             </button>

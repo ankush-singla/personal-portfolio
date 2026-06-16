@@ -33,7 +33,7 @@ export const ACHIEVEMENTS: Record<AchievementId, Achievement> = {
   'ai-prodigy': { 
     id: 'ai-prodigy', 
     title: 'AI Prodigy', 
-    description: 'Engaged with the Ankush AI chatbot.', 
+    description: 'Engaged with the Ankush AI agent.', 
     icon: '🧠',
     hint: 'A ghost in the machine waits for a spark. Have you spoken to the reflection?'
   },
@@ -61,7 +61,7 @@ export const ACHIEVEMENTS: Record<AchievementId, Achievement> = {
   'vocal-resonance': { 
     id: 'vocal-resonance', 
     title: 'Vocal Resonance', 
-    description: 'Engaged in a voice chat with the AI friend.', 
+    description: 'Engaged in a voice chat with the AI agent.', 
     icon: '🎙️',
     hint: 'The machine does not just think, it speaks. Have you called out to the phantom in the wires?'
   }

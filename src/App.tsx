@@ -1,16 +1,10 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { Link } from 'react-router-dom';
 import { ThemeType } from './types';
 import { RESUME_DATA } from './data/resume';
-import ThemeBot from './components/ThemeBot';
-import { useAchievements, ACHIEVEMENTS } from './hooks/useAchievements';
-import { AchievementToast } from './components/AchievementToast';
-import { AchievementsModal } from './components/AchievementsModal';
+import { useApp } from './context/AppContext';
+import { ACHIEVEMENTS } from './data/achievements';
 import { Camera, Gamepad2, Users, Briefcase, Mail, Github, Linkedin, Twitter, ArrowRight, X, ChevronLeft, ChevronRight, Menu, Play, Pause, Trophy, ExternalLink } from 'lucide-react';
 import { applyThemeToRoot } from './utils/theme';
 import MatrixRain from './components/MatrixRain';
@@ -20,8 +14,21 @@ import BasketballParquet from './components/BasketballParquet';
 const CAREER_SCROLL_MARGIN_PX = 400;
 
 export default function App() {
-  const [theme, setTheme] = useState<string>('monolith');
-  const [prevTheme, setPrevTheme] = useState<string>('monolith');
+  const {
+    theme,
+    setTheme,
+    prevTheme,
+    setPrevTheme,
+    unlockedIds,
+    unlock,
+    latestAchievement,
+    clearLatest,
+    enabled,
+    setEnabled,
+    isAchievementsModalOpen,
+    setIsAchievementsModalOpen,
+  } = useApp();
+
   const [selectedProject, setSelectedProject] = useState<any>(null);
   const [currentProjectIndex, setCurrentProjectIndex] = useState(1); // Default to Ace AI (2025)
   const [isProjectAutoPlayPaused, setIsProjectAutoPlayPaused] = useState(false);
@@ -29,7 +36,6 @@ export default function App() {
   const [activeCompany, setActiveCompany] = useState<string>(RESUME_DATA.experience[0].company);
   const [activeSection, setActiveSection] = useState<string>('home');
   const [testimonialIndex, setTestimonialIndex] = useState(0);
-  const [isAchievementsModalOpen, setIsAchievementsModalOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [hasFiredConfetti, setHasFiredConfetti] = useState(() => {
     return localStorage.getItem('has-fired-confetti') === 'true';
@@ -54,7 +60,6 @@ export default function App() {
     };
   }, []);
 
-  const { enabled, setEnabled, unlockedIds, unlock, latestAchievement, clearLatest } = useAchievements();
   const totalAchievements = Object.keys(ACHIEVEMENTS).length;
 
   const getDisplayPeriod = (experiences: typeof RESUME_DATA.experience, company: string) => {
@@ -452,12 +457,12 @@ export default function App() {
                 )}
               </a>
             ))}
-            <a
-              href="/writing"
+            <Link
+              to="/writing"
               className="group relative text-[11px] font-black uppercase tracking-[0.25em] pl-[0.25em] transition-all hover:-translate-y-0.5 text-on-surface/40 hover:text-on-surface"
             >
               Writing
-            </a>
+            </Link>
           </nav>
 
           {/* Action & Utility Island (Right) */}
@@ -537,14 +542,14 @@ export default function App() {
                       <ChevronRight size={18} className={`transition-transform ${activeSection === item.id ? 'text-copper translate-x-1' : 'text-on-surface/20'}`} />
                     </a>
                   ))}
-                  <a
-                    href="/writing"
+                  <Link
+                    to="/writing"
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="group flex justify-between items-center py-5 border-b border-outline-suggested/30 text-sm font-black uppercase tracking-[0.2em] text-on-surface/60 hover:text-on-surface transition-colors"
                   >
                     Writing
                     <ChevronRight size={18} className="text-on-surface/20" />
-                  </a>
+                  </Link>
                 </div>
 
                 {/* Mobile Achievement Stats */}
@@ -1225,17 +1230,7 @@ export default function App() {
         </section>
       </main>
 
-      {/* Theme Chat Bot */}
-      <ThemeBot 
-        currentTheme={theme} 
-        onThemeChange={(t) => {
-          setPrevTheme(theme);
-          setTheme(t);
-        }} 
-        onInteract={() => unlock('ai-prodigy')}
-        onVoiceInteract={() => unlock('vocal-resonance')}
-        unlockedIds={unlockedIds}
-      />
+
 
       {/* Deep Dive Modal */}
       <AnimatePresence>
@@ -1347,24 +1342,6 @@ export default function App() {
       </AnimatePresence>
     </div>
 
-    {/* Gamification Toast */}
-    <AchievementToast achievement={latestAchievement} onClose={clearLatest} />
-
-    {/* Gamification Modal */}
-    <AchievementsModal
-      isOpen={isAchievementsModalOpen}
-      onClose={() => setIsAchievementsModalOpen(false)}
-      unlockedIds={unlockedIds}
-      currentTheme={theme}
-      enabled={enabled}
-      onToggleEnabled={setEnabled}
-      onUnlockMatrix={() => {
-        const next = theme === 'matrix' ? prevTheme : 'matrix';
-        setPrevTheme(theme);
-        setTheme(next);
-      }}
-      onReplayConfetti={fireConfetti}
-    />
     </>
   );
 }

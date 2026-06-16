@@ -6,6 +6,8 @@ import App from './App.tsx';
 import WritingIndex from './pages/WritingIndex.tsx';
 import PostPage from './pages/PostPage.tsx';
 import ColophonPage from './pages/ColophonPage.tsx';
+import Layout from './components/Layout.tsx';
+import { AppProvider } from './context/AppContext.tsx';
 import './index.css';
 
 const phKey = import.meta.env.VITE_PUBLIC_POSTHOG_KEY;
@@ -29,12 +31,16 @@ if (phKey) {
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<App />} />
-        <Route path="/writing" element={<WritingIndex />} />
-        <Route path="/writing/:slug" element={<PostPage />} />
-        <Route path="/build" element={<ColophonPage />} />
-      </Routes>
+      <AppProvider>
+        <Routes>
+          <Route element={<Layout />}>
+            <Route path="/" element={<App />} />
+            <Route path="/writing" element={<WritingIndex />} />
+            <Route path="/writing/:slug" element={<PostPage />} />
+            <Route path="/build" element={<ColophonPage />} />
+          </Route>
+        </Routes>
+      </AppProvider>
     </BrowserRouter>
   </StrictMode>,
 );
