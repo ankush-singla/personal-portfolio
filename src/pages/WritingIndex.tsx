@@ -38,7 +38,7 @@ export default function WritingIndex() {
 
       <SiteHeader activeSection="writing" />
 
-      <main className="pt-40 md:pt-48 px-6 md:px-24 pb-32">
+      <main className="relative z-10 pt-40 md:pt-48 px-6 md:px-24 pb-32">
         <div className="hidden md:flex absolute left-6 md:left-12 top-0 h-full items-start z-[55] pt-48">
           <span className="vertical-label sticky top-40">06 / Writing</span>
         </div>
@@ -126,7 +126,9 @@ export default function WritingIndex() {
         </div>
       </main>
 
-      <SiteFooter />
+      <div className="relative z-10">
+        <SiteFooter />
+      </div>
     </div>
   );
 }
