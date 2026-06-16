@@ -3,7 +3,7 @@ import { RESUME_DATA } from '../data/resume';
 import { useApp } from '../context/AppContext';
 
 const btnBase =
-  'inline-flex items-center gap-2 px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.15em] transition-colors';
+  'inline-flex items-center gap-2 px-4 py-2.5 text-[11px] font-semibold uppercase tracking-widest leading-none transition-colors';
 const btnOutline = `${btnBase} border border-outline-suggested text-on-surface hover:bg-copper hover:text-charcoal hover:border-copper`;
 const btnPrimary = `${btnBase} bg-copper text-charcoal border border-copper hover:bg-copper-deep`;
 
