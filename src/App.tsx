@@ -7,6 +7,7 @@ import { useApp } from './context/AppContext';
 import { ACHIEVEMENTS } from './data/achievements';
 import { Camera, Gamepad2, Users, Briefcase, Mail, Github, Linkedin, Twitter, ArrowRight, X, ChevronLeft, ChevronRight, Menu, Play, Pause, Trophy, ExternalLink } from 'lucide-react';
 import { applyThemeToRoot } from './utils/theme';
+import { fireConfetti } from './utils/confetti';
 import MatrixRain from './components/MatrixRain';
 import BasketballParquet from './components/BasketballParquet';
 
@@ -122,77 +123,6 @@ export default function App() {
       }
     }
   }, [activeCompany]);
-
-  const fireConfetti = () => {
-    import('canvas-confetti').then((confettiModule) => {
-      const confetti = confettiModule.default;
-      const colors = ['#b87333', '#76d6d5', '#ffffff']; // Copper, Teal, White
-      
-      // 1. Initial powerful central burst
-      const count = 200;
-      const defaults = {
-        origin: { y: 0.7 },
-        colors: colors,
-        zIndex: 999
-      };
-
-      function fire(particleRatio: number, opts: any) {
-        confetti({
-          ...defaults,
-          ...opts,
-          particleCount: Math.floor(count * particleRatio)
-        });
-      }
-
-      fire(0.25, { spread: 26, startVelocity: 55 });
-      fire(0.2, { spread: 60 });
-      fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
-      fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 });
-      fire(0.1, { spread: 120, startVelocity: 45 });
-
-      // 2. Left side cannon
-      setTimeout(() => {
-        confetti({
-          ...defaults,
-          particleCount: 50,
-          angle: 60,
-          spread: 70,
-          origin: { x: 0, y: 0.65 },
-          scalar: 1.2
-        });
-      }, 300);
-
-      // 3. Right side cannon
-      setTimeout(() => {
-        confetti({
-          ...defaults,
-          particleCount: 50,
-          angle: 120,
-          spread: 70,
-          origin: { x: 1, y: 0.65 },
-          scalar: 1.2
-        });
-      }, 600);
-
-      // 4. Random "Popcorn" bursts for sustained excitement
-      for (let i = 0; i < 6; i++) {
-        setTimeout(() => {
-          confetti({
-            ...defaults,
-            particleCount: Math.floor(Math.random() * 20) + 15,
-            spread: 60,
-            origin: { 
-              x: 0.2 + Math.random() * 0.6, 
-              y: 0.2 + Math.random() * 0.4 
-            },
-            scalar: 0.8,
-            gravity: 1.2,
-            drift: Math.random() > 0.5 ? 2 : -2
-          });
-        }, 900 + (i * 250));
-      }
-    });
-  };
 
   useEffect(() => {
     if (unlockedIds.length === 7 && !hasFiredConfetti) {
@@ -1219,7 +1149,14 @@ export default function App() {
             </div>
 
             {/* Footer line */}
-            <div className="flex justify-end pt-6 pb-32 md:pb-0">
+            <div className="flex justify-between items-end gap-4 pt-6 pb-32 md:pb-0">
+              <Link
+                to="/build"
+                className="group inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-on-surface/40 hover:text-copper transition-colors"
+              >
+                How I built this
+                <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
+              </Link>
               <div className="text-right">
                 <p className="text-[10px] uppercase tracking-[0.2em] opacity-40 mb-1">{RESUME_DATA.siteMetadata.footer.copyright}</p>
                 <p className="text-[10px] uppercase tracking-[0.2em] text-teal block mt-1">{RESUME_DATA.siteMetadata.footer.vibe}</p>

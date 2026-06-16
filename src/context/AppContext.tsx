@@ -27,7 +27,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<string>(() => {
     return localStorage.getItem('site-theme') || 'monolith';
   });
-  const [prevTheme, setPrevTheme] = useState<string>('monolith');
+  const [prevTheme, setPrevTheme] = useState<string>(() => {
+    return localStorage.getItem('site-prev-theme') || 'monolith';
+  });
   const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
   const [isAchievementsModalOpen, setIsAchievementsModalOpen] = useState<boolean>(false);
 
@@ -39,6 +41,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     const root = document.documentElement;
     applyThemeToRoot(root, theme);
   }, [theme]);
+
+  // Persist the previous theme so "revert" survives a reload (e.g. out of Matrix).
+  useEffect(() => {
+    localStorage.setItem('site-prev-theme', prevTheme);
+  }, [prevTheme]);
 
   return (
     <AppContext.Provider

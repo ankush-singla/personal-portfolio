@@ -54,7 +54,7 @@ const STATS: { value: string; label: string }[] = [
   { value: '1', label: 'AI that repaints the site' },
 ];
 
-export default function ColophonPage() {
+export default function BuildPage() {
   const { theme } = useApp();
 
   useEffect(() => {
@@ -62,7 +62,7 @@ export default function ColophonPage() {
     document.title = 'How I Built This — Ankush Singla';
     setMeta(
       'description',
-      "A behind-the-scenes colophon: how Ankush Singla built this AI-native, gamified portfolio — the stack, the ThemeBot, the secret theme, and the messy parts of shipping it.",
+      "A behind-the-scenes look at how Ankush Singla built this AI-native, gamified portfolio — the stack, the ThemeBot, the secret theme, and the messy parts of shipping it.",
     );
     window.scrollTo(0, 0);
   }, [theme]);
@@ -89,7 +89,7 @@ export default function ColophonPage() {
 
       <main className="pt-40 md:pt-48 px-6 md:px-24 pb-32">
         <div className="hidden md:flex absolute left-6 md:left-12 top-0 h-full items-start z-[55] pt-48">
-          <span className="vertical-label sticky top-40">07 / Colophon</span>
+          <span className="vertical-label sticky top-40">07 / The Build</span>
         </div>
 
         <article className="max-w-3xl mx-auto">
@@ -109,9 +109,8 @@ export default function ColophonPage() {
             </h1>
             <p className="text-base md:text-lg font-light text-on-surface/70 leading-relaxed max-w-2xl">
               I lead AI product for a living, so a static PDF résumé felt like a chef handing you a
-              photo of dinner. This page is the colophon — the &ldquo;how it was made&rdquo; — for the
-              little playable thing you just poked around in. The good parts, and the parts that fought
-              back.
+              photo of dinner. This is the &ldquo;how it was made&rdquo; for the little playable thing
+              you just poked around in &mdash; the good parts, and the parts that fought back.
             </p>
           </motion.header>
 

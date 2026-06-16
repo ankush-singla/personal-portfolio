@@ -5,7 +5,7 @@ import posthog from 'posthog-js';
 import App from './App.tsx';
 import WritingIndex from './pages/WritingIndex.tsx';
 import PostPage from './pages/PostPage.tsx';
-import ColophonPage from './pages/ColophonPage.tsx';
+import BuildPage from './pages/BuildPage.tsx';
 import Layout from './components/Layout.tsx';
 import { AppProvider } from './context/AppContext.tsx';
 import './index.css';
@@ -37,7 +37,7 @@ createRoot(document.getElementById('root')!).render(
             <Route path="/" element={<App />} />
             <Route path="/writing" element={<WritingIndex />} />
             <Route path="/writing/:slug" element={<PostPage />} />
-            <Route path="/build" element={<ColophonPage />} />
+            <Route path="/build" element={<BuildPage />} />
           </Route>
         </Routes>
       </AppProvider>
